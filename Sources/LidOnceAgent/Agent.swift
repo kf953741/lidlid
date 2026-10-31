@@ -1,6 +1,7 @@
 import AppKit
 import IOKit
 import LidOnceCore
+import LidOnceSystem
 
 /// A separate unprivileged process owns the global kernel flag. The UI keeps
 /// its stdin pipe open and sends heartbeats. EOF, a hung UI, lid-open, battery,
@@ -35,6 +36,8 @@ final class SessionAgent {
             throw PowerError(text: "另一个盖盖会话正在运行")
         }
         driver = try PowerDriver()
+        snapshot.agentPID = getpid()
+        snapshot.sandboxContainer = NSHomeDirectory()
     }
     func start() throws {
         guard driver.bool("AppleClamshellState") != nil else {

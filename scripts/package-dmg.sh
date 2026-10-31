@@ -5,10 +5,10 @@ APP="${1:-$ROOT/dist/LidLid.app}"
 SCRATCH="${LIDLID_DMG_WORK_DIR:-${LIDUNE_DMG_WORK_DIR:-$ROOT/.build/dmg}}"
 [[ -d "$APP" ]] || { print -u2 -- "Build the app first: zsh scripts/build.sh"; exit 1; }
 APP="${APP:A}"
-codesign --verify --strict "$APP"
+python3 "$ROOT/scripts/verify-sandbox.py" "$APP"
 VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")"
 ARCH="$(lipo -archs "$APP/Contents/MacOS/LidLid")"
-[[ "$ARCH" == arm64 ]] || { print -u2 -- "This preview packages Apple Silicon only; found: $ARCH"; exit 1; }
+[[ "$ARCH" == arm64 ]] || { print -u2 -- "This build packages Apple Silicon only; found: $ARCH"; exit 1; }
 DMG="${LIDLID_DMG_PATH:-${LIDUNE_DMG_PATH:-$ROOT/dist/LidLid-${VERSION}-macOS-arm64.dmg}}"
 mkdir -p "$SCRATCH" "${DMG:h}"
 python3 -m venv "$SCRATCH/venv"

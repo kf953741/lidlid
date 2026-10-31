@@ -1,16 +1,22 @@
 import AppKit
 import LidOnceCore
+import LidOnceSystem
 
 signal(SIGPIPE, SIG_IGN)
-if CommandLine.arguments.contains("--agent") {
+if CommandLine.arguments.contains("--agent") || CommandLine.arguments.contains("--sandbox-check") {
+    // Developer integration entry point. The power owner is the exact same
+    // inherited-sandbox executable launched by the UI, never an unsandboxed copy.
+    let child = AgentProcess.make()
+    if CommandLine.arguments.contains("--sandbox-check") { child.arguments = ["--sandbox-check"] }
+    child.standardInput = FileHandle.standardInput
+    child.standardOutput = FileHandle.standardOutput
+    child.standardError = FileHandle.standardError
     do {
-        let agent = try SessionAgent()
-        try agent.start()
-        withExtendedLifetime(agent) { RunLoop.main.run() }
+        try child.run()
+        child.waitUntilExit()
+        exit(child.terminationStatus)
     } catch {
-        var state = Snapshot(); state.error = true; state.message = error.localizedDescription
-        if let data = try? JSONEncoder().encode(state) { try? FileHandle.standardOutput.write(contentsOf: data + Data([10])) }
-        exit(1)
+        fputs(error.localizedDescription + "\n", stderr); exit(1)
     }
 } else if CommandLine.arguments.contains("--check") {
     do {

@@ -41,6 +41,8 @@ public struct Command: Codable {
 
 public struct Snapshot: Codable {
     public var phase: Phase = .off
+    public var agentPID: Int32? = nil
+    public var sandboxContainer: String? = nil
     public var message = "点一次，下次合盖继续运行"
     public var lidClosed: Bool? = nil
     public var causesSleep: Bool? = nil

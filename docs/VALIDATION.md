@@ -2,6 +2,30 @@
 
 This document separates the implemented workflow, software evidence, and physical evidence. Promotional illustrations describe the intended use case; they are not test results.
 
+## Sandbox build 1.3.0 (November 1, 2026)
+
+On the Apple M5 Pro development MacBook, macOS 27.0.1:
+
+- All eight state/localization tests pass.
+- The main app has only the App Sandbox entitlement. The separately signed, embedded agent has only App Sandbox and sandbox inheritance. Both signatures and the complete nested bundle verify.
+- The signed parent launches the embedded agent into the same `dev.kf.lidonce` container. The read-only CI check opens the power-domain connection without changing power settings.
+- Real, open-lid activation creates one `PreventUserIdleSystemSleep` assertion. Manual cancellation, parent pipe EOF, heartbeat timeout, and agent SIGTERM each record an accepted clamshell-restoration call and release the assertion.
+- A second agent is rejected while a session owns the lock, without changing the first agent's assertion.
+- Killing the actual UI with SIGKILL makes the agent restore through pipe EOF. Killing the actual embedded agent with SIGKILL makes the surviving sandboxed UI perform recovery and visibly return to Off with a recovery notice.
+- These software lifecycle checks were performed on AC power with no external display. They do not establish battery-powered closed-lid behavior or subsequent physical sleep restoration for 1.3.0. The October 31 hardware observation below belongs to 1.2.0.
+
+Reproduce the read-only bundle/sandbox check with:
+
+```sh
+python3 scripts/verify-sandbox.py dist/LidLid.app
+```
+
+The optional real IOKit lifecycle test must run through the parent app executable, not the inherited-sandbox agent directly:
+
+```sh
+python3 scripts/integration.py dist/LidLid.app/Contents/MacOS/LidLid
+```
+
 ## Development configuration
 
 | Configuration | Software checks | Physical lid-close/reopen |
@@ -10,7 +34,7 @@ This document separates the implemented workflow, software evidence, and physica
 | Other Apple Silicon MacBooks / macOS 14+ | Targeted by the build, not individually validated | Reports wanted |
 | Intel Macs | Not supported by the session agent | Not supported |
 
-## Completed software checks
+## Historical checks (through 1.2.0)
 
 - Four session tests, including 256 sequences of open/closed readings, one-shot consumption, cancellation reset, and deadline handling.
 - Four localization tests: system-language fallback and explicit overrides, switching an existing result between languages, preservation of diagnostic codes, and English duration pluralization.
@@ -19,9 +43,9 @@ This document separates the implemented workflow, software evidence, and physica
 - A real UI SIGKILL with agent cleanup; a real agent SIGKILL with surviving UI cleanup.
 - Native UI on/off, duration selection, active deadline display, settings navigation, and return to the default off state.
 - English and simplified Chinese native UI, immediate language changes during an active session, localized duration menus and deadline formatting, and a persisted language choice after relaunch. Each README uses captures of its matching interface.
-- DMG checksum verification, a read-only mounted copy with the expected app version and matching app files, an Applications shortcut, and the actual Finder installation-window layout. The DMG and ZIP contain the same application build.
+- DMG checksum verification, a read-only mounted copy with the expected app version and matching app files, an Applications shortcut, and the actual Finder installation-window layout. The historical DMG and ZIP contained the same application build; current downloads use DMG only.
 
-Historical local check summaries are in [software.json](validation/software.json) and [interface.json](validation/interface.json). They are snapshots, not a compatibility certification. Public CI tests the pure state machine and build only.
+Historical local check summaries are in [software.json](validation/software.json) and [interface.json](validation/interface.json). They are snapshots, not a compatibility certification. Current CI also checks the nested signatures and inherited sandbox at runtime; it does not change hardware power settings.
 
 ## Observed local-task close/reopen
 

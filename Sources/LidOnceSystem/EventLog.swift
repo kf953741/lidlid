@@ -1,7 +1,7 @@
 import Foundation
 
-enum EventLog {
-    static func write(_ message: String) {
+public enum EventLog {
+    public static func write(_ message: String) {
         let manager = FileManager.default
         let directory = manager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("LidOnce", isDirectory: true)

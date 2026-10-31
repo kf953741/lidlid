@@ -4,6 +4,7 @@ Run with the lid open, no external monitor, Clamshell and LidLid UI both quit.
 """
 import json
 import os
+from pathlib import Path
 import queue
 import signal
 import subprocess
@@ -35,10 +36,10 @@ def wait(messages, phase, seconds=6):
             last = messages.get(timeout=max(0.01, end - time.monotonic()))
         except queue.Empty:
             break
-        if last["phase"] == phase:
-            return last
         if last.get("error"):
             raise AssertionError(last)
+        if last["phase"] == phase:
+            return last
     raise AssertionError(f"Waiting for {phase}: {last}")
 
 def send(child, action):
@@ -51,22 +52,44 @@ for scenario in ("manual cancel", "parent pipe EOF", "heartbeat timeout", "agent
         wait(messages, "off")
         send(child, "arm")
         armed = wait(messages, "armed")
-        holds = assertions_for(child.pid)
-        assert len(holds) == 2, holds
+        agent_pid = armed["agentPID"]
+        assert agent_pid != child.pid, "Test must use the embedded session agent"
+        container = Path(armed["sandboxContainer"])
+        assert str(container).endswith("/Library/Containers/dev.kf.lidonce/Data"), armed
+        holds = assertions_for(agent_pid)
+        assert len(holds) == 1 and "PreventUserIdleSystemSleep" in holds[0], holds
         if scenario == "manual cancel":
+            # A rejected second process must not clear the first process's hold.
+            duplicate, duplicate_messages = start()
+            try:
+                rejected = duplicate_messages.get(timeout=6)
+                assert rejected.get("error") and "另一个盖盖会话" in rejected["message"], rejected
+                duplicate.wait(timeout=6)
+                assert duplicate.returncode == 1, duplicate.returncode
+                assert len(assertions_for(agent_pid)) == 1
+            finally:
+                if duplicate.poll() is None:
+                    duplicate.stdin.close()
+                    duplicate.wait(timeout=8)
             send(child, "stop")
             stopped = wait(messages, "off")
-            assert not assertions_for(child.pid)
+            assert not assertions_for(agent_pid)
             send(child, "quit")
         elif scenario == "parent pipe EOF":
             child.stdin.close()
         elif scenario == "agent SIGTERM":
-            child.send_signal(signal.SIGTERM)
+            os.kill(agent_pid, signal.SIGTERM)
         # Heartbeat case intentionally sends nothing for 12 seconds.
         child.wait(timeout=18)
         assert child.returncode == 0, child.returncode
-        assert not assertions_for(child.pid)
-        report.append({"case": scenario, "passed": True, "assertionsWhileArmed": len(holds)})
+        assert not assertions_for(agent_pid)
+        events = (container / "Library/Application Support/LidOnce/events.log").read_text()
+        assert any(f"pid={agent_pid} restore: selector12(false) accepted; assertions released" in line
+                   for line in events.splitlines()), "Cleanup call was not recorded as successful"
+        report.append({"case": scenario, "passed": True, "assertionsWhileArmed": len(holds),
+                       "inheritedSandbox": True, "restoreCallAccepted": True,
+                       "onBattery": armed["onBattery"],
+                       "duplicateAgentRejected": scenario == "manual cancel"})
     finally:
         if child.poll() is None:
             try: child.stdin.close()

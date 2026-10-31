@@ -21,6 +21,6 @@ jobs:
       - name: Build application bundle
         run: zsh scripts/build.sh
       - name: Verify local signature
-        run: codesign --verify --strict dist/LidLid.app
+        run: python3 scripts/verify-sandbox.py dist/LidLid.app
       - name: Build and verify DMG
         run: zsh scripts/package-dmg.sh

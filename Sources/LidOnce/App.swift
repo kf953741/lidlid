@@ -2,6 +2,7 @@ import AppKit
 import SwiftUI
 import ServiceManagement
 import LidOnceCore
+import LidOnceSystem
 
 final class AppModel: ObservableObject {
     @Published var state = Snapshot()
@@ -55,9 +56,7 @@ final class AppModel: ObservableObject {
     }
     func launchAgent() {
         guard process == nil else { return }
-        let child = Process(), stdin = Pipe(), stdout = Pipe()
-        child.executableURL = Bundle.main.executableURL
-        child.arguments = ["--agent"]
+        let child = AgentProcess.make(), stdin = Pipe(), stdout = Pipe()
         child.standardInput = stdin; child.standardOutput = stdout
         child.standardError = FileHandle.nullDevice
         input = stdin; output = stdout; process = child
