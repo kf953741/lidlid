@@ -61,8 +61,6 @@ Codex、Claude Code 正在**你的 Mac 本机**执行任务，编译或下载也
 3. 点击菜单栏猫头鹰，打开开关，确认显示「**已开启**」。
 4. 本次合盖保持唤醒；重新开盖会自动结束。也可以随时手动关闭开关。
 
-也可以下载 [ZIP 备用包](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.zip)；校验值见 [Release 页面](https://github.com/kf953741/lidlid/releases/tag/v1.2.0)。
-
 <details>
 <summary>查看 DMG 安装界面</summary>
 <p align="center"><img src="docs/assets/installer.jpg" width="640" alt="真实的中英文 DMG 安装窗口：将 LidLid 拖入应用程序"></p>

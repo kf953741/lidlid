@@ -63,8 +63,6 @@ LidLid is built around that moment: turn on closed-lid keep-awake for **this ses
 3. Click the owl in your menu bar. Turn on the switch until the interface shows **On**.
 4. Close the lid for this session. Reopen it to end the session automatically. You can also switch it off manually.
 
-A [ZIP archive](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.zip) is also available. Checksums are included on the [release page](https://github.com/kf953741/lidlid/releases/tag/v1.2.0).
-
 <details>
 <summary>See the DMG installer</summary>
 <p align="center"><img src="docs/assets/installer.jpg" width="640" alt="Actual bilingual DMG installer: drag LidLid to Applications"></p>
