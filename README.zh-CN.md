@@ -49,7 +49,7 @@ Lidune 为这个小场景而做：点一次，只让**本次合盖**保持唤醒
 
 ## 安装与使用
 
-**目标环境：**Apple Silicon MacBook、macOS 14 或更新版本，不连接外接显示器。详见[兼容性说明](docs/VALIDATION.md)。
+**目标环境：** Apple Silicon MacBook、macOS 14 或更新版本，不连接外接显示器。详见[兼容性说明](docs/VALIDATION.md)。
 
 1. 从 [Release](https://github.com/kf953741/lidune/releases/tag/v1.1.1-preview.1) 下载 Apple Silicon 安装包。
 2. 解压，将 `Lidune.app` 放入「应用程序」并打开。当前为**本地临时签名，尚未经过 Apple 公证**。若首次启动被拦截，请通过「系统设置 → 隐私与安全性」检查和确认；不需要执行关闭系统安全功能的命令。
