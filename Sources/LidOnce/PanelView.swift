@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import LidOnceCore
 
 private enum PanelStyle {
     static let background = Color(nsColor: NSColor(name: "LidunePanel") { appearance in
@@ -26,6 +27,7 @@ struct PanelView: View {
         .fixedSize(horizontal: false, vertical: true)
         .background(PanelStyle.background)
         .tint(PanelStyle.accent)
+        .environment(\.locale, model.language.locale)
         .animation(.easeInOut(duration: 0.16), value: model.options)
     }
 
@@ -47,9 +49,9 @@ struct PanelView: View {
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(.secondary)
-                .accessibilityLabel("选项")
+                .accessibilityLabel(model.text("选项"))
                 .accessibilityIdentifier("options-button")
-                .help("选项")
+                .help(model.text("选项"))
             }
 
             HStack(alignment: .center, spacing: 16) {
@@ -58,12 +60,12 @@ struct PanelView: View {
                         .font(.system(size: 28, weight: .medium))
                         .tracking(-0.6)
                         .accessibilityIdentifier("session-state")
-                    Text("本次合盖不休眠")
+                    Text(model.text("本次合盖不休眠"))
                         .font(.system(size: 12))
                         .foregroundStyle(.secondary)
                 }
                 Spacer(minLength: 0)
-                Toggle("本次合盖不休眠", isOn: Binding(
+                Toggle(model.text("本次合盖不休眠"), isOn: Binding(
                     get: { model.enabled },
                     set: { value in if value != model.enabled { model.toggle() } }
                 ))
@@ -88,15 +90,16 @@ struct PanelView: View {
 
             Divider().opacity(0.6).padding(.top, 22).padding(.bottom, 15)
             HStack {
-                Text("最长保持")
+                Text(model.text("最长保持"))
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                 Spacer()
                 durationMenu
             }
-            Text("电量降至 10% 或过热时自动结束")
+            Text(model.text("电量降至 10% 或过热时自动结束"))
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 16)
         }
     }
@@ -111,42 +114,69 @@ struct PanelView: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("返回")
+                .accessibilityLabel(model.text("返回"))
                 .accessibilityIdentifier("back-button")
-                Text("选项").font(.system(size: 14, weight: .semibold))
+                Text(model.text("选项")).font(.system(size: 14, weight: .semibold))
                 Spacer()
             }
             HStack {
-                Text("登录时启动").font(.system(size: 12))
+                Text(model.text("登录时启动")).font(.system(size: 12))
                 Spacer()
-                Toggle("登录时启动", isOn: Binding(get: { model.loginEnabled }, set: model.setLogin))
+                Toggle(model.text("登录时启动"), isOn: Binding(get: { model.loginEnabled }, set: model.setLogin))
                     .labelsHidden()
                     .toggleStyle(.switch)
                     .controlSize(.small)
             }.padding(.top, 24)
             if let message = model.loginMessage {
-                Text(message)
+                Text(model.text(message))
                     .font(.system(size: 11))
                     .foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.top, 10)
             }
+            HStack {
+                Text(model.text("语言"))
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Menu {
+                    ForEach(AppLanguage.allCases, id: \.self) { language in
+                        Button {
+                            model.language = language
+                        } label: {
+                            if model.language == language {
+                                Label(languageName(language), systemImage: "checkmark")
+                            } else {
+                                Text(languageName(language))
+                            }
+                        }
+                    }
+                } label: {
+                    Text(languageName(model.language)).font(.system(size: 12))
+                }
+                .menuStyle(.borderlessButton)
+                .menuIndicator(.visible)
+                .tint(.primary)
+                .fixedSize()
+                .accessibilityLabel(model.text("语言"))
+                .accessibilityIdentifier("language-menu")
+            }.padding(.top, 18)
             Divider().opacity(0.6).padding(.vertical, 20)
-            settingRow("低电量保护", "10%")
-            settingRow("高温保护", "自动").padding(.top, 16)
-            settingRow("当前电量", model.state.battery.map { "\($0)%" } ?? "读取中").padding(.top, 16)
-            Text("保持通风，放入包内前先结束本次。")
+            settingRow(model.text("低电量保护"), "10%")
+            settingRow(model.text("高温保护"), model.text("自动")).padding(.top, 16)
+            settingRow(model.text("当前电量"), model.state.battery.map { "\($0)%" } ?? model.text("读取中")).padding(.top, 16)
+            Text(model.text("保持通风，放入包内前先结束本次。"))
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 18)
             Divider().opacity(0.6).padding(.top, 20).padding(.bottom, 16)
             HStack {
-                Text("Lidune 1.1")
+                Text("Lidune \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")")
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
                 Spacer()
-                Button("退出 Lidune") { NSApp.terminate(nil) }
+                Button(model.text("退出 Lidune")) { NSApp.terminate(nil) }
                     .buttonStyle(.plain)
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
@@ -162,9 +192,9 @@ struct PanelView: View {
                     model.maximumMinutes = minutes
                 } label: {
                     if model.maximumMinutes == minutes {
-                        Label(durationName(minutes), systemImage: "checkmark")
+                        Label(model.text.duration(minutes), systemImage: "checkmark")
                     } else {
-                        Text(durationName(minutes))
+                        Text(model.text.duration(minutes))
                     }
                 }
             }
@@ -176,20 +206,20 @@ struct PanelView: View {
         .tint(.primary)
         .fixedSize()
         .disabled(model.busy)
-        .accessibilityLabel("最长保持：\(model.durationLabel)")
+        .accessibilityLabel("\(model.text("最长保持")): \(durationDisplay)")
         .accessibilityIdentifier("duration-menu")
     }
 
     private var notice: some View {
         VStack(alignment: .leading, spacing: 7) {
-            Text(model.conflict ? "Clamshell 正在运行" : "需要处理")
+            Text(model.text(model.conflict ? "Clamshell 正在运行" : "需要处理"))
                 .font(.system(size: 12, weight: .medium))
-            Text(model.conflict ? "退出后即可开启本次合盖不休眠。" : model.state.message)
+            Text(model.text(model.conflict ? "退出后即可开启本次合盖不休眠。" : model.state.message))
                 .font(.system(size: 11))
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             if model.conflict {
-                Button("退出 Clamshell", action: model.exitReference)
+                Button(model.text("退出 Clamshell"), action: model.exitReference)
                     .buttonStyle(.link)
                     .font(.system(size: 11))
             }
@@ -205,15 +235,20 @@ struct PanelView: View {
         }.font(.system(size: 12))
     }
 
-    private func durationName(_ minutes: Int) -> String {
-        if minutes == 0 { return "直到开盖" }
-        if minutes < 60 { return "\(minutes) 分钟" }
-        return "\(minutes / 60) 小时"
+    private func languageName(_ language: AppLanguage) -> String {
+        switch language {
+        case .system: return model.text("跟随系统")
+        case .simplifiedChinese: return "简体中文"
+        case .english: return "English"
+        }
     }
 
     private var durationDisplay: String {
         if model.enabled, let deadline = model.state.deadline {
-            return "最晚 \(Date(timeIntervalSince1970: deadline).formatted(date: .omitted, time: .shortened))"
+            let time = Date(timeIntervalSince1970: deadline).formatted(
+                Date.FormatStyle(date: .omitted, time: .shortened).locale(model.language.locale)
+            )
+            return "\(model.text("最晚结束")) \(time)"
         }
         return model.durationLabel
     }

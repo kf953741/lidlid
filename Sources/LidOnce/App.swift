@@ -8,6 +8,12 @@ final class AppModel: ObservableObject {
     @Published var connected = false
     @Published var conflict = conflictingApp()
     @Published var options = false
+    @Published var language = AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system {
+        didSet {
+            UserDefaults.standard.set(language.rawValue, forKey: "appLanguage")
+            changed?()
+        }
+    }
     @Published var maximumMinutes = UserDefaults.standard.integer(forKey: "maximumMinutes") {
         didSet { UserDefaults.standard.set(maximumMinutes, forKey: "maximumMinutes") }
     }
@@ -30,23 +36,20 @@ final class AppModel: ObservableObject {
     var enabled: Bool { state.phase == .armed || state.phase == .closed || state.phase == .restoring }
     var changing: Bool { state.phase == .starting || state.phase == .restoring }
     var canToggle: Bool { connected && !changing && (!conflict || enabled) }
+    var text: AppText { AppText(language: language) }
     var detail: String {
         if state.phase == .off && !state.error && state.message != Snapshot().message {
-            return state.message
+            return text(state.message)
         }
-        return "开盖自动关闭，下次恢复正常睡眠。"
+        return text("开盖自动关闭，下次恢复正常睡眠。")
     }
-    var durationLabel: String {
-        if maximumMinutes == 0 { return "直到开盖" }
-        if maximumMinutes < 60 { return "\(maximumMinutes) 分钟" }
-        return "\(maximumMinutes / 60) 小时"
-    }
+    var durationLabel: String { text.duration(maximumMinutes) }
     var title: String {
         switch state.phase {
-        case .off: return "已关闭"
-        case .starting: return "正在开启…"
-        case .armed, .closed: return "已开启"
-        case .restoring: return "正在关闭…"
+        case .off: return text("已关闭")
+        case .starting: return text("正在开启…")
+        case .armed, .closed: return text("已开启")
+        case .restoring: return text("正在关闭…")
         }
     }
     func launchAgent() {
@@ -192,8 +195,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     private func updateIcon() {
         status?.button?.image = model.state.error
-            ? NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: model.state.message)
+            ? NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: model.text(model.state.message))
             : OwlMenuSymbol.image(for: model.enabled ? .on : .off)
+        if !model.state.error {
+            status?.button?.image?.accessibilityDescription = model.text(OwlMenuSymbol.label(model.enabled ? .on : .off))
+        }
         status?.button?.title = ""
         status?.button?.toolTip = "Lidune · \(model.title)"
     }

@@ -12,11 +12,13 @@ This document separates the implemented workflow, software evidence, and physica
 
 ## Completed software checks
 
-- Four core tests, including 256 sequences of open/closed readings, one-shot consumption, cancellation reset, and deadline handling.
+- Four session tests, including 256 sequences of open/closed readings, one-shot consumption, cancellation reset, and deadline handling.
+- Four localization tests: system-language fallback and explicit overrides, switching an existing result between languages, preservation of diagnostic codes, and English duration pluralization.
 - Real IOKit activation and restoration requests accepted; two power assertions observed while active and absent after cancellation.
 - Parent pipe EOF, heartbeat timeout, and agent SIGTERM cleanup paths.
 - A real UI SIGKILL with agent cleanup; a real agent SIGKILL with surviving UI cleanup.
 - Native UI on/off, duration selection, active deadline display, settings navigation, and return to the default off state.
+- English and simplified Chinese native UI, immediate language changes during an active session, localized duration menus and deadline formatting, and a persisted language choice after relaunch. Each README uses captures of its matching interface.
 
 Historical local check summaries are in [software.json](validation/software.json) and [interface.json](validation/interface.json). They are snapshots, not a compatibility certification. Public CI tests the pure state machine and build only.
 

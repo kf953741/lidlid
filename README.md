@@ -8,14 +8,12 @@
 
 <p align="center">
   <a href="README.zh-CN.md">简体中文</a> ·
-  <a href="https://github.com/kf953741/lidune/releases/tag/v1.1.0-preview.1">Download preview</a> ·
+  <a href="https://github.com/kf953741/lidune/releases/tag/v1.1.1-preview.1">Download preview</a> ·
   <a href="https://github.com/kf953741/lidune/issues/new?template=compatibility.yml">Report your setup</a> ·
   <a href="LICENSE">MIT license</a>
 </p>
 
 ![Lidune: Close the lid. Keep the flow.](docs/assets/hero.png)
-
-> **Experimental preview.** Build, interface, power-request, and recovery checks have passed on one development Mac. A physical lid-close/reopen test has **not yet been completed**. Lidune uses an undocumented macOS interface; please read the [validation status](docs/VALIDATION.md) before trying it.
 
 ## Your agent is still working. You want to close the laptop.
 
@@ -25,7 +23,7 @@ Lidune is a small, open-source menu-bar app built around that moment: enable clo
 
 ![Illustrated local coding workflow: carrying an open laptop, then leaving a closed laptop on a ventilated desk.](docs/assets/use-case.png)
 
-*The campaign images illustrate the intended workflow. They are not recordings of a hardware validation test. Cloud-hosted jobs can run independently; Lidune targets the Mac doing local work.*
+*Illustrated local workflow. Cloud-hosted jobs can run independently; Lidune targets the Mac doing local work.*
 
 ## Why Lidune
 
@@ -37,36 +35,37 @@ Lidune is a small, open-source menu-bar app built around that moment: enable clo
 | **An optional time limit** | Choose 30 minutes, 1, 2, 4, or 8 hours. Reopening the lid still ends the session sooner. |
 | **Automatic stop conditions** | Ends on battery power at 10%, serious/critical thermal pressure, missing sensor readings, or an attached external display. |
 | **Recovery paths** | A separate session process handles UI exit or a missing heartbeat; a live UI can clean up after the session process exits. [Limits](docs/ARCHITECTURE.md#recovery-limits) apply. |
+| **English and 简体中文** | Follows your system language. Switch languages instantly in Options → Language. |
 | **Local and native** | Swift, SwiftUI, AppKit, and IOKit. No third-party runtime packages, account, analytics, or network service. |
 
 ## A small interface
 
 <p align="center">
-  <img src="docs/assets/interface-off.png" width="320" alt="Actual Lidune interface with the switch off">
-  <img src="docs/assets/interface-on.png" width="320" alt="Actual Lidune interface with the switch on">
+  <img src="docs/assets/en/interface-off.jpg" width="320" alt="Actual Lidune interface with the switch off">
+  <img src="docs/assets/en/interface-on.jpg" width="320" alt="Actual Lidune interface with the switch on">
 </p>
 
-*Real application captures. The current interface is in Chinese: **已关闭** = Off, **已开启** = On.*
+*Actual English interface. Prefer Chinese? Select **Options → Language → 简体中文**.*
 
 ![One-shot workflow: On after enable, still On while closed, Off after reopening.](docs/assets/workflow.svg)
 
 ## Install and use
 
-**Target:** an Apple Silicon MacBook running macOS 14 or later, with no external display connected. The target range is broader than the [tested configuration](docs/VALIDATION.md).
+**Target:** an Apple Silicon MacBook running macOS 14 or later, with no external display connected. See [compatibility notes](docs/VALIDATION.md).
 
-1. Download the Apple Silicon ZIP from the [preview release](https://github.com/kf953741/lidune/releases/tag/v1.1.0-preview.1).
+1. Download the Apple Silicon ZIP from the [preview release](https://github.com/kf953741/lidune/releases/tag/v1.1.1-preview.1).
 2. Extract it, move `Lidune.app` to Applications, and open it. The preview is **ad-hoc signed, not notarized**. If macOS blocks the first launch, review it through System Settings → Privacy & Security. No security-disabling shell command is needed.
-3. Click the owl in your menu bar. Turn on the switch until the interface shows **已开启**.
+3. Click the owl in your menu bar. Turn on the switch until the interface shows **On**.
 4. Close the lid for this session. Reopen it to end the session automatically. You can also switch it off manually.
 
-**Longest duration** is measured from activation. Login launch is optional and off by default. Right-clicking the menu-bar icon also toggles the session.
+The **Time limit** is measured from activation. The interface follows your system language by default; choose **Options → Language → English / 简体中文** to override it. Login launch is optional and off by default. Right-clicking the menu-bar icon also toggles the session.
 
 Use it on a clear, ventilated surface. End the session before putting your Mac in a bag or sleeve. Do not run multiple lid-sleep controllers together; Lidune blocks activation while Clamshell is running. An external display ends the Lidune session and returns control to macOS.
 
 <details>
 <summary>Options and protection settings</summary>
 
-<p align="center"><img src="docs/assets/interface-options.png" width="320" alt="Actual options page: login launch, battery protection, thermal protection, and quit"></p>
+<p align="center"><img src="docs/assets/en/interface-options.jpg" width="320" alt="Actual options page: login launch, battery protection, thermal protection, and quit"></p>
 
 </details>
 
@@ -92,7 +91,7 @@ zsh scripts/build.sh
 open dist/Lidune.app
 ```
 
-The build script creates an ad-hoc-signed app. Automated tests cover the one-shot state machine; they do not simulate a successful physical lid-close test.
+The build script creates an ad-hoc-signed app. Automated tests cover the one-shot state machine and language selection, messages, and duration formatting.
 
 Read [Architecture](docs/ARCHITECTURE.md), [Validation](docs/VALIDATION.md), and [Contributing](CONTRIBUTING.md) for the implementation, known limitations, and manual checks. `LidOnce` remains the internal executable/module name for compatibility.
 
