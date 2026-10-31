@@ -2,7 +2,7 @@
 
 Your task is still running, but you need to go. With LidLid, turn on one switch, close your MacBook and take it with you. Reopening the lid ends the session automatically.
 
-[简体中文](USAGE.zh-CN.md) · [Download DMG](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg) · [Watch the 20-second demo (MP4)](assets/en/usage-demo.mp4)
+[简体中文](USAGE.zh-CN.md) · [Download DMG](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg) · [Download the 20-second demo (MP4)](https://github.com/kf953741/lidlid/raw/refs/heads/main/docs/assets/en/usage-demo.mp4)
 
 ![LidLid in 20 seconds: switch on, close and carry, reopen to end the session.](assets/en/usage-demo.gif)
 

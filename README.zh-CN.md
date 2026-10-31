@@ -15,7 +15,7 @@
 
 ![盖盖 20 秒上手：打开开关、合盖带走、开盖自动结束。](docs/assets/zh-CN/usage-demo.gif)
 
-[观看 20 秒演示](docs/assets/zh-CN/usage-demo.mp4) · [两分钟上手教程](docs/USAGE.zh-CN.md)
+[下载 20 秒视频（MP4）](https://github.com/kf953741/lidlid/raw/refs/heads/main/docs/assets/zh-CN/usage-demo.mp4) · [两分钟上手教程](docs/USAGE.zh-CN.md)
 
 *真实应用界面，搭配移动办公场景插画。*
 

@@ -2,7 +2,7 @@
 
 任务还没跑完，你却已经要出门或换个地方。用盖盖，打开一个开关，就可以合上电脑、带着它走。再次开盖，本次自动结束。
 
-[English](USAGE.md) · [直接下载 DMG](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg) · [观看 20 秒演示（MP4）](assets/zh-CN/usage-demo.mp4)
+[English](USAGE.md) · [直接下载 DMG](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg) · [下载 20 秒视频（MP4）](https://github.com/kf953741/lidlid/raw/refs/heads/main/docs/assets/zh-CN/usage-demo.mp4)
 
 ![盖盖 20 秒上手：打开开关、合盖带走、开盖自动结束。](assets/zh-CN/usage-demo.gif)
 

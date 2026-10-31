@@ -19,7 +19,7 @@
 
 ![LidLid 20-second demo: switch on, close and carry, reopen to end the session.](docs/assets/en/usage-demo.gif)
 
-[Watch the 20-second video](docs/assets/en/usage-demo.mp4) · [Two-minute setup guide](docs/USAGE.md)
+[Download the 20-second video (MP4)](https://github.com/kf953741/lidlid/raw/refs/heads/main/docs/assets/en/usage-demo.mp4) · [Two-minute setup guide](docs/USAGE.md)
 
 *Actual app interface with illustrated on-the-go scenes.*
 
