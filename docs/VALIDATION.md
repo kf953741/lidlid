@@ -19,6 +19,7 @@ This document separates the implemented workflow, software evidence, and physica
 - A real UI SIGKILL with agent cleanup; a real agent SIGKILL with surviving UI cleanup.
 - Native UI on/off, duration selection, active deadline display, settings navigation, and return to the default off state.
 - English and simplified Chinese native UI, immediate language changes during an active session, localized duration menus and deadline formatting, and a persisted language choice after relaunch. Each README uses captures of its matching interface.
+- DMG checksum verification, a read-only mounted copy with the expected app version and matching app files, an Applications shortcut, and the actual Finder installation-window layout. The DMG and ZIP contain the same application build.
 
 Historical local check summaries are in [software.json](validation/software.json) and [interface.json](validation/interface.json). They are snapshots, not a compatibility certification. Public CI tests the pure state machine and build only.
 

@@ -1,0 +1,17 @@
+{
+  "tool": "built-in image_gen",
+  "date": "2026-10-31",
+  "purpose": "Simplified-Chinese localizations of the project's existing campaign artwork.",
+  "images": [
+    {
+      "file": "hero.png",
+      "reference": "../hero.png",
+      "prompt": "Use case: text-localization. Edit target: the provided Lidune English hero image. Create its corresponding simplified-Chinese campaign hero for the Chinese README. Preserve the exact wide 2:1 composition, calm high-end cream and pine-green palette, watchful blue/ivory owl identity, closed unbranded laptop on a clear ventilated desk, warm light, amber flowing line, plants and cup. Change only the typography to polished simplified Chinese and adjust optical text spacing within the existing left text region. Brand above, exact text: 'Lidune · 合留'. Large elegant, highly legible Chinese Songti-style editorial headline on exactly two lines, exact text line 1: '合盖一次，' and line 2: '任务继续。'. Smaller caption below, exact text: '开源预览版'. Every Chinese character must be correct, crisp, and complete. Remove all old English headline and caption. No additional words, no English except the brand Lidune, no logos, no watermarks, no feature badges, no new objects, no certifications or completed-job indicators. Retain original subject positions and full-bleed landscape canvas. This is a conceptual campaign illustration."
+    },
+    {
+      "file": "use-case.png",
+      "reference": "../use-case.png",
+      "prompt": "Use case: text-localization. Edit target: the provided Lidune two-panel English scenario illustration. Make the matching simplified-Chinese campaign image. Preserve the 2:1 landscape composition, exactly two panels, original adult developer identity and poses, open unbranded laptop held carefully in the left panel, same developer relaxed with a drink and a closed laptop on a clear ventilated desk in the right panel, tiny blue/ivory owl, warm ivory/navy/apricot palette, thin divider, original drawing style, all objects and lighting. Replace ONLY the two English top captions with beautifully typeset crisp simplified Chinese of visually balanced size. Left caption exact text: '任务还没跑完？'. Right caption exact text: '点一下，合盖继续。'. Keep all characters correct and readable with generous whitespace, no text touching edges, each caption one line. Remove every old English caption. Abstract code marks on the laptop screen remain abstract. No additional words, logos, speech bubbles, watermarks, fake test results, checkmarks or new props. Keep the closed laptop on the desk, never in a bag. This is conceptual campaign artwork."
+    }
+  ]
+}

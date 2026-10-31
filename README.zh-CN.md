@@ -6,12 +6,12 @@
 
 <p align="center">
   <a href="README.md">English</a> ·
-  <a href="https://github.com/kf953741/lidune/releases/tag/v1.1.1-preview.1">下载预览版</a> ·
+  <a href="https://github.com/kf953741/lidune/releases/download/v1.1.1-preview.1/Lidune-1.1.1-macOS-arm64.dmg">下载 DMG（M 系列）</a> ·
   <a href="https://github.com/kf953741/lidune/issues/new?template=compatibility.yml">反馈兼容性</a> ·
   <a href="LICENSE">MIT 开源协议</a>
 </p>
 
-![Lidune：合盖，任务继续。](docs/assets/hero.png)
+![Lidune · 合留：合盖一次，任务继续。](docs/assets/zh-CN/hero.png)
 
 ## Agent 还在工作，你却得把电脑一直摊着
 
@@ -19,7 +19,7 @@ Codex、Claude Code 正在**你的 Mac 本机**执行任务，或者编译、下
 
 Lidune 为这个小场景而做：点一次，只让**本次合盖**保持唤醒；再次开盖，本次自动结束，把正常睡眠交回 macOS。
 
-![场景插画：左侧抱着开盖电脑等待任务，右侧将合盖电脑放在通风桌面。](docs/assets/use-case.png)
+![任务还没跑完？点一下，合盖继续。](docs/assets/zh-CN/use-case.png)
 
 *本地工作场景示意。云端任务可能独立运行，Lidune 面向需要保持 Mac 本机运行的工作。*
 
@@ -49,12 +49,19 @@ Lidune 为这个小场景而做：点一次，只让**本次合盖**保持唤醒
 
 ## 安装与使用
 
-**目标环境：** Apple Silicon MacBook、macOS 14 或更新版本，不连接外接显示器。详见[兼容性说明](docs/VALIDATION.md)。
+**目标环境：** Apple Silicon（M 系列）MacBook、macOS 14 或更新版本，不连接外接显示器。**目前不支持 Intel MacBook。** 详见[兼容性说明](docs/VALIDATION.md)。
 
-1. 从 [Release](https://github.com/kf953741/lidune/releases/tag/v1.1.1-preview.1) 下载 Apple Silicon 安装包。
-2. 解压，将 `Lidune.app` 放入「应用程序」并打开。当前为**本地临时签名，尚未经过 Apple 公证**。若首次启动被拦截，请通过「系统设置 → 隐私与安全性」检查和确认；不需要执行关闭系统安全功能的命令。
+1. 下载 [M 系列 DMG 安装包](https://github.com/kf953741/lidune/releases/download/v1.1.1-preview.1/Lidune-1.1.1-macOS-arm64.dmg)。
+2. 打开 DMG，将 `Lidune.app` 拖入「**应用程序**」，再从「应用程序」打开。当前为**本地临时签名，尚未经过 Apple 公证**。若首次启动被拦截，请通过「系统设置 → 隐私与安全性」检查和确认；不需要执行关闭系统安全功能的命令。
 3. 点击菜单栏猫头鹰，打开开关，确认显示「**已开启**」。
 4. 本次合盖保持唤醒；重新开盖会自动结束。也可以随时手动关闭开关。
+
+也可以下载 [ZIP 备用包](https://github.com/kf953741/lidune/releases/download/v1.1.1-preview.1/Lidune-v1.1.1-preview.1-macOS-arm64.zip)；校验值见 [Release 页面](https://github.com/kf953741/lidune/releases/tag/v1.1.1-preview.1)。
+
+<details>
+<summary>查看 DMG 安装界面</summary>
+<p align="center"><img src="docs/assets/installer.jpg" width="640" alt="真实的中英文 DMG 安装窗口：将 Lidune 拖入应用程序"></p>
+</details>
 
 界面默认跟随系统语言，也可以在「选项 → 语言」选择「简体中文」或「English」，即时生效。最长保持时间从按下开关起计算。「登录时启动」默认关闭，可在选项页开启；右键菜单栏图标也能快速切换。
 
@@ -84,10 +91,13 @@ git clone https://github.com/kf953741/lidune.git
 cd lidune
 swift test
 zsh scripts/build.sh
+zsh scripts/package-dmg.sh
 open dist/Lidune.app
 ```
 
 构建脚本生成临时签名应用。自动测试覆盖单次状态逻辑、语言选择、状态消息和时长格式。技术细节见[架构说明](docs/ARCHITECTURE.md)、[验证记录](docs/VALIDATION.md)和[贡献说明](CONTRIBUTING.md)。内部模块与可执行文件暂保留 `LidOnce` 名称以兼容现有设置。
+
+DMG 打包步骤需要 Python 3，会在独立构建环境中下载固定版本的 `dmgbuild`，生成带「应用程序」快捷方式的拖动安装镜像，并校验镜像。这仅是打包依赖，应用运行不需要 Python。配置参考 [dmgbuild 官方文档](https://dmgbuild.readthedocs.io/en/latest/settings.html)。
 
 ## 协议与素材
 

@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="README.zh-CN.md">简体中文</a> ·
-  <a href="https://github.com/kf953741/lidune/releases/tag/v1.1.1-preview.1">Download preview</a> ·
+  <a href="https://github.com/kf953741/lidune/releases/download/v1.1.1-preview.1/Lidune-1.1.1-macOS-arm64.dmg">Download DMG · Apple Silicon</a> ·
   <a href="https://github.com/kf953741/lidune/issues/new?template=compatibility.yml">Report your setup</a> ·
   <a href="LICENSE">MIT license</a>
 </p>
@@ -51,12 +51,19 @@ Lidune is a small, open-source menu-bar app built around that moment: enable clo
 
 ## Install and use
 
-**Target:** an Apple Silicon MacBook running macOS 14 or later, with no external display connected. See [compatibility notes](docs/VALIDATION.md).
+**Target:** an Apple Silicon (M-series) MacBook running macOS 14 or later, with no external display connected. **Intel MacBooks are not currently supported.** See [compatibility notes](docs/VALIDATION.md).
 
-1. Download the Apple Silicon ZIP from the [preview release](https://github.com/kf953741/lidune/releases/tag/v1.1.1-preview.1).
-2. Extract it, move `Lidune.app` to Applications, and open it. The preview is **ad-hoc signed, not notarized**. If macOS blocks the first launch, review it through System Settings → Privacy & Security. No security-disabling shell command is needed.
+1. Download the [Apple Silicon DMG](https://github.com/kf953741/lidune/releases/download/v1.1.1-preview.1/Lidune-1.1.1-macOS-arm64.dmg).
+2. Open the DMG, drag `Lidune.app` to **Applications**, then open Lidune from Applications. The preview is **ad-hoc signed, not notarized**. If macOS blocks the first launch, review it through System Settings → Privacy & Security. No security-disabling shell command is needed.
 3. Click the owl in your menu bar. Turn on the switch until the interface shows **On**.
 4. Close the lid for this session. Reopen it to end the session automatically. You can also switch it off manually.
+
+A [ZIP archive](https://github.com/kf953741/lidune/releases/download/v1.1.1-preview.1/Lidune-v1.1.1-preview.1-macOS-arm64.zip) is also available. Checksums are included on the [release page](https://github.com/kf953741/lidune/releases/tag/v1.1.1-preview.1).
+
+<details>
+<summary>DMG installer preview</summary>
+<p align="center"><img src="docs/assets/installer.jpg" width="640" alt="Actual bilingual DMG installer: drag Lidune to Applications"></p>
+</details>
 
 The **Time limit** is measured from activation. The interface follows your system language by default; choose **Options → Language → English / 简体中文** to override it. Login launch is optional and off by default. Right-clicking the menu-bar icon also toggles the session.
 
@@ -88,10 +95,13 @@ git clone https://github.com/kf953741/lidune.git
 cd lidune
 swift test
 zsh scripts/build.sh
+zsh scripts/package-dmg.sh
 open dist/Lidune.app
 ```
 
 The build script creates an ad-hoc-signed app. Automated tests cover the one-shot state machine and language selection, messages, and duration formatting.
+
+The DMG step uses Python 3 and downloads the pinned `dmgbuild` packaging tool into an isolated build environment. It creates a drag-to-install image with an Applications shortcut and verifies the image. This is a build dependency; the app has no Python runtime dependency. Packaging settings follow the [dmgbuild documentation](https://dmgbuild.readthedocs.io/en/latest/settings.html).
 
 Read [Architecture](docs/ARCHITECTURE.md), [Validation](docs/VALIDATION.md), and [Contributing](CONTRIBUTING.md) for the implementation, known limitations, and manual checks. `LidOnce` remains the internal executable/module name for compatibility.
 

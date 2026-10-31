@@ -16,9 +16,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Show compiler
         run: swift --version
-      - name: Run pure state-machine tests
+      - name: Run session and localization tests
         run: swift test
       - name: Build application bundle
         run: zsh scripts/build.sh
       - name: Verify local signature
         run: codesign --verify --strict dist/Lidune.app
+      - name: Build and verify DMG
+        run: zsh scripts/package-dmg.sh
