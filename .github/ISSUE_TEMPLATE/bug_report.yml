@@ -1,0 +1,29 @@
+name: Bug report / 问题反馈
+description: Report an unexpected behavior / 反馈异常行为
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: input
+    id: environment
+    attributes:
+      label: Model, macOS, and Lidune version / 机型、系统与软件版本
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps and observed behavior / 操作步骤与现象
+      description: Include the power source, external display status, and any other lid controller.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior / 预期表现
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Relevant evidence / 相关记录
+      description: Optional screenshots or a short redacted app event excerpt. Do not include secrets or unrelated personal data.

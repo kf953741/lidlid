@@ -1,0 +1,41 @@
+{
+  "tests": [
+    {
+      "case": "manual cancel",
+      "passed": true,
+      "assertionsWhileArmed": 2
+    },
+    {
+      "case": "parent pipe EOF",
+      "passed": true,
+      "assertionsWhileArmed": 2
+    },
+    {
+      "case": "heartbeat timeout",
+      "passed": true,
+      "assertionsWhileArmed": 2
+    },
+    {
+      "case": "agent SIGTERM",
+      "passed": true,
+      "assertionsWhileArmed": 2
+    },
+    {
+      "case": "native UI arm and cancel",
+      "passed": true
+    },
+    {
+      "case": "UI SIGKILL while armed",
+      "passed": true,
+      "recovery": "agent received pipe EOF; selector12(false) accepted; assertions released"
+    },
+    {
+      "case": "agent SIGKILL while armed",
+      "passed": true,
+      "recovery": "live UI issued selector12(false); parent recovery logged and UI showed restored state"
+    }
+  ],
+  "physicalLidTest": "not performed",
+  "evidenceLimit": "IOKit accepted enable/restore requests; assertions were observed then absent. Cached CausesSleep was not used as proof of kernel mask or physical sleep.",
+  "environment": "Apple M5 Pro, macOS 27.0, Swift 6.4.2; 2026-10-31 Asia/Shanghai"
+}

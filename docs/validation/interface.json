@@ -1,0 +1,48 @@
+{
+  "version": "1.1.0",
+  "date": "2026-10-31 Asia/Shanghai",
+  "scope": "Native interface and two-state status presentation. Underlying one-shot agent and kernel interface unchanged.",
+  "checks": [
+    {
+      "name": "Release build",
+      "result": "passed"
+    },
+    {
+      "name": "Installed application code signature",
+      "result": "passed"
+    },
+    {
+      "name": "Native toggle on",
+      "result": "AX showed 已开启 and switch on; both idle-system and system-sleep requests observed"
+    },
+    {
+      "name": "Native toggle off",
+      "result": "AX showed 已关闭 and switch off; no requests owned by LidOnce remained"
+    },
+    {
+      "name": "Duration selection",
+      "result": "30 minutes selected through native menu; active view showed a concrete 19:04 deadline and disabled duration editing"
+    },
+    {
+      "name": "Default duration restoration",
+      "result": "Native menu restored to 直到开盖"
+    },
+    {
+      "name": "Options navigation",
+      "result": "Main → options → main verified; login setting remained off"
+    },
+    {
+      "name": "Visual inspection",
+      "result": "Main off/on and options checked in current dark appearance; screenshots saved"
+    }
+  ],
+  "finalState": {
+    "enabled": false,
+    "maximumMinutes": 0,
+    "loginEnabled": false
+  },
+  "limitations": [
+    "No physical lid-close test in this UI update.",
+    "Light appearance not visually reviewed in this run."
+  ]
+}

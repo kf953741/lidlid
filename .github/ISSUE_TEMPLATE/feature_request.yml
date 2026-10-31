@@ -1,0 +1,25 @@
+name: Feature or workflow / 功能与使用场景
+description: Tell us what you need to keep running / 描述你需要继续运行的任务
+title: "[Workflow] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: workflow
+    attributes:
+      label: What are you doing on your Mac? / 你的使用场景是什么？
+      placeholder: A local coding agent, a build, a download, or another task...
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Where does the current workflow get in your way? / 现在遇到什么麻烦？
+    validations:
+      required: true
+  - type: textarea
+    id: desired
+    attributes:
+      label: What would help? / 希望怎样解决？
+      description: Duration, battery/AC use, and one-shot vs. another session behavior are useful context.
+    validations:
+      required: true

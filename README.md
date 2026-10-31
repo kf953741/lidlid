@@ -1,0 +1,103 @@
+<p align="center">
+  <img src="docs/assets/app-icon.png" width="88" alt="Lidune owl app icon">
+</p>
+
+<h1 align="center">Lidune · 合留</h1>
+
+<p align="center"><strong>Close the lid. Keep your local work going.</strong><br>One close. One session. Normal sleep returns when you reopen.</p>
+
+<p align="center">
+  <a href="README.zh-CN.md">简体中文</a> ·
+  <a href="https://github.com/kf953741/lidune/releases/tag/v1.1.0-preview.1">Download preview</a> ·
+  <a href="https://github.com/kf953741/lidune/issues/new?template=compatibility.yml">Report your setup</a> ·
+  <a href="LICENSE">MIT license</a>
+</p>
+
+![Lidune: Close the lid. Keep the flow.](docs/assets/hero.png)
+
+> **Experimental preview.** Build, interface, power-request, and recovery checks have passed on one development Mac. A physical lid-close/reopen test has **not yet been completed**. Lidune uses an undocumented macOS interface; please read the [validation status](docs/VALIDATION.md) before trying it.
+
+## Your agent is still working. You want to close the laptop.
+
+Maybe Codex or Claude Code is running a task **on your Mac**. Maybe a build, download, or terminal session still needs the machine awake. You get up—and find yourself carrying an open laptop so the work can continue.
+
+Lidune is a small, open-source menu-bar app built around that moment: enable closed-lid keep-awake for **one session**, then automatically give sleep control back to macOS when you reopen the lid.
+
+![Illustrated local coding workflow: carrying an open laptop, then leaving a closed laptop on a ventilated desk.](docs/assets/use-case.png)
+
+*The campaign images illustrate the intended workflow. They are not recordings of a hardware validation test. Cloud-hosted jobs can run independently; Lidune targets the Mac doing local work.*
+
+## Why Lidune
+
+| Feature | What it means |
+| --- | --- |
+| **One-shot by design** | Turn it on for the next lid close. Reopening ends that session. Every app launch starts off. |
+| **One switch** | Two normal states: off and on. A matching owl symbol lives in the menu bar. |
+| **No administrator setup** | Uses an unprivileged IOKit call and power assertions. No sudo rule, root helper, driver, or kernel extension. |
+| **An optional time limit** | Choose 30 minutes, 1, 2, 4, or 8 hours. Reopening the lid still ends the session sooner. |
+| **Automatic stop conditions** | Ends on battery power at 10%, serious/critical thermal pressure, missing sensor readings, or an attached external display. |
+| **Recovery paths** | A separate session process handles UI exit or a missing heartbeat; a live UI can clean up after the session process exits. [Limits](docs/ARCHITECTURE.md#recovery-limits) apply. |
+| **Local and native** | Swift, SwiftUI, AppKit, and IOKit. No third-party runtime packages, account, analytics, or network service. |
+
+## A small interface
+
+<p align="center">
+  <img src="docs/assets/interface-off.png" width="320" alt="Actual Lidune interface with the switch off">
+  <img src="docs/assets/interface-on.png" width="320" alt="Actual Lidune interface with the switch on">
+</p>
+
+*Real application captures. The current interface is in Chinese: **已关闭** = Off, **已开启** = On.*
+
+![One-shot workflow: On after enable, still On while closed, Off after reopening.](docs/assets/workflow.svg)
+
+## Install and use
+
+**Target:** an Apple Silicon MacBook running macOS 14 or later, with no external display connected. The target range is broader than the [tested configuration](docs/VALIDATION.md).
+
+1. Download the Apple Silicon ZIP from the [preview release](https://github.com/kf953741/lidune/releases/tag/v1.1.0-preview.1).
+2. Extract it, move `Lidune.app` to Applications, and open it. The preview is **ad-hoc signed, not notarized**. If macOS blocks the first launch, review it through System Settings → Privacy & Security. No security-disabling shell command is needed.
+3. Click the owl in your menu bar. Turn on the switch until the interface shows **已开启**.
+4. Close the lid for this session. Reopen it to end the session automatically. You can also switch it off manually.
+
+**Longest duration** is measured from activation. Login launch is optional and off by default. Right-clicking the menu-bar icon also toggles the session.
+
+Use it on a clear, ventilated surface. End the session before putting your Mac in a bag or sleeve. Do not run multiple lid-sleep controllers together; Lidune blocks activation while Clamshell is running. An external display ends the Lidune session and returns control to macOS.
+
+<details>
+<summary>Options and protection settings</summary>
+
+<p align="center"><img src="docs/assets/interface-options.png" width="320" alt="Actual options page: login launch, battery protection, thermal protection, and quit"></p>
+
+</details>
+
+## Help us find the useful version of this idea
+
+This first public release is here to learn whether this small workflow matters to people.
+
+- **Use Codex or Claude Code locally?** Tell us what you need to keep running and for how long.
+- **Tried a real close/open cycle?** [Report your model, macOS version, power source, and result](https://github.com/kf953741/lidune/issues/new?template=compatibility.yml). Also check whether the following lid close sleeps normally.
+- **Need something different?** [Describe the workflow](https://github.com/kf953741/lidune/issues/new?template=feature_request.yml).
+
+If you want to follow the project, a star helps others discover it. Compatibility reports and specific use cases help us decide what to build next.
+
+## Build from source
+
+Requires a macOS 14+ SDK and Swift 5.9 or newer, provided by Xcode or compatible Command Line Tools. The local preview was built with Swift 6.4.2.
+
+```sh
+git clone https://github.com/kf953741/lidune.git
+cd lidune
+swift test
+zsh scripts/build.sh
+open dist/Lidune.app
+```
+
+The build script creates an ad-hoc-signed app. Automated tests cover the one-shot state machine; they do not simulate a successful physical lid-close test.
+
+Read [Architecture](docs/ARCHITECTURE.md), [Validation](docs/VALIDATION.md), and [Contributing](CONTRIBUTING.md) for the implementation, known limitations, and manual checks. `LidOnce` remains the internal executable/module name for compatibility.
+
+## License and artwork
+
+[MIT](LICENSE), © 2026 Fei Kang. UI and menu-bar artwork are original. The app icon and campaign illustrations were generated for this project; their provenance is in [Assets](docs/ASSETS.md).
+
+The implementation references Apple's published [IOPMLibDefs.h](https://github.com/apple-oss-distributions/xnu/blob/main/iokit/IOKit/pwr_mgt/IOPMLibDefs.h), [RootDomainUserClient.cpp](https://github.com/apple-oss-distributions/xnu/blob/main/iokit/Kernel/RootDomainUserClient.cpp), and [IOPMrootDomain.cpp](https://github.com/apple-oss-distributions/xnu/blob/main/iokit/Kernel/IOPMrootDomain.cpp). The initial API investigation included a locally installed Clamshell app; this repository includes no Clamshell code, binaries, artwork, or licensing logic.
