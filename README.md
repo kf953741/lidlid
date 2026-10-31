@@ -2,7 +2,7 @@
   <img src="docs/assets/app-icon.png" width="88" alt="LidLid owl app icon">
 </p>
 
-<h1 align="center">LidLid · 盖盖</h1>
+<h1 align="center">LidLid · 盖盖<br>Keep your MacBook awake with the lid closed</h1>
 
 <p align="center"><strong>Close the lid. Carry on.</strong><br>Take your laptop with you. Keep your local work going.</p>
 
@@ -13,9 +13,13 @@
   <a href="LICENSE">MIT license</a>
 </p>
 
-![LidLid: Close the lid. Carry on. Take your laptop with you.](docs/assets/hero-mobility.png)
+**LidLid is a free, open-source macOS menu bar app that keeps your MacBook awake with the lid closed, without an external monitor.** Keep local Codex and Claude Code tasks, builds and downloads running while you carry your Mac. Enable it for one session; reopening the lid ends that session. For Apple Silicon MacBooks on macOS 14+.
 
-## Your task isn't done. You need to go.
+中文：[MacBook 合盖不休眠，让 Codex / Claude Code 继续运行。](README.zh-CN.md)
+
+![LidLid MacBook closed-lid keep-awake: close the lid and carry your laptop while local tasks continue.](docs/assets/hero-mobility.png)
+
+## Keep Codex and Claude Code running while you head out
 
 Codex or Claude Code is still working **on your Mac**, a build is underway, or a download hasn't finished. You need to head out or move to another room. To keep the Mac awake, you end up balancing an open laptop in both hands while you walk.
 
@@ -41,8 +45,8 @@ LidLid is built around that moment: turn on closed-lid keep-awake for **this ses
 ## A small interface
 
 <p align="center">
-  <img src="docs/assets/en/interface-off.jpg" width="320" alt="Actual LidLid interface with the switch off">
-  <img src="docs/assets/en/interface-on.jpg" width="320" alt="Actual LidLid interface with the switch on">
+  <img src="docs/assets/en/interface-off.jpg" width="320" alt="LidLid macOS menu bar interface: closed-lid keep-awake off">
+  <img src="docs/assets/en/interface-on.jpg" width="320" alt="LidLid macOS menu bar interface: closed-lid keep-awake on">
 </p>
 
 *Actual English interface. Prefer Chinese? Select **Options → Language → 简体中文**.*
@@ -78,6 +82,32 @@ Keep ventilation unobstructed while carrying your Mac. End the session before pu
 <p align="center"><img src="docs/assets/en/interface-options.jpg" width="320" alt="Actual options page: login launch, battery protection, thermal protection, and quit"></p>
 
 </details>
+
+## Frequently asked questions
+
+### How do I keep my MacBook awake with the lid closed and no external monitor?
+
+[Install LidLid from the DMG](#install-and-use), open the menu bar app, turn the switch **On**, then close the lid. It is designed for an Apple Silicon MacBook Air or MacBook Pro without an external display. It can run on battery; the session ends at 10% while on battery power, on serious thermal pressure, or when you reopen the lid.
+
+### Will Codex or Claude Code keep running when I close my MacBook?
+
+LidLid keeps the Mac awake so tasks running **locally on your Mac** can continue during the session. Those tasks still need any required network connection and user approvals. A job already running on a remote server or in the cloud does not need LidLid to keep that remote machine working.
+
+### Why can my MacBook still sleep with the lid closed when caffeinate is running?
+
+Preventing idle sleep and preventing lid-close sleep are different requests. Apple's [`caffeinate`](https://github.com/apple-oss-distributions/PowerManagement/blob/main/caffeinate/caffeinate.c) creates power assertions; an idle-sleep assertion alone does not guarantee closed-lid operation. LidLid also makes a lid-specific request. See the [power implementation](docs/ARCHITECTURE.md#power-requests).
+
+### Does LidLid automatically detect when Codex or Claude Code finishes?
+
+No. You turn it on manually for a session. Reopening the lid, switching it off, reaching the optional time limit, or a stop condition ends the session. It does not inspect agent conversations or detect task completion.
+
+### Can downloads continue or SSH stay connected with the lid closed?
+
+Keeping the Mac awake lets downloads, builds and local SSH clients continue running. LidLid does not provide internet access or reconnect Wi-Fi, VPNs or SSH. Moving between networks can still interrupt connections.
+
+### Does LidLid support Intel MacBooks?
+
+The current DMG is **arm64 only**, for Apple Silicon (M-series) MacBooks on macOS 14 or later. Intel Macs are not currently supported. See [compatibility notes](docs/VALIDATION.md).
 
 ## Help us find the useful version of this idea
 

@@ -1,6 +1,6 @@
 <p align="center"><img src="docs/assets/app-icon.png" width="88" alt="LidLid 猫头鹰图标"></p>
 
-<h1 align="center">盖盖 · LidLid</h1>
+<h1 align="center">盖盖 · LidLid<br>MacBook 合盖不休眠</h1>
 
 <p align="center"><strong>合上盖子，带着任务走。</strong><br>任务还没跑完，也能合盖出发。</p>
 
@@ -11,9 +11,11 @@
   <a href="LICENSE">MIT 开源协议</a>
 </p>
 
-![盖盖 · LidLid：合上盖子，带着任务走。](docs/assets/zh-CN/hero-mobility.png)
+**盖盖（LidLid）是一款免费开源的 MacBook 合盖不休眠菜单栏工具，无需外接显示器。** 让 Mac 本机的 Codex、Claude Code、编译和下载在合盖后继续运行，需要出门或换个地方时，可以合上盖子带着电脑走。开启一次，再次开盖自动结束。适用于 Apple Silicon（M 系列）MacBook，要求 macOS 14+。
 
-## 任务还没结束，你已经要出发
+![盖盖 MacBook 合盖不休眠：合上盖子，带着仍在执行本机任务的电脑出发。](docs/assets/zh-CN/hero-mobility.png)
+
+## Codex、Claude Code 还没跑完，也能合盖出发
 
 Codex、Claude Code 正在**你的 Mac 本机**执行任务，编译或下载也还没结束。可你已经要出门，或是换个地方继续工作。为了不让电脑睡眠，只能双手托着开盖的笔记本，一路小心地走。
 
@@ -39,8 +41,8 @@ Codex、Claude Code 正在**你的 Mac 本机**执行任务，编译或下载也
 ## 简约界面
 
 <p align="center">
-  <img src="docs/assets/zh-CN/interface-off.jpg" width="320" alt="真实界面：已关闭">
-  <img src="docs/assets/zh-CN/interface-on.jpg" width="320" alt="真实界面：已开启">
+  <img src="docs/assets/zh-CN/interface-off.jpg" width="320" alt="盖盖 macOS 菜单栏真实界面：合盖不休眠已关闭">
+  <img src="docs/assets/zh-CN/interface-on.jpg" width="320" alt="盖盖 macOS 菜单栏真实界面：合盖不休眠已开启">
 </p>
 
 *真实中文界面；可在「选项 → 语言」切换为 English。*
@@ -75,6 +77,32 @@ Codex、Claude Code 正在**你的 Mac 本机**执行任务，编译或下载也
 <p align="center"><img src="docs/assets/zh-CN/interface-options.jpg" width="320" alt="真实选项页：登录启动、低电量与高温保护、退出"></p>
 </details>
 
+## 常见问题
+
+### MacBook 怎么设置合盖不休眠，不接外接显示器也可以吗？
+
+[下载并安装盖盖 DMG](#安装与使用)，点击菜单栏猫头鹰，打开开关，显示「**已开启**」后再合盖。盖盖面向不连接外接屏的 M 系列 MacBook Air／MacBook Pro；也支持电池供电，电池供电时电量降至 10%、出现严重高温或再次开盖时会结束本次。
+
+### 合上 MacBook 后，Codex 和 Claude Code 还能继续运行吗？
+
+盖盖让 Mac 在本次合盖期间保持唤醒，运行在 **Mac 本机**的任务就能继续执行。任务仍需要其所需的网络连接和用户授权。已经在远程服务器或云端运行的任务，不需要靠盖盖维持远端机器运行。
+
+### 为什么开了 caffeinate，MacBook 合盖后还是会休眠？
+
+阻止空闲休眠与阻止合盖休眠是不同的请求。Apple 的 [`caffeinate`](https://github.com/apple-oss-distributions/PowerManagement/blob/main/caffeinate/caffeinate.c) 使用电源断言；仅防止空闲休眠，并不等于能合盖运行。盖盖还会发起专门的合盖控制请求，详见[电源实现](docs/ARCHITECTURE.md#power-requests)。
+
+### 盖盖会自动识别 Codex／Claude Code 的任务完成吗？
+
+不会。你手动开启本次会话，再次开盖、手动关闭、达到所设时长或触发结束条件时停止。盖盖不读取 AI 对话，也不自动判断任务是否完成。
+
+### MacBook 合盖后可以继续下载、保持 SSH 连接吗？
+
+保持 Mac 唤醒可以让下载、编译和本机 SSH 客户端继续运行。盖盖不提供网络，也不负责重连 Wi-Fi、VPN 或 SSH；移动过程中切换网络仍可能导致连接中断。
+
+### Intel MacBook 可以用吗？
+
+当前 DMG 仅包含 **arm64** 版本，面向 Apple Silicon（M 系列）MacBook、macOS 14 或更新版本；目前不支持 Intel Mac。详见[兼容性说明](docs/VALIDATION.md)。
+
 ## 先开源，听听真正的使用需求
 
 我们先把项目开源，想了解：你最需要带着继续运行的本机任务是什么。
@@ -87,7 +115,7 @@ Codex、Claude Code 正在**你的 Mac 本机**执行任务，编译或下载也
 
 ## 从源码构建
 
-需要 Xcode 或兼容的 Command Line Tools，包含 macOS 14+ SDK、Swift 5.9 或更新版本。本地预览包使用 Swift 6.4.2 构建。
+需要 Xcode 或兼容的 Command Line Tools，包含 macOS 14+ SDK、Swift 5.9 或更新版本。当前安装包使用 Swift 6.4.2 构建。
 
 ```sh
 git clone https://github.com/kf953741/lidlid.git
