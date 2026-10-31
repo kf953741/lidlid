@@ -13,7 +13,11 @@
 
 **盖盖（LidLid）是一款免费开源的 MacBook 合盖不休眠菜单栏工具，无需外接显示器。** 让 Mac 本机的 Codex、Claude Code、编译和下载在合盖后继续运行，需要出门或换个地方时，可以合上盖子带着电脑走。开启一次，再次开盖自动结束。适用于 Apple Silicon（M 系列）MacBook，要求 macOS 14+。
 
-![盖盖 MacBook 合盖不休眠：合上盖子，带着仍在执行本机任务的电脑出发。](docs/assets/zh-CN/hero-mobility.png)
+![盖盖 20 秒上手：打开开关、合盖带走、开盖自动结束。](docs/assets/zh-CN/usage-demo.gif)
+
+[观看 20 秒演示](docs/assets/zh-CN/usage-demo.mp4) · [两分钟上手教程](docs/USAGE.zh-CN.md)
+
+*真实应用界面，搭配移动办公场景插画。*
 
 ## Codex、Claude Code 还没跑完，也能合盖出发
 

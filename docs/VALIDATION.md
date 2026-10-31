@@ -6,7 +6,7 @@ This document separates the implemented workflow, software evidence, and physica
 
 | Configuration | Software checks | Physical lid-close/reopen |
 | --- | --- | --- |
-| Apple M5 Pro, macOS 27.0, Swift 6.4.2 | Build, UI, request lifecycle, and recovery checks passed | **Not yet completed** |
+| Apple M5 Pro, macOS 27.0.1, Swift 6.4.2 | Build, UI, request lifecycle, and recovery checks passed | One local calculation close/reopen check completed |
 | Other Apple Silicon MacBooks / macOS 14+ | Targeted by the build, not individually validated | Reports wanted |
 | Intel Macs | Not supported by the session agent | Not supported |
 
@@ -23,9 +23,15 @@ This document separates the implemented workflow, software evidence, and physica
 
 Historical local check summaries are in [software.json](validation/software.json) and [interface.json](validation/interface.json). They are snapshots, not a compatibility certification. Public CI tests the pure state machine and build only.
 
+## Observed local-task close/reopen
+
+On October 31, 2026, LidLid 1.2.0 was enabled on the development MacBook, on battery power with no external display. During a user-operated close/reopen cycle, an independent local calculation completed 44 work steps with the real lid sensor closed before and after each calculation. Consecutive closed-lid samples were at most 1.076 seconds apart. Reopening returned the UI to Off; the [Chinese capture](assets/zh-CN/demo-reopened.jpg) shows that result.
+
+This was a small local calculation, not a recorded Codex or Claude Code session. It establishes one observed run on this configuration.
+
 ## Not yet established
 
-- Continuous progress of a real task while the physical lid is shut.
+- Closed-lid completion of actual Codex or Claude Code workflows, or long-duration workloads.
 - Restoration of normal sleep on the following real lid close.
 - Physical AC/battery transitions, external-display hot-plugging, login launch, low-battery stops, or thermal stops.
 - Reliability across the targeted Mac models and macOS versions.

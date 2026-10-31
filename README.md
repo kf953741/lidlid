@@ -17,7 +17,11 @@
 
 中文：[MacBook 合盖不休眠，让 Codex / Claude Code 继续运行。](README.zh-CN.md)
 
-![LidLid MacBook closed-lid keep-awake: close the lid and carry your laptop while local tasks continue.](docs/assets/hero-mobility.png)
+![LidLid 20-second demo: switch on, close and carry, reopen to end the session.](docs/assets/en/usage-demo.gif)
+
+[Watch the 20-second video](docs/assets/en/usage-demo.mp4) · [Two-minute setup guide](docs/USAGE.md)
+
+*Actual app interface with illustrated on-the-go scenes.*
 
 ## Keep Codex and Claude Code running while you head out
 
