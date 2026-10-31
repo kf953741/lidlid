@@ -1,0 +1,17 @@
+{
+  "tool": "built-in image_gen",
+  "date": "2026-10-31",
+  "campaign": "Close the lid. Carry on.",
+  "images": [
+    {
+      "file": "hero-mobility.png",
+      "reference": "zh-CN/hero-mobility.png",
+      "prompt": "Use case: text-localization. Edit target: the provided new Chinese Lidune mobility hero. Make the matching ENGLISH hero, preserving the entire 2:1 illustration, developer identity, full-body walking pose, closed silver laptop carried in one hand, doorway, daylight, small owl app icon, amber accent, palette, lighting, composition, whitespace and all artwork. Change ONLY the typography in the left region. Small wordmark exact text: 'Lidune'. Large elegant crisp dark pine-green serif headline on exactly two lines: line 1 'Close the lid.' line 2 'Carry on.'. Below, a smaller legible sans-serif subtitle on two lines, exact text line 1 'Take your laptop with you.' line 2 'Keep your local work going.'. Optical type spacing should feel refined and balanced like the Chinese version. Remove ALL Chinese lettering, preserving the small owl icon beside the brand. No edition badge, no additional text, no watermark or new objects. This is a corresponding localized campaign, not a new composition."
+    },
+    {
+      "file": "use-case-mobility.png",
+      "reference": "zh-CN/use-case-mobility.png",
+      "prompt": "Use case: text-localization. Edit target: the provided new Chinese Lidune two-panel mobility illustration. Preserve every visual detail, both panels, same developer identities, both full-body walking poses, left OPEN laptop balanced in BOTH hands, right fully CLOSED laptop carried naturally in ONE hand, doorway/daylight, plants, amber accent, colors, lighting, thin divider and layout. Change ONLY the top captions to perfectly legible, optically balanced ENGLISH editorial serif typography. Left caption exact text: 'Task still running. Time to leave?'. Right caption exact text: 'Close the lid. Carry on.'. Remove all Chinese letters, keep the caption regions spacious and aligned. No edition badge, no extra text, no coffee or sitting or laptop left on a table, no new objects, no watermark. The laptop goes with the person in both panels. Keep the original wide 2:1 canvas."
+    }
+  ]
+}

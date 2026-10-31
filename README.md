@@ -4,7 +4,7 @@
 
 <h1 align="center">Lidune · 合留</h1>
 
-<p align="center"><strong>Close the lid. Keep your local work going.</strong><br>One close. One session. Normal sleep returns when you reopen.</p>
+<p align="center"><strong>Close the lid. Carry on.</strong><br>Take your laptop with you. Keep your local work going.</p>
 
 <p align="center">
   <a href="README.zh-CN.md">简体中文</a> ·
@@ -13,17 +13,17 @@
   <a href="LICENSE">MIT license</a>
 </p>
 
-![Lidune: Close the lid. Keep the flow.](docs/assets/hero.png)
+![Lidune: Close the lid. Carry on. Take your laptop with you.](docs/assets/hero-mobility.png)
 
-## Your agent is still working. You want to close the laptop.
+## Your task isn't done. You need to go.
 
-Maybe Codex or Claude Code is running a task **on your Mac**. Maybe a build, download, or terminal session still needs the machine awake. You get up—and find yourself carrying an open laptop so the work can continue.
+Codex or Claude Code is still working **on your Mac**, a build is underway, or a download hasn't finished. You need to head out or move to another room. To keep the Mac awake, you end up balancing an open laptop in both hands while you walk.
 
-Lidune is a small, open-source menu-bar app built around that moment: enable closed-lid keep-awake for **one session**, then automatically give sleep control back to macOS when you reopen the lid.
+Lidune is built around that moment: turn on closed-lid keep-awake for **this session**, close the lid, and take the laptop with you. Reopening ends the session and returns sleep control to macOS.
 
-![Illustrated local coding workflow: carrying an open laptop, then leaving a closed laptop on a ventilated desk.](docs/assets/use-case.png)
+![The same developer leaving with an open laptop in both hands, then carrying it closed in one hand.](docs/assets/use-case-mobility.png)
 
-*Illustrated local workflow. Cloud-hosted jobs can run independently; Lidune targets the Mac doing local work.*
+*Illustrated on-the-go workflow. Lidune targets the Mac doing local work; cloud-hosted jobs can run independently.*
 
 ## Why Lidune
 
@@ -54,20 +54,20 @@ Lidune is a small, open-source menu-bar app built around that moment: enable clo
 **Target:** an Apple Silicon (M-series) MacBook running macOS 14 or later, with no external display connected. **Intel MacBooks are not currently supported.** See [compatibility notes](docs/VALIDATION.md).
 
 1. Download the [Apple Silicon DMG](https://github.com/kf953741/lidune/releases/download/v1.1.1-preview.1/Lidune-1.1.1-macOS-arm64.dmg).
-2. Open the DMG, drag `Lidune.app` to **Applications**, then open Lidune from Applications. The preview is **ad-hoc signed, not notarized**. If macOS blocks the first launch, review it through System Settings → Privacy & Security. No security-disabling shell command is needed.
+2. Open the DMG, drag `Lidune.app` to **Applications**, then open Lidune from Applications. This build is **ad-hoc signed, not notarized**. If macOS blocks the first launch, review it through System Settings → Privacy & Security. No security-disabling shell command is needed.
 3. Click the owl in your menu bar. Turn on the switch until the interface shows **On**.
 4. Close the lid for this session. Reopen it to end the session automatically. You can also switch it off manually.
 
 A [ZIP archive](https://github.com/kf953741/lidune/releases/download/v1.1.1-preview.1/Lidune-v1.1.1-preview.1-macOS-arm64.zip) is also available. Checksums are included on the [release page](https://github.com/kf953741/lidune/releases/tag/v1.1.1-preview.1).
 
 <details>
-<summary>DMG installer preview</summary>
+<summary>See the DMG installer</summary>
 <p align="center"><img src="docs/assets/installer.jpg" width="640" alt="Actual bilingual DMG installer: drag Lidune to Applications"></p>
 </details>
 
 The **Time limit** is measured from activation. The interface follows your system language by default; choose **Options → Language → English / 简体中文** to override it. Login launch is optional and off by default. Right-clicking the menu-bar icon also toggles the session.
 
-Use it on a clear, ventilated surface. End the session before putting your Mac in a bag or sleeve. Do not run multiple lid-sleep controllers together; Lidune blocks activation while Clamshell is running. An external display ends the Lidune session and returns control to macOS.
+Keep ventilation unobstructed while carrying your Mac. End the session before putting it in a bag or sleeve. Network-dependent tasks still need a working connection. Do not run multiple lid-sleep controllers together; Lidune blocks activation while Clamshell is running. An external display ends the Lidune session and returns control to macOS.
 
 <details>
 <summary>Options and protection settings</summary>
@@ -78,7 +78,7 @@ Use it on a clear, ventilated surface. End the session before putting your Mac i
 
 ## Help us find the useful version of this idea
 
-This first public release is here to learn whether this small workflow matters to people.
+This project is open-source so we can learn which local workflows you need to take with you.
 
 - **Use Codex or Claude Code locally?** Tell us what you need to keep running and for how long.
 - **Tried a real close/open cycle?** [Report your model, macOS version, power source, and result](https://github.com/kf953741/lidune/issues/new?template=compatibility.yml). Also check whether the following lid close sleeps normally.
@@ -88,7 +88,7 @@ If you want to follow the project, a star helps others discover it. Compatibilit
 
 ## Build from source
 
-Requires a macOS 14+ SDK and Swift 5.9 or newer, provided by Xcode or compatible Command Line Tools. The local preview was built with Swift 6.4.2.
+Requires a macOS 14+ SDK and Swift 5.9 or newer, provided by Xcode or compatible Command Line Tools. The current download was built with Swift 6.4.2.
 
 ```sh
 git clone https://github.com/kf953741/lidune.git
