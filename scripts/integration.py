@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Real, reversible open-lid API checks. Never synthesizes a lid event or sleep.
-Run with the lid open, no external monitor, Clamshell and LidOnce UI both quit.
+Run with the lid open, no external monitor, Clamshell and LidLid UI both quit.
 """
 import json
 import os
@@ -16,7 +16,7 @@ report = []
 
 def assertions_for(pid):
     result = subprocess.check_output(["/usr/bin/pmset", "-g", "assertions"], text=True)
-    return [line.strip() for line in result.splitlines() if f"pid {pid}(" in line and "LidOnce" in line]
+    return [line.strip() for line in result.splitlines() if f"pid {pid}(" in line and any(name in line for name in ("LidLid", "LidOnce"))]
 
 def start():
     child = subprocess.Popen([binary, "--agent"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True, bufsize=1)

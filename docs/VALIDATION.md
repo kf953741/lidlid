@@ -34,21 +34,21 @@ Historical local check summaries are in [software.json](validation/software.json
 
 Use a ventilated desk, sufficient charge, no external display, and one lid controller. Start with a short test and an expendable local task.
 
-1. Confirm that ordinary lid sleep behaves normally with Lidune off.
-2. Enable Lidune and verify that it shows **已开启** (On).
+1. Confirm that ordinary lid sleep behaves normally with LidLid off.
+2. Enable LidLid and verify that it shows **已开启** (On).
 3. Close the lid for about 30 seconds, then reopen it.
 4. Check whether the task actually advanced while closed. Merely finding the process alive or seeing an accepted request is insufficient.
-5. Confirm Lidune returns to off. Close the lid again and check that ordinary sleep is restored.
-6. [Report the model, OS, power source, duration, and both results](https://github.com/kf953741/lidune/issues/new?template=compatibility.yml).
+5. Confirm LidLid returns to off. Close the lid again and check that ordinary sleep is restored.
+6. [Report the model, OS, power source, duration, and both results](https://github.com/kf953741/lidlid/issues/new?template=compatibility.yml).
 
 Do not deliberately overheat the Mac, drain its battery to test the cutoff, or put it in a bag during this check. Keep the lid open and restart if restoration is uncertain.
 
 ## Optional real API check
 
-With Lidune and Clamshell quit, lid open, and no external display:
+With LidLid and Clamshell quit, lid open, and no external display:
 
 ```sh
-python3 scripts/integration.py 'dist/Lidune.app/Contents/MacOS/LidOnce'
+python3 scripts/integration.py 'dist/LidLid.app/Contents/MacOS/LidLid'
 ```
 
 This briefly activates and releases the actual interface. It does not close the lid or prove closed-lid operation.
@@ -56,7 +56,7 @@ This briefly activates and releases the actual interface. It does not close the 
 Read-only diagnostic output:
 
 ```sh
-'dist/Lidune.app/Contents/MacOS/LidOnce' --check
+'dist/LidLid.app/Contents/MacOS/LidLid' --check
 ```
 
 The `phase` in this command's output is a default diagnostic snapshot, **not a query of an already running agent's session state**. Use the UI and event records to inspect the running session.

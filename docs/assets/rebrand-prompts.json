@@ -1,0 +1,16 @@
+{
+  "tool": "built-in image_gen",
+  "date": "2026-10-31",
+  "brand": "盖盖 · LidLid",
+  "source_commit": "8717901f95172890a19c932679282759cf665e44",
+  "edits": [
+    {
+      "file": "zh-CN/hero-mobility.png",
+      "prompt": "Use case: text-localization / precise brand rename. Edit target: the provided Chinese mobility campaign hero. Change ONLY the small brand wordmark next to the owl app icon at the upper left from its old name to the exact new brand text '盖盖 · LidLid'. The Chinese name must be 盖盖 (two identical characters), the English name must be LidLid (capital L in both halves). Match the refined dark pine-green serif style and optical spacing in the existing brand region. Preserve the app icon, the exact headline '合上盖子，带着任务走。', the exact subtitle '任务还没跑完，也能合盖出发。', every other element, the developer's walking pose, closed laptop held in one hand, doorway, colors, light, and the wide 2:1 canvas. No new badge, no extra text, no composition change."
+    },
+    {
+      "file": "hero-mobility.png",
+      "prompt": "Use case: text-localization / precise brand rename. Edit target: the provided English mobility campaign hero. Change ONLY the small upper-left brand wordmark next to the owl app icon to exact text 'LidLid' (capital L in both halves, no space). Match the existing refined dark pine-green serif style. Preserve the owl app icon and all other artwork, text and layout exactly, including 'Close the lid. Carry on.' and 'Take your laptop with you. Keep your local work going.', the full-body walking developer holding the closed laptop, light and palette, and 2:1 canvas. No new badge, no extra text, no composition change."
+    }
+  ]
+}

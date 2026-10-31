@@ -3,12 +3,12 @@ import SwiftUI
 import LidOnceCore
 
 private enum PanelStyle {
-    static let background = Color(nsColor: NSColor(name: "LidunePanel") { appearance in
+    static let background = Color(nsColor: NSColor(name: "LidLidPanel") { appearance in
         appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
             ? NSColor(calibratedRed: 0.115, green: 0.125, blue: 0.125, alpha: 1)
             : NSColor(calibratedRed: 0.980, green: 0.980, blue: 0.969, alpha: 1)
     })
-    static let accent = Color(nsColor: NSColor(name: "LiduneAccent") { appearance in
+    static let accent = Color(nsColor: NSColor(name: "LidLidAccent") { appearance in
         appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
             ? NSColor(calibratedRed: 0.40, green: 0.76, blue: 0.65, alpha: 1)
             : NSColor(calibratedRed: 0.13, green: 0.40, blue: 0.34, alpha: 1)
@@ -34,11 +34,11 @@ struct PanelView: View {
     private var main: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 8) {
-                Image(nsImage: OwlMenuSymbol.image(for: .on, size: 20))
+                Image(nsImage: OwlMenuSymbol.image(for: model.enabled ? .on : .off, size: 20))
                     .renderingMode(.template)
                     .foregroundStyle(PanelStyle.accent)
                     .accessibilityHidden(true)
-                Text("Lidune")
+                Text(model.brandName)
                     .font(.system(size: 14, weight: .semibold))
                 Spacer()
                 Button { model.options = true } label: {
@@ -172,11 +172,11 @@ struct PanelView: View {
                 .padding(.top, 18)
             Divider().opacity(0.6).padding(.top, 20).padding(.bottom, 16)
             HStack {
-                Text("Lidune \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")")
+                Text("\(model.brandName) \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")")
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
                 Spacer()
-                Button(model.text("退出 Lidune")) { NSApp.terminate(nil) }
+                Button(model.text("退出盖盖")) { NSApp.terminate(nil) }
                     .buttonStyle(.plain)
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)

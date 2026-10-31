@@ -1,27 +1,27 @@
-<p align="center"><img src="docs/assets/app-icon.png" width="88" alt="Lidune 猫头鹰图标"></p>
+<p align="center"><img src="docs/assets/app-icon.png" width="88" alt="LidLid 猫头鹰图标"></p>
 
-<h1 align="center">Lidune · 合留</h1>
+<h1 align="center">盖盖 · LidLid</h1>
 
 <p align="center"><strong>合上盖子，带着任务走。</strong><br>任务还没跑完，也能合盖出发。</p>
 
 <p align="center">
   <a href="README.md">English</a> ·
-  <a href="https://github.com/kf953741/lidune/releases/download/v1.1.1-preview.1/Lidune-1.1.1-macOS-arm64.dmg">下载 DMG（M 系列）</a> ·
-  <a href="https://github.com/kf953741/lidune/issues/new?template=compatibility.yml">反馈兼容性</a> ·
+  <a href="https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg">下载 DMG（M 系列）</a> ·
+  <a href="https://github.com/kf953741/lidlid/issues/new?template=compatibility.yml">反馈兼容性</a> ·
   <a href="LICENSE">MIT 开源协议</a>
 </p>
 
-![Lidune · 合留：合上盖子，带着任务走。](docs/assets/zh-CN/hero-mobility.png)
+![盖盖 · LidLid：合上盖子，带着任务走。](docs/assets/zh-CN/hero-mobility.png)
 
 ## 任务还没结束，你已经要出发
 
 Codex、Claude Code 正在**你的 Mac 本机**执行任务，编译或下载也还没结束。可你已经要出门，或是换个地方继续工作。为了不让电脑睡眠，只能双手托着开盖的笔记本，一路小心地走。
 
-Lidune 为这个时刻而做：开启**本次合盖不休眠**，合上盖子，把电脑一起带走。再次开盖，本次自动结束，恢复正常睡眠。
+盖盖为这个时刻而做：开启**本次合盖不休眠**，合上盖子，把电脑一起带走。再次开盖，本次自动结束，恢复正常睡眠。
 
 ![同一个人出发：左侧双手托着开盖电脑，右侧单手拿着合盖电脑从容离开。](docs/assets/zh-CN/use-case-mobility.png)
 
-*移动办公场景示意。Lidune 面向需要保持 Mac 本机运行的工作，云端任务可能独立运行。*
+*移动办公场景示意。盖盖面向需要保持 Mac 本机运行的工作，云端任务可能独立运行。*
 
 ## 优势
 
@@ -45,27 +45,32 @@ Lidune 为这个时刻而做：开启**本次合盖不休眠**，合上盖子，
 
 *真实中文界面；可在「选项 → 语言」切换为 English。*
 
+<details>
+<summary>查看菜单栏的开启与关闭图标</summary>
+<p align="center"><img src="docs/assets/zh-CN/menu-states.png" width="720" alt="关闭为闭眼轻轮廓，开启为大圆眼实心轮廓，浅色与深色菜单栏均可区分"></p>
+</details>
+
 ![单次流程：开启后保持开启，合盖期间不变，开盖后回到关闭。](docs/assets/workflow.zh-CN.svg)
 
 ## 安装与使用
 
 **目标环境：** Apple Silicon（M 系列）MacBook、macOS 14 或更新版本，不连接外接显示器。**目前不支持 Intel MacBook。** 详见[兼容性说明](docs/VALIDATION.md)。
 
-1. 下载 [M 系列 DMG 安装包](https://github.com/kf953741/lidune/releases/download/v1.1.1-preview.1/Lidune-1.1.1-macOS-arm64.dmg)。
-2. 打开 DMG，将 `Lidune.app` 拖入「**应用程序**」，再从「应用程序」打开。当前为**本地临时签名，尚未经过 Apple 公证**。若首次启动被拦截，请通过「系统设置 → 隐私与安全性」检查和确认；不需要执行关闭系统安全功能的命令。
+1. 下载 [M 系列 DMG 安装包](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg)。
+2. 打开 DMG，将 `LidLid.app`（盖盖）拖入「**应用程序**」，再从「应用程序」打开。当前为**本地临时签名，尚未经过 Apple 公证**。若首次启动被拦截，请通过「系统设置 → 隐私与安全性」检查和确认；不需要执行关闭系统安全功能的命令。
 3. 点击菜单栏猫头鹰，打开开关，确认显示「**已开启**」。
 4. 本次合盖保持唤醒；重新开盖会自动结束。也可以随时手动关闭开关。
 
-也可以下载 [ZIP 备用包](https://github.com/kf953741/lidune/releases/download/v1.1.1-preview.1/Lidune-v1.1.1-preview.1-macOS-arm64.zip)；校验值见 [Release 页面](https://github.com/kf953741/lidune/releases/tag/v1.1.1-preview.1)。
+也可以下载 [ZIP 备用包](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.zip)；校验值见 [Release 页面](https://github.com/kf953741/lidlid/releases/tag/v1.2.0)。
 
 <details>
 <summary>查看 DMG 安装界面</summary>
-<p align="center"><img src="docs/assets/installer.jpg" width="640" alt="真实的中英文 DMG 安装窗口：将 Lidune 拖入应用程序"></p>
+<p align="center"><img src="docs/assets/installer.jpg" width="640" alt="真实的中英文 DMG 安装窗口：将 LidLid 拖入应用程序"></p>
 </details>
 
 界面默认跟随系统语言，也可以在「选项 → 语言」选择「简体中文」或「English」，即时生效。最长保持时间从按下开关起计算。「登录时启动」默认关闭，可在选项页开启；右键菜单栏图标也能快速切换。
 
-移动时保持散热口无遮挡，装包或放入保护套前先结束本次。联网任务仍需要可用的网络连接。避免同时运行多个合盖控制工具；检测到 Clamshell 正在运行时，Lidune 会阻止开启。接入外接屏会结束本次，交回 macOS 管理。
+移动时保持散热口无遮挡，装包或放入保护套前先结束本次。联网任务仍需要可用的网络连接。避免同时运行多个合盖控制工具；检测到 Clamshell 正在运行时，LidLid 会阻止开启。接入外接屏会结束本次，交回 macOS 管理。
 
 <details>
 <summary>查看选项页</summary>
@@ -77,8 +82,8 @@ Lidune 为这个时刻而做：开启**本次合盖不休眠**，合上盖子，
 我们先把项目开源，想了解：你最需要带着继续运行的本机任务是什么。
 
 - 正在用本机 Codex／Claude Code？告诉我们需要继续运行什么任务、一般多久。
-- 做过一次真实合盖／开盖？[提交机型、系统、电源条件和结果](https://github.com/kf953741/lidune/issues/new?template=compatibility.yml)，也请检查下一次合盖是否恢复正常睡眠。
-- 有不同的需求？[描述你的使用场景](https://github.com/kf953741/lidune/issues/new?template=feature_request.yml)。
+- 做过一次真实合盖／开盖？[提交机型、系统、电源条件和结果](https://github.com/kf953741/lidlid/issues/new?template=compatibility.yml)，也请检查下一次合盖是否恢复正常睡眠。
+- 有不同的需求？[描述你的使用场景](https://github.com/kf953741/lidlid/issues/new?template=feature_request.yml)。
 
 想关注后续可以点一个 Star；具体场景和兼容性反馈会帮助我们决定下一步做什么。
 
@@ -87,15 +92,15 @@ Lidune 为这个时刻而做：开启**本次合盖不休眠**，合上盖子，
 需要 Xcode 或兼容的 Command Line Tools，包含 macOS 14+ SDK、Swift 5.9 或更新版本。本地预览包使用 Swift 6.4.2 构建。
 
 ```sh
-git clone https://github.com/kf953741/lidune.git
-cd lidune
+git clone https://github.com/kf953741/lidlid.git
+cd lidlid
 swift test
 zsh scripts/build.sh
 zsh scripts/package-dmg.sh
-open dist/Lidune.app
+open dist/LidLid.app
 ```
 
-构建脚本生成临时签名应用。自动测试覆盖单次状态逻辑、语言选择、状态消息和时长格式。技术细节见[架构说明](docs/ARCHITECTURE.md)、[验证记录](docs/VALIDATION.md)和[贡献说明](CONTRIBUTING.md)。内部模块与可执行文件暂保留 `LidOnce` 名称以兼容现有设置。
+构建脚本生成临时签名应用。自动测试覆盖单次状态逻辑、语言选择、状态消息和时长格式。技术细节见[架构说明](docs/ARCHITECTURE.md)、[验证记录](docs/VALIDATION.md)和[贡献说明](CONTRIBUTING.md)。内部 Swift 模块、设置标识和支持目录保留旧标识，以延续现有偏好设置。
 
 DMG 打包步骤需要 Python 3，会在独立构建环境中下载固定版本的 `dmgbuild`，生成带「应用程序」快捷方式的拖动安装镜像，并校验镜像。这仅是打包依赖，应用运行不需要 Python。配置参考 [dmgbuild 官方文档](https://dmgbuild.readthedocs.io/en/latest/settings.html)。
 

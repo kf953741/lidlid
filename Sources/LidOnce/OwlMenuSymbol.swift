@@ -21,8 +21,8 @@ enum OwlMenuSymbol {
 
     static func label(_ state: OwlMenuState) -> String {
         switch state {
-        case .off: return "合留：已关闭"
-        case .on: return "合留：已开启，仅本次合盖不休眠"
+        case .off: return "盖盖：已关闭"
+        case .on: return "盖盖：已开启，仅本次合盖不休眠"
         }
     }
 
@@ -49,38 +49,36 @@ enum OwlMenuSymbol {
         head.curve(to: NSPoint(x: 3, y: 2.7), controlPoint1: NSPoint(x: 2.9, y: 7.5), controlPoint2: NSPoint(x: 2.2, y: 5.2))
         head.close()
 
-        // Transparent heart-shaped facial mask. It works on both light and dark bars.
-        let face = NSBezierPath()
-        face.move(to: NSPoint(x: 12, y: 10.3))
-        face.curve(to: NSPoint(x: 4.8, y: 11.5), controlPoint1: NSPoint(x: 8.9, y: 6.2), controlPoint2: NSPoint(x: 5.2, y: 7.5))
-        face.curve(to: NSPoint(x: 12, y: 18.8), controlPoint1: NSPoint(x: 4, y: 16.2), controlPoint2: NSPoint(x: 8.4, y: 17.2))
-        face.curve(to: NSPoint(x: 19.2, y: 11.5), controlPoint1: NSPoint(x: 15.6, y: 17.2), controlPoint2: NSPoint(x: 20, y: 16.2))
-        face.curve(to: NSPoint(x: 12, y: 10.3), controlPoint1: NSPoint(x: 18.8, y: 7.5), controlPoint2: NSPoint(x: 15.1, y: 6.2))
-        face.close()
+        let beak = NSBezierPath()
+        beak.move(to: NSPoint(x: 10.9, y: 16.3))
+        beak.line(to: NSPoint(x: 13.1, y: 16.3))
+        beak.line(to: NSPoint(x: 12, y: 18.6))
+        beak.close()
         color.setFill(); color.setStroke()
         if state == .off {
-            head.lineWidth = 2; head.lineJoinStyle = .round; head.stroke()
+            // The resting state has little ink and unmistakably closed eyelids.
+            head.lineWidth = 1.7; head.lineJoinStyle = .round; head.stroke()
+            for x: CGFloat in [7.7, 16.3] {
+                let lid = NSBezierPath()
+                lid.move(to: NSPoint(x: x - 2.2, y: 11.8))
+                lid.curve(to: NSPoint(x: x + 2.2, y: 11.8),
+                    controlPoint1: NSPoint(x: x - 1, y: 13.8),
+                    controlPoint2: NSPoint(x: x + 1, y: 13.8))
+                lid.lineWidth = 1.8; lid.lineCapStyle = .round; lid.stroke()
+            }
+            beak.fill()
         } else {
-            head.append(face)
+            // Large transparent eye sockets and a solid silhouette stay distinct
+            // from off at 18 pt, including with white template ink on a dark bar.
+            for x: CGFloat in [7.7, 16.3] {
+                head.append(NSBezierPath(ovalIn: NSRect(x: x - 3.7, y: 7.4, width: 7.4, height: 8)))
+            }
+            head.append(beak)
             head.windingRule = .evenOdd
             head.fill()
-        }
-
-        func eye(x: CGFloat, open: Bool) {
-            if open {
-                NSBezierPath(ovalIn: NSRect(x: x - 1.2, y: 11.3, width: 2.4, height: 3.1)).fill()
-            } else {
-                let lid = NSBezierPath()
-                lid.move(to: NSPoint(x: x - 1.8, y: 12.3))
-                lid.curve(to: NSPoint(x: x + 1.8, y: 12.3), controlPoint1: NSPoint(x: x - 0.8, y: 13.3), controlPoint2: NSPoint(x: x + 0.8, y: 13.3))
-                lid.lineWidth = 1.65; lid.lineCapStyle = .round; lid.stroke()
+            for x: CGFloat in [7.7, 16.3] {
+                NSBezierPath(ovalIn: NSRect(x: x - 1.9, y: 9.1, width: 3.8, height: 4.6)).fill()
             }
         }
-        eye(x: 8.1, open: state == .on)
-        eye(x: 15.9, open: state == .on)
-        let beak = NSBezierPath()
-        beak.move(to: NSPoint(x: 11.1, y: 15.2))
-        beak.line(to: NSPoint(x: 12.9, y: 15.2))
-        beak.line(to: NSPoint(x: 12, y: 17.1)); beak.close(); beak.fill()
     }
 }

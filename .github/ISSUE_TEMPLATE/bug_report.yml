@@ -6,7 +6,7 @@ body:
   - type: input
     id: environment
     attributes:
-      label: Model, macOS, and Lidune version / 机型、系统与软件版本
+      label: Model, macOS, and LidLid version / 机型、系统与软件版本
     validations:
       required: true
   - type: textarea

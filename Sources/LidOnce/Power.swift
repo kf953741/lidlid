@@ -49,7 +49,7 @@ final class PowerDriver {
         for type in ["PreventUserIdleSystemSleep", "PreventSystemSleep"] {
             var id: IOPMAssertionID = 0
             let result = IOPMAssertionCreateWithName(type as CFString, IOPMAssertionLevel(kIOPMAssertionLevelOn),
-                                                   "LidOnce · 单次合盖" as CFString, &id)
+                                                   "LidLid · 单次合盖" as CFString, &id)
             guard result == kIOReturnSuccess else {
                 releaseAssertions()
                 throw PowerError(text: "防睡眠请求失败：\(Self.hex(result))")

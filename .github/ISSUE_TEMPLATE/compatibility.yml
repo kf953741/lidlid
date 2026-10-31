@@ -31,7 +31,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: Lidune version / 软件版本
+      label: LidLid version / 软件版本
       placeholder: v1.1.0-preview.1
     validations:
       required: true

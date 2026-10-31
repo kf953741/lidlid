@@ -32,7 +32,7 @@ final class SessionAgent {
                                                attributes: [.posixPermissions: 0o700])
         lockFD = open(dir.appendingPathComponent("agent.lock").path, O_CREAT | O_RDWR | O_NOFOLLOW | O_CLOEXEC, 0o600)
         guard lockFD >= 0, flock(lockFD, LOCK_EX | LOCK_NB) == 0 else {
-            throw PowerError(text: "另一个 LidOnce 会话正在运行")
+            throw PowerError(text: "另一个盖盖会话正在运行")
         }
         driver = try PowerDriver()
     }

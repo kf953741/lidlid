@@ -1,9 +1,9 @@
 # Architecture
 
-Lidune is a Swift Package with two targets:
+LidLid is a Swift Package with two targets:
 
 - `LidOnceCore`: commands, snapshots, and the one-shot state machine.
-- `LidOnce`: the AppKit/SwiftUI menu-bar UI and an unprivileged session process, started from the same executable with `--agent`.
+- `LidOnce`: the internal Swift executable target. It is packaged as `LidLid.app/Contents/MacOS/LidLid`, providing the AppKit/SwiftUI menu-bar UI and the unprivileged session process started with `--agent`.
 
 There are no third-party package dependencies. The app does not make network requests.
 

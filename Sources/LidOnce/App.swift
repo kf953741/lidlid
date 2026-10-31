@@ -37,6 +37,7 @@ final class AppModel: ObservableObject {
     var changing: Bool { state.phase == .starting || state.phase == .restoring }
     var canToggle: Bool { connected && !changing && (!conflict || enabled) }
     var text: AppText { AppText(language: language) }
+    var brandName: String { text("盖盖") }
     var detail: String {
         if state.phase == .off && !state.error && state.message != Snapshot().message {
             return text(state.message)
@@ -120,7 +121,7 @@ final class AppModel: ObservableObject {
             repairTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in self?.repair() }
             repair()
         } else if quitting { readyToQuit?() }
-        else { state.error = true; state.message = "合盖进程已结束，请重新打开 Lidune" }
+        else { state.error = true; state.message = "合盖进程已结束，请重新打开盖盖" }
         changed?()
     }
     private func repair() {
@@ -132,7 +133,7 @@ final class AppModel: ObservableObject {
             EventLog.write("parent recovery: selector12(false) accepted after agent exit")
             repairTimer?.invalidate(); repairTimer = nil; repairDriver = nil
             state.phase = .off; state.error = true
-            state.message = "意外退出后已恢复睡眠，请重新打开 Lidune"
+            state.message = "意外退出后已恢复睡眠，请重新打开盖盖"
             requestedArm = false
             changed?()
             if quitting { readyToQuit?() }
@@ -146,7 +147,7 @@ final class AppModel: ObservableObject {
         do {
             if enabled { try SMAppService.mainApp.register() } else { try SMAppService.mainApp.unregister() }
             loginEnabled = SMAppService.mainApp.status == .enabled
-            loginMessage = SMAppService.mainApp.status == .requiresApproval ? "请在系统设置 → 登录项中允许 Lidune" : nil
+            loginMessage = SMAppService.mainApp.status == .requiresApproval ? "请在系统设置 → 登录项中允许盖盖" : nil
         } catch { loginEnabled = SMAppService.mainApp.status == .enabled; loginMessage = error.localizedDescription }
     }
 }
@@ -166,7 +167,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let button = status.button {
             button.target = self; button.action = #selector(clicked)
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
-            button.setAccessibilityLabel("Lidune 合留")
+            button.setAccessibilityLabel(model.brandName)
         }
         popover.behavior = .transient
         popover.contentViewController = NSHostingController(rootView: PanelView(model: model))
@@ -194,6 +195,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         popover.contentViewController?.view.window?.makeKey()
     }
     private func updateIcon() {
+        status?.button?.setAccessibilityLabel(model.brandName)
         status?.button?.image = model.state.error
             ? NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: model.text(model.state.message))
             : OwlMenuSymbol.image(for: model.enabled ? .on : .off)
@@ -201,6 +203,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             status?.button?.image?.accessibilityDescription = model.text(OwlMenuSymbol.label(model.enabled ? .on : .off))
         }
         status?.button?.title = ""
-        status?.button?.toolTip = "Lidune · \(model.title)"
+        status?.button?.toolTip = "\(model.brandName) · \(model.title)"
     }
 }

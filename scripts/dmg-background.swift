@@ -20,9 +20,9 @@ func text(_ value: String, x: CGFloat, top: CGFloat, size: CGFloat,
         withAttributes: [.font: NSFont.systemFont(ofSize: size, weight: weight), .foregroundColor: color])
 }
 
-text("Lidune · 合留", x: 44, top: 32, size: 23, weight: .semibold, color: pine)
+text("盖盖 · LidLid", x: 44, top: 32, size: 23, weight: .semibold, color: pine)
 text("拖入「应用程序」即可安装", x: 44, top: 80, size: 17, weight: .medium, color: pine)
-text("Drag Lidune to Applications to install.", x: 44, top: 108, size: 12, color: muted)
+text("Drag LidLid to Applications to install.", x: 44, top: 108, size: 12, color: muted)
 
 let arrow = NSBezierPath()
 arrow.move(to: NSPoint(x: 280, y: CGFloat(height - 218)))
@@ -36,8 +36,8 @@ arrow.lineJoinStyle = .round
 pine.withAlphaComponent(0.55).setStroke()
 arrow.stroke()
 
-text("安装后，点击菜单栏猫头鹰开始使用。", x: 44, top: 308, size: 11, color: muted)
-text("After installing, open Lidune from Applications.", x: 44, top: 328, size: 11, color: muted)
+text("安装后，请从「应用程序」打开盖盖。", x: 44, top: 308, size: 11, color: muted)
+text("After installing, open LidLid from Applications.", x: 44, top: 328, size: 11, color: muted)
 let version = CommandLine.arguments.count > 2 ? CommandLine.arguments[2] : ""
 text("\(version) · Apple Silicon", x: 432, top: 37, size: 11, color: muted)
 NSGraphicsContext.restoreGraphicsState()
