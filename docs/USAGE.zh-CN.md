@@ -16,6 +16,11 @@
 
 安装包尚未经过 Apple 公证。如果首次打开被拦截，请在「系统设置 → 隐私与安全性」检查并确认打开。
 
+<details>
+<summary>查看拖动安装界面</summary>
+<p align="center"><img src="assets/installer.jpg" width="640" alt="真实的中英文 DMG 安装窗口：将盖盖拖入应用程序"></p>
+</details>
+
 ## 2. 任务在跑时，打开盖盖开关
 
 先照常在 Mac 本机启动 Codex、Claude Code、编译或下载任务。准备走时，点击菜单栏的猫头鹰，打开「**本次合盖不休眠**」。看到「**已开启**」，就可以合盖。

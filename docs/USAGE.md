@@ -16,6 +16,11 @@ Open the [DMG installer](https://github.com/kf953741/lidlid/releases/download/v1
 
 This build is not notarized. If macOS blocks the first launch, review and allow it in System Settings → Privacy & Security.
 
+<details>
+<summary>See the drag-to-install window</summary>
+<p align="center"><img src="assets/installer.jpg" width="640" alt="Actual bilingual DMG installer: drag LidLid to Applications"></p>
+</details>
+
 ## 2. Switch on while your task is running
 
 Start your local Codex or Claude Code task, build or download as usual. When you need to leave, click the owl and turn on **Keep awake for this lid close**. Wait until LidLid shows **On**, then close the lid.

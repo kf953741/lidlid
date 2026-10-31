@@ -7,14 +7,23 @@
 <p align="center">
   <a href="https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg">Download LidLid DMG</a> ·
   <a href="docs/USAGE.md">Getting started</a> ·
-  <a href="README.zh-CN.md">简体中文</a>
+  <a href="README.zh-CN.md">简体中文 · MacBook 合盖不休眠</a>
 </p>
 
-Codex, Claude Code, a build or a download is still running, but you need to go. Switch on LidLid, close your MacBook and **keep your local work running** while you take it with you. Reopening the lid ends the session automatically.
+![LidLid: keep your MacBook awake with the lid closed. Close the lid. Carry on.](docs/assets/hero-mobility.png)
+
+**Keep Codex and Claude Code running with your MacBook lid closed.** LidLid is a free, open-source menu bar app that keeps local tasks, builds and downloads running while you carry your Mac. Switch it on before closing the lid; reopening ends the session automatically.
+
+![Illustrated on-the-go comparison: carrying an open MacBook with both hands versus a closed MacBook in one hand.](docs/assets/use-case-mobility.png)
+
+<details>
+<summary>Watch the 20-second demo</summary>
 
 ![LidLid 20-second demo: switch on, close and carry, reopen to end the session.](docs/assets/en/usage-demo.gif)
 
 *Actual app interface with illustrated on-the-go scenes.*
+
+</details>
 
 ## Why LidLid
 
@@ -22,6 +31,22 @@ Codex, Claude Code, a build or a download is still running, but you need to go. 
 - **Ends when you reopen:** switch it on again next time you need it.
 - **No external monitor:** works on battery; stops automatically if the battery is low or your Mac gets too hot.
 - **Easy to use:** English and Chinese, free and open source, no account needed.
+
+## Keep Codex and Claude Code running when you close your MacBook
+
+<p align="center">
+  <img src="docs/assets/en/interface-off.jpg" width="320" alt="LidLid English interface: MacBook closed-lid keep-awake off">
+  <img src="docs/assets/en/interface-on.jpg" width="320" alt="LidLid English interface: closed-lid keep-awake on for local tasks">
+</p>
+
+<details>
+<summary>Menu-bar icons and workflow</summary>
+
+![Owl menu-bar icons: closed eyes when off, open eyes when on.](docs/assets/en/menu-states.png)
+
+![LidLid workflow: enable, close the lid, reopen to end the session automatically.](docs/assets/workflow.svg)
+
+</details>
 
 ## Install and use
 

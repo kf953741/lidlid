@@ -10,11 +10,20 @@
   <a href="README.md">English</a>
 </p>
 
-Codex、Claude Code、编译或下载还没结束，你已经要走。开启盖盖，合上电脑，让 **Mac 本机任务继续运行**。再次开盖，本次自动结束。
+![盖盖 · LidLid：MacBook 合盖不休眠，合上盖子，带着任务走。](docs/assets/zh-CN/hero-mobility.png)
+
+**盖盖是一款免费的 MacBook 合盖不休眠工具，让本机 Codex、Claude Code 在合盖后继续运行。** 编译或下载还没结束，你已经要出发。打开开关，合上电脑、从容带走；再次开盖，本次自动结束。
+
+![移动办公场景插画：左侧双手托着开盖的 MacBook，右侧单手携带合盖的 MacBook。](docs/assets/zh-CN/use-case-mobility.png)
+
+<details>
+<summary>看 20 秒使用演示</summary>
 
 ![盖盖 20 秒演示：开启开关、合盖带走、开盖自动结束。](docs/assets/zh-CN/usage-demo.gif)
 
 *真实应用界面，搭配移动办公场景插画。*
+
+</details>
 
 ## 为什么用盖盖
 
@@ -22,6 +31,22 @@ Codex、Claude Code、编译或下载还没结束，你已经要走。开启盖�
 - **开盖自动结束**：下次需要时，再开启一次。
 - **无需外接屏**：电池供电也能用，低电量或高温时自动结束本次。
 - **简单自在**：中英文界面，免费开源，无需账号。
+
+## Codex、Claude Code 合盖继续运行
+
+<p align="center">
+  <img src="docs/assets/zh-CN/interface-off.jpg" width="320" alt="盖盖中文界面：MacBook 合盖不休眠已关闭">
+  <img src="docs/assets/zh-CN/interface-on.jpg" width="320" alt="盖盖中文界面：已开启本次合盖不休眠，让本机任务继续运行">
+</p>
+
+<details>
+<summary>查看菜单栏图标与使用流程</summary>
+
+![猫头鹰菜单栏图标：闭眼为关闭，睁眼为开启。](docs/assets/zh-CN/menu-states.png)
+
+![盖盖使用流程：开启本次、合上盖子、再次开盖后自动结束。](docs/assets/workflow.zh-CN.svg)
+
+</details>
 
 ## 安装与使用
 
