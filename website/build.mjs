@@ -2,6 +2,7 @@ import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { site } from './site.config.mjs';
+import { privacyCopy } from './privacy-copy.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const out = path.join(root, 'dist');
@@ -65,14 +66,8 @@ const copy = {
     footer: ['隐私政策', '支持与帮助', 'GitHub'], footerLine: '为需要出发的你而做。',
     skip: '跳到主要内容', close: '关闭演示', demoTitle: '盖盖 · 20 秒使用演示',
     privacyTitle: '隐私政策', privacyMeta: '盖盖 LidLid 的隐私政策：本机偏好、诊断记录、官网托管与问题反馈。',
-    privacyIntro: '盖盖是一个在你的 Mac 本机运行的菜单栏工具。当前版本无需账号，不提供云端处理，也没有内置广告或分析统计。',
-    privacySections: [
-      ['应用会处理哪些信息', '<p>应用会在本机保存你选择的界面语言和最长保持时间，并读取合盖状态、电量、电源和系统温度状态，用于完成你开启的本次会话及相关保护。</p><p>本机还会保留开启、合盖、结束及恢复状态等诊断记录。盖盖不读取你的代码、文件内容或 Codex／Claude 对话。</p>'],
-      ['这些信息会上传吗', '<p>当前应用没有账号系统、广告 SDK、分析统计或网络服务，不会主动把上述本机偏好和诊断记录上传给开发者。</p>'],
-      ['访问官网时', '<p>本官网没有主动加入访客分析 SDK、营销 Cookie 或登录功能。网站由 Vercel 托管，托管平台会为交付页面、运行和安全处理 IP 地址、浏览器及请求等信息。相关处理可参考 <a href="https://vercel.com/legal/privacy-notice" target="_blank" rel="noopener noreferrer">Vercel 隐私说明</a>。</p>'],
-      ['下载和联系支持时', '<p>当前 DMG 下载和问题反馈由 GitHub 提供。访问这些外部页面、下载文件或提交反馈时，也适用 GitHub 自身的隐私政策。你主动提交的描述、机型、系统版本或截图，会用于协助处理问题；公开反馈中请不要包含密码、密钥或私人内容。</p>'],
-      ['如何联系开发者', '<p>盖盖由 Fei Kang 开发。有关隐私的问题，可以通过<a href="/support/">支持页面</a>所列的反馈入口联系我们。后续版本如改变信息处理方式，会更新本页面。</p>'],
-    ],
+    privacyIntro: privacyCopy.zh.intro,
+    privacySections: privacyCopy.zh.sections,
     updated: '更新日期：2026 年 11 月 1 日',
     supportTitle: '支持与使用指南', supportMeta: '盖盖 LidLid 支持：DMG 安装、首次打开、MacBook 合盖不休眠和常见问题。',
     supportIntro: '从下载安装到合盖出发，跟着下面三步就好。遇到问题，也可以直接反馈给我们。',
@@ -134,14 +129,8 @@ const copy = {
     footer: ['Privacy', 'Support', 'GitHub'], footerLine: 'Made for the moments you need to go.',
     skip: 'Skip to content', close: 'Close demo', demoTitle: 'LidLid · 20-second demo',
     privacyTitle: 'Privacy policy', privacyMeta: 'LidLid privacy: local preferences and diagnostics, website hosting and support requests.',
-    privacyIntro: 'LidLid runs locally on your Mac. The current version needs no account, provides no cloud processing, and includes no advertising or analytics SDK.',
-    privacySections: [
-      ['Information the app handles', '<p>The app stores your language and time-limit preferences locally. It reads lid state, battery level, power source and system thermal state to manage the session you enable and its protection conditions.</p><p>Local diagnostic records describe activation, lid events, ending and restoration. LidLid does not read your code, file contents, or Codex and Claude conversations.</p>'],
-      ['Does this information leave my Mac?', '<p>The current app has no account system, advertising SDK, analytics or network service. It does not automatically upload these preferences or diagnostic records to the developer.</p>'],
-      ['Visiting this website', '<p>This website includes no visitor analytics SDK, marketing cookies or sign-in. It is hosted by Vercel, which processes information such as IP addresses, browser details and requests for delivery, operation and security. See the <a href="https://vercel.com/legal/privacy-notice" target="_blank" rel="noopener noreferrer">Vercel Privacy Notice</a> for information about its processing.</p>'],
-      ['Downloads and support', '<p>Current DMG downloads and issue reports are provided through GitHub. Visiting those external pages, downloading files or submitting feedback is also subject to GitHub’s own privacy practices. Details you choose to send, such as a description, model, macOS version or screenshot, are used to help address your request. Do not include passwords, keys or private content in public reports.</p>'],
-      ['Contact and updates', '<p>LidLid is developed by Fei Kang. For privacy questions, use the feedback link on the <a href="/en/support/">support page</a>. This policy will be updated if a future version changes how information is handled.</p>'],
-    ],
+    privacyIntro: privacyCopy.en.intro,
+    privacySections: privacyCopy.en.sections,
     updated: 'Updated November 1, 2026',
     supportTitle: 'Support & getting started', supportMeta: 'LidLid support: DMG installation, first launch, MacBook closed-lid keep-awake and common questions.',
     supportIntro: 'From download to your next move, follow these three steps. If something gets in the way, send us feedback.',

@@ -14,6 +14,8 @@ On the Apple M5 Pro development MacBook, macOS 27.0.1:
 - Killing the actual UI with SIGKILL makes the agent restore through pipe EOF. Killing the actual embedded agent with SIGKILL makes the surviving sandboxed UI perform recovery and visibly return to Off with a recovery notice.
 - These software lifecycle checks were performed on AC power with no external display. They do not establish battery-powered closed-lid behavior or subsequent physical sleep restoration for 1.3.0. The October 31 hardware observation below belongs to 1.2.0.
 
+Build 6 adds language-matched Privacy Policy and Help & Support links in Options. Both Chinese and English UI were captured from the actual sandboxed build. English language and duration preferences survived relaunch. A native language menu was left open for longer than the 12-second watchdog window while a session remained active; common-run-loop-mode UI heartbeat and recovery timers prevent event tracking from ending the session early. The session was manually cancelled after the check. This is a software UI regression check, not a physical lid test.
+
 Reproduce the read-only bundle/sandbox check with:
 
 ```sh

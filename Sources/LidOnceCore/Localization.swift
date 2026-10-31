@@ -72,6 +72,8 @@ public struct AppText {
         "读取中": "Reading…",
         "保持通风，放入包内前先结束本次。": "Keep your Mac ventilated. Turn off before putting it in a bag.",
         "退出盖盖": "Quit LidLid",
+        "隐私政策": "Privacy Policy",
+        "支持与帮助": "Help & Support",
         "Clamshell 正在运行": "Clamshell is running",
         "需要处理": "Needs attention",
         "退出后即可开启本次合盖不休眠。": "Quit Clamshell to enable this session.",

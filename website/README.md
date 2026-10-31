@@ -28,6 +28,7 @@ The project builds this directory with Node.js 24 and serves `dist/`. Production
 
 - `site.config.mjs` contains the production URL, DMG version/download, feedback link and future App Store listing URL.
 - `build.mjs` contains the localized page copy and generates the canonical URLs, alternate language links, structured data, sitemap and robots file.
+- `privacy-copy.mjs` is the shared source for the public privacy pages and the Mac App Store policy exports in `docs/app-store/`.
 - `public/` holds the shared CSS/JavaScript and optimized copies of the existing project artwork and actual app screenshots. Walking scenes are illustrations; videos combine those illustrations with native captures.
 - Add `appStoreUrl` only after the listing is available. Update download copy, version, pricing metadata and privacy text to match the released app when distribution changes.
 

@@ -170,6 +170,16 @@ struct PanelView: View {
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 18)
+            HStack(spacing: 16) {
+                Link(model.text("隐私政策"), destination: URL(string: model.language.resolved() == .simplifiedChinese
+                    ? "https://lidlid.vercel.app/privacy/" : "https://lidlid.vercel.app/en/privacy/")!)
+                    .accessibilityIdentifier("privacy-link")
+                Link(model.text("支持与帮助"), destination: URL(string: model.language.resolved() == .simplifiedChinese
+                    ? "https://lidlid.vercel.app/support/" : "https://lidlid.vercel.app/en/support/")!)
+                    .accessibilityIdentifier("support-link")
+            }
+            .font(.system(size: 11))
+            .padding(.top, 16)
             Divider().opacity(0.6).padding(.top, 20).padding(.bottom, 16)
             HStack {
                 Text("\(model.brandName) \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")")

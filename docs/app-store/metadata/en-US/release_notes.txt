@@ -1,0 +1,1 @@
+Meet LidLid. One switch keeps your Mac awake for this lid close; reopening ends the session. Includes time limits, low-battery and thermal stop conditions, and English and Simplified Chinese interfaces.

@@ -7,3 +7,5 @@ __pycache__/
 .env
 .env.*
 *.local
+
+docs/app-store/submission-inputs.local.json

@@ -75,10 +75,13 @@ final class AppModel: ObservableObject {
         } catch {
             process = nil; state.error = true; state.message = "无法启动合盖进程：\(error.localizedDescription)"
         }
-        heartbeat = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+        heartbeat = Timer(timeInterval: 2, repeats: true) { [weak self] _ in
             guard let self else { return }
             self.send(Command("ping")); self.conflict = conflictingApp()
         }
+        // Native menus use an event-tracking run-loop mode. Keep the heartbeat
+        // running while a duration or language menu is open.
+        RunLoop.main.add(heartbeat!, forMode: .common)
     }
     private func consume(_ data: Data) {
         guard !data.isEmpty else { return }
@@ -117,7 +120,8 @@ final class AppModel: ObservableObject {
             state.phase = .restoring; state.error = true
             state.message = "合盖进程意外结束，正在恢复睡眠…"
             repairDriver = try? PowerDriver()
-            repairTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in self?.repair() }
+            repairTimer = Timer(timeInterval: 0.25, repeats: true) { [weak self] _ in self?.repair() }
+            RunLoop.main.add(repairTimer!, forMode: .common)
             repair()
         } else if quitting { readyToQuit?() }
         else { state.error = true; state.message = "合盖进程已结束，请重新打开盖盖" }

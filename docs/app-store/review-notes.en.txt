@@ -1,0 +1,20 @@
+LidLid is a menu bar utility for Apple Silicon MacBooks running macOS 14 or later. It requires a built-in lid sensor and battery; please review on a MacBook rather than a desktop Mac or Intel Mac. No account, demo credentials or in-app purchase is required by this build.
+
+The app has no Dock icon. Launching it opens its menu bar popover. Click the owl in the menu bar to reopen it. Language can be changed in Options.
+
+To review the core feature:
+1. Use a MacBook with its lid open and no external display connected. Battery operation is supported; if testing on battery, use a charge above 10%.
+2. Open LidLid and switch on. Wait for On.
+3. Close the lid while an independent, expendable local task is running.
+4. Reopen the lid. LidLid ends this session automatically and returns to Off.
+5. A later lid close uses normal system sleep unless another session is explicitly enabled.
+
+Users may choose a time limit. The session ends when the lid reopens or the limit is reached, whichever comes first. It also ends at 10% battery when on battery power, on serious or critical thermal pressure, if an external display appears, or if required lid/battery readings fail. Please keep the Mac ventilated and end the session before putting it in a bag or sleeve.
+
+Implementation: the app uses the macOS SDK constant kPMSetClamshellSleepState (declared in IOPMLibDefs.h, included by IOPMLib.h) with IOConnectCallScalarMethod, plus kIOPMAssertionTypePreventUserIdleSystemSleep. A real lid close requests display sleep with the system pmset displaysleepnow command. It does not use pmset disablesleep, request administrator privileges, install a privileged daemon or download executable code.
+
+Both executables are bundled and signed. The main app has App Sandbox enabled. Contents/Helpers/LidLidAgent inherits the parent's sandbox and shares its container; anonymous pipes carry commands and heartbeats. UI and agent failure handling attempts to restore normal sleep. The app does not contain a general command runner or request temporary sandbox exceptions, network access, camera, microphone, Accessibility or broad file access.
+
+LidLid does not integrate with or operate coding assistants. Such tools are mentioned only as examples of tasks that benefit from keeping the Mac awake. Online tasks still require connectivity.
+
+Privacy Policy and Help & Support links are available in Options. The app has no account, advertising, analytics, tracking or automatic diagnostic uploads. Local preferences and diagnostic records are described in the policy.
