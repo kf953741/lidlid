@@ -6,6 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg">Download LidLid DMG</a> ·
+  <a href="https://lidlid.vercel.app/en/">Website</a> ·
   <a href="docs/USAGE.md">Getting started</a> ·
   <a href="README.zh-CN.md">简体中文 · MacBook 合盖不休眠</a>
 </p>

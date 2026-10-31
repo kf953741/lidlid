@@ -1,0 +1,226 @@
+import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import { site } from './site.config.mjs';
+
+const root = path.dirname(fileURLToPath(import.meta.url));
+const out = path.join(root, 'dist');
+const base = site.url.replace(/\/$/, '');
+const uiSizes = { zh: { on: [704, 592], off: [716, 604] }, en: { on: [704, 628], off: [704, 628] } };
+const routes = {
+  zh: { home: '/', privacy: '/privacy/', support: '/support/' },
+  en: { home: '/en/', privacy: '/en/privacy/', support: '/en/support/' },
+};
+const e = value => String(value).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const plain = value => value.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+const arrow = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>';
+const downloadIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 16v4h14v-4"/></svg>';
+const play = '<svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m7 4 9 6-9 6V4Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+const roundIcon = kind => `<svg width="29" height="29" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${kind === 'clock' ? '<circle cx="14" cy="14" r="10"/><path d="M14 8v6l4 2"/>' : kind === 'laptop' ? '<path d="M5 19V7h18v12M2 21h24M11 21h6"/>' : '<path d="m14 3 9 4v7c0 5-9 11-9 11S5 19 5 14V7l9-4Z"/><path d="m10 14 3 3 6-6"/>'}</svg>`;
+function owl(on) {
+  const outline = 'M3 2.7C4 4.2 5.6 5.2 7.1 5.8C10 4.4 14 4.4 16.9 5.8C18.4 5.2 20 4.2 21 2.7C21.8 5.2 21.1 7.5 20.5 9.4C22 13 20.7 16.7 17.8 18.9C16 20.2 14 21 12 21.6C10 21 8 20.2 6.2 18.9C3.3 16.7 2 13 3.5 9.4C2.9 7.5 2.2 5.2 3 2.7Z';
+  return `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">${on ? `<path fill="currentColor" fill-rule="evenodd" d="${outline}M4 11.4a3.7 4 0 1 0 7.4 0a3.7 4 0 1 0-7.4 0ZM12.6 11.4a3.7 4 0 1 0 7.4 0a3.7 4 0 1 0-7.4 0ZM10.9 16.3H13.1L12 18.6Z"/><g fill="currentColor"><ellipse cx="7.7" cy="11.4" rx="1.9" ry="2.3"/><ellipse cx="16.3" cy="11.4" rx="1.9" ry="2.3"/></g>` : `<g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${outline}"/><path d="M5.5 11.8C6.7 13.8 8.7 13.8 9.9 11.8M14.1 11.8C15.3 13.8 17.3 13.8 18.5 11.8"/></g>`}</svg>`;
+}
+
+const copy = {
+  zh: {
+    lang: 'zh-CN', brand: '盖盖', other: 'EN', otherLabel: 'Read in English',
+    title: '盖盖 LidLid — MacBook 合盖不休眠，带着任务走',
+    description: 'Codex、Claude Code 任务还没跑完，你已经要出门？盖盖让 MacBook 合盖不休眠，本机任务继续运行。无需外接屏，开盖自动结束。免费下载，支持 M 系列 MacBook、macOS 14+。',
+    nav: ['为什么用盖盖', '三步上手', '支持'], download: '下载盖盖', demo: '看 20 秒演示',
+    eyebrow: 'MACBOOK 合盖不休眠', heading: '合上盖子，<br><em>带着任务走。</em>',
+    lead: 'Codex、Claude Code 还在工作，你已经要走。打开盖盖，让 Mac 本机的任务在合盖后继续运行。',
+    compat: '免费开源 · M 系列 MacBook · macOS 14+', artAlt: '场景插画：开发者单手携带合盖的 MacBook 出门', artLabel: '场景插画',
+    uiOn: '盖盖真实中文界面，已开启本次合盖不休眠', uiOff: '盖盖真实中文界面，已关闭本次合盖不休眠',
+    workIntro: '你的本机任务，继续进行', work: ['Codex', 'Claude Code', '编译', '下载'],
+    storyLabel: '任务没跑完，也能先出发', storyTitle: '从「托着走」，<br>到「拿着走」。',
+    storyLead: '不用双手托着开盖的电脑。去隔壁房间、换个工位，或是准备出门，都可以从容一点。',
+    storyAlt: '场景对比插画：左侧双手托着开盖电脑，右侧单手拿着合盖电脑离开',
+    imageNote: '移动办公场景插画。联网任务仍需可用的网络连接。',
+    features: [
+      ['clock', '一次开启，开盖结束', '只为本次合盖保持运行。重新开盖后自动关闭，下次需要时再开启。'],
+      ['laptop', '不用接外接屏', '面向 M 系列 MacBook，电池供电也能使用，轻装换个地方。'],
+      ['shield', '有分寸地保持运行', '可选最长保持时间；电池供电降至 10% 或出现严重高温时自动结束。'],
+    ],
+    interfaceLabel: '一个开关，就够了', interfaceTitle: '该继续时继续，<br>该休息时休息。',
+    interfaceLead: '点开菜单栏的猫头鹰，开启这一次。回来开盖，自动回到关闭状态。',
+    checks: ['睁眼开启，闭眼关闭', '中英文界面，跟随系统或自由切换', '免费开源，无需账号'],
+    interfaceLink: '看看怎么用', previewLabel: '真实界面预览，点击切换状态', on: '已开启', off: '已关闭',
+    guideLabel: '两分钟上手', guideTitle: '准备出发，只要三步。', guideLead: '先让本机任务跑起来，再打开盖盖。',
+    steps: [
+      ['下载，拖进应用程序', '打开 DMG，将「盖盖」拖入「应用程序」，再启动它。'],
+      ['打开本次合盖开关', '点击菜单栏猫头鹰，确认显示「已开启」，就可以合盖。'],
+      ['合盖带走，开盖结束', '带着电脑去下一个地方。再次开盖，本次自动结束。'],
+    ],
+    guideNote: '需要首次打开的帮助？', guideHelp: '查看安装与使用指南',
+    faqTitle: '你可能还想知道', faqLead: '更详细的安装说明和使用帮助，都在支持页面。', faqLink: '前往支持页面',
+    faq: [
+      ['MacBook 合盖后，Codex、Claude 还能继续运行吗？', '盖盖面向运行在 Mac 本机的 Codex、Claude Code、编译和下载任务。开启后，本机会在这次合盖期间保持唤醒；任务仍需要它所需的网络连接和用户授权。已经在云端执行的任务，可以独立运行。'],
+      ['需要插电或外接显示器吗？', '不需要外接显示器，电池供电也能使用。当前版本面向不连接外接屏的 M 系列 MacBook；电池供电降至 10% 时会结束本次。'],
+      ['可以合盖后直接放进包里吗？', '移动时请保持电脑通风。放入背包或保护套之前，先结束本次合盖不休眠。'],
+      ['Mac App Store 版本可以下载了吗？', 'Mac App Store 版本正在筹备，目前请使用本站提供的 DMG 下载入口。正式上架后，我们会在这里更新商店链接。'],
+    ],
+    closingTitle: '任务继续，<br>你也继续出发。', closingLead: '让下一次离开工位，少一点等待。',
+    storePending: 'Mac App Store 版本筹备中', storeAvailable: '在 Mac App Store 查看',
+    footer: ['隐私政策', '支持与帮助', 'GitHub'], footerLine: '为需要出发的你而做。',
+    skip: '跳到主要内容', close: '关闭演示', demoTitle: '盖盖 · 20 秒使用演示',
+    privacyTitle: '隐私政策', privacyMeta: '盖盖 LidLid 的隐私政策：本机偏好、诊断记录、官网托管与问题反馈。',
+    privacyIntro: '盖盖是一个在你的 Mac 本机运行的菜单栏工具。当前版本无需账号，不提供云端处理，也没有内置广告或分析统计。',
+    privacySections: [
+      ['应用会处理哪些信息', '<p>应用会在本机保存你选择的界面语言和最长保持时间，并读取合盖状态、电量、电源和系统温度状态，用于完成你开启的本次会话及相关保护。</p><p>本机还会保留开启、合盖、结束及恢复状态等诊断记录。盖盖不读取你的代码、文件内容或 Codex／Claude 对话。</p>'],
+      ['这些信息会上传吗', '<p>当前应用没有账号系统、广告 SDK、分析统计或网络服务，不会主动把上述本机偏好和诊断记录上传给开发者。</p>'],
+      ['访问官网时', '<p>本官网没有主动加入访客分析 SDK、营销 Cookie 或登录功能。网站由 Vercel 托管，托管平台会为交付页面、运行和安全处理 IP 地址、浏览器及请求等信息。相关处理可参考 <a href="https://vercel.com/legal/privacy-notice" target="_blank" rel="noopener noreferrer">Vercel 隐私说明</a>。</p>'],
+      ['下载和联系支持时', '<p>当前 DMG 下载和问题反馈由 GitHub 提供。访问这些外部页面、下载文件或提交反馈时，也适用 GitHub 自身的隐私政策。你主动提交的描述、机型、系统版本或截图，会用于协助处理问题；公开反馈中请不要包含密码、密钥或私人内容。</p>'],
+      ['如何联系开发者', '<p>盖盖由 Fei Kang 开发。有关隐私的问题，可以通过<a href="/support/">支持页面</a>所列的反馈入口联系我们。后续版本如改变信息处理方式，会更新本页面。</p>'],
+    ],
+    updated: '更新日期：2026 年 11 月 1 日',
+    supportTitle: '支持与使用指南', supportMeta: '盖盖 LidLid 支持：DMG 安装、首次打开、MacBook 合盖不休眠和常见问题。',
+    supportIntro: '从下载安装到合盖出发，跟着下面三步就好。遇到问题，也可以直接反馈给我们。',
+    feedback: '反馈问题或建议', installHeading: '安装与使用',
+    supportSteps: [
+      ['安装盖盖', '下载 DMG，打开后将「盖盖」拖入「应用程序」，再从「应用程序」启动。适用于 M 系列 MacBook、macOS 14 或更新版本，目前不支持 Intel Mac。'],
+      ['开启本次合盖不休眠', '先启动你需要继续运行的本机任务。点击菜单栏猫头鹰，打开开关，确认显示「已开启」后再合盖。请先断开外接显示器，并避免同时运行其他合盖控制工具。'],
+      ['重新开盖，自动结束', '再次开盖时，盖盖自动回到「已关闭」；你也可以手动关闭开关。最长保持时间可在开启前设为「直到开盖」或 30 分钟、1／2／4／8 小时。'],
+    ],
+    firstLaunch: '首次打开被 macOS 拦截', firstLaunchText: '当前 DMG 尚未经过 Apple 公证。如果首次打开被拦截，请在「系统设置 → 隐私与安全性」中检查并按系统提示允许打开。请使用本站提供的 GitHub Release 下载入口。',
+    supportFaq: [
+      ['怎样切换中文和英文？', '点开盖盖右上角「选项」，在「语言」中选择简体中文、English 或跟随系统，立即生效。'],
+      ['任务完成后会自动关闭吗？', '盖盖不读取 AI 对话，也不自动检测任务是否完成。开盖、手动关闭、达到所设时长或触发保护条件时，本次会话会结束。'],
+      ['为什么任务还是没有继续？', '先检查是否显示「已开启」、是否连接了外接屏、是否触发低电量或高温保护。任务本身仍可能需要网络连接或用户确认；切换 Wi-Fi、VPN 时也可能断开连接。'],
+      ['反馈问题时，需要提供什么？', '提供 MacBook 型号、macOS 版本、盖盖版本，以及出现问题时的操作步骤即可。请先遮住截图中的私人信息，不要上传代码、AI 对话、密钥或其他敏感内容。'],
+    ],
+    supportNote: '保持通风，放入包或保护套前先结束本次。联网任务仍需网络连接。',
+    privacyLink: '阅读隐私政策', back: '返回首页', notFound: '这一页走丢了。',
+  },
+  en: {
+    lang: 'en', brand: 'LidLid', other: '中文', otherLabel: '阅读中文版',
+    title: 'LidLid — Keep your MacBook awake with the lid closed',
+    description: 'Keep local Codex and Claude Code tasks, builds and downloads running with your MacBook lid closed. A simple menu bar app for Apple Silicon. Download free.',
+    nav: ['Why LidLid', 'Get started', 'Support'], download: 'Download for Mac', demo: 'Watch the 20s demo',
+    eyebrow: 'MACBOOK CLOSED-LID KEEP-AWAKE', heading: 'Close the lid.<br><em>Carry on.</em>',
+    lead: 'Codex or Claude Code is still working, but you need to go. Keep local work running while you close your MacBook and take it with you.',
+    compat: 'Free & open source · Apple Silicon · macOS 14+', artAlt: 'Illustration of a developer leaving with a closed MacBook in one hand', artLabel: 'Illustrated scene',
+    uiOn: 'Actual English LidLid interface with closed-lid keep-awake on', uiOff: 'Actual English LidLid interface with closed-lid keep-awake off',
+    workIntro: 'For the work running on your Mac', work: ['Codex', 'Claude Code', 'Builds', 'Downloads'],
+    storyLabel: 'YOUR TASK IS RUNNING. YOU NEED TO GO.', storyTitle: 'Less balancing.<br>More moving.',
+    storyLead: 'Stop carrying an open laptop in both hands. Move to another room, change desks, or head out with a little more freedom.',
+    storyAlt: 'Illustrated comparison: carrying an open MacBook in both hands, then a closed MacBook in one hand',
+    imageNote: 'Illustrated on-the-go scenes. Online tasks still need a working connection.',
+    features: [
+      ['clock', 'One session. Then back to normal.', 'Turn it on for this lid close. Reopening ends the session. Switch it on again next time you need it.'],
+      ['laptop', 'No external monitor needed.', 'Made for Apple Silicon MacBooks. Works on battery, so you can move with just your laptop.'],
+      ['shield', 'A little more peace of mind.', 'Choose a time limit. Sessions end at 10% on battery power or on serious thermal pressure.'],
+    ],
+    interfaceLabel: 'JUST ONE SWITCH', interfaceTitle: 'Keep going.<br>Then let it rest.',
+    interfaceLead: 'Open the owl in your menu bar and switch on. When you return and reopen the lid, LidLid goes back to Off.',
+    checks: ['Eyes open for On. Eyes closed for Off.', 'English and Chinese, ready when you are.', 'Free and open source. No account needed.'],
+    interfaceLink: 'See how it works', previewLabel: 'Actual interface preview. Select a state to view it.', on: 'On', off: 'Off',
+    guideLabel: 'TWO MINUTES TO GET STARTED', guideTitle: 'Ready to go in three steps.', guideLead: 'Start your local task, then turn on LidLid.',
+    steps: [
+      ['Download. Drag. Open.', 'Open the DMG, drag LidLid to Applications, then launch it.'],
+      ['Switch on for this lid close.', 'Click the owl in your menu bar. Wait until LidLid shows On, then close the lid.'],
+      ['Close and go. Reopen to finish.', 'Take your Mac to the next place. Reopening the lid ends the session automatically.'],
+    ],
+    guideNote: 'Need help with the first launch?', guideHelp: 'Read the setup guide',
+    faqTitle: 'A few good questions.', faqLead: 'More installation help and answers live on the support page.', faqLink: 'Visit support',
+    faq: [
+      ['Will Codex and Claude Code keep running with the lid closed?', 'LidLid is for Codex, Claude Code, builds and downloads running locally on your Mac. It keeps your Mac awake for this session. Tasks still need their required internet connection and user approvals. Jobs already running in the cloud can run independently.'],
+      ['Do I need power or an external monitor?', 'No external monitor is needed, and LidLid can run on battery. The current version is for Apple Silicon MacBooks without an external display connected. A session ends at 10% on battery power.'],
+      ['Can I put my running MacBook in a bag?', 'Keep your Mac ventilated while carrying it. End the session before putting it in a bag or sleeve.'],
+      ['Is LidLid available on the Mac App Store?', 'A Mac App Store version is planned. For now, use the DMG download on this site. We will add the store link when a listing is available.'],
+    ],
+    closingTitle: 'Your task carries on.<br>So can you.', closingLead: 'Make your next move with a little less waiting.',
+    storePending: 'Mac App Store version in preparation', storeAvailable: 'View on the Mac App Store',
+    footer: ['Privacy', 'Support', 'GitHub'], footerLine: 'Made for the moments you need to go.',
+    skip: 'Skip to content', close: 'Close demo', demoTitle: 'LidLid · 20-second demo',
+    privacyTitle: 'Privacy policy', privacyMeta: 'LidLid privacy: local preferences and diagnostics, website hosting and support requests.',
+    privacyIntro: 'LidLid runs locally on your Mac. The current version needs no account, provides no cloud processing, and includes no advertising or analytics SDK.',
+    privacySections: [
+      ['Information the app handles', '<p>The app stores your language and time-limit preferences locally. It reads lid state, battery level, power source and system thermal state to manage the session you enable and its protection conditions.</p><p>Local diagnostic records describe activation, lid events, ending and restoration. LidLid does not read your code, file contents, or Codex and Claude conversations.</p>'],
+      ['Does this information leave my Mac?', '<p>The current app has no account system, advertising SDK, analytics or network service. It does not automatically upload these preferences or diagnostic records to the developer.</p>'],
+      ['Visiting this website', '<p>This website includes no visitor analytics SDK, marketing cookies or sign-in. It is hosted by Vercel, which processes information such as IP addresses, browser details and requests for delivery, operation and security. See the <a href="https://vercel.com/legal/privacy-notice" target="_blank" rel="noopener noreferrer">Vercel Privacy Notice</a> for information about its processing.</p>'],
+      ['Downloads and support', '<p>Current DMG downloads and issue reports are provided through GitHub. Visiting those external pages, downloading files or submitting feedback is also subject to GitHub’s own privacy practices. Details you choose to send, such as a description, model, macOS version or screenshot, are used to help address your request. Do not include passwords, keys or private content in public reports.</p>'],
+      ['Contact and updates', '<p>LidLid is developed by Fei Kang. For privacy questions, use the feedback link on the <a href="/en/support/">support page</a>. This policy will be updated if a future version changes how information is handled.</p>'],
+    ],
+    updated: 'Updated November 1, 2026',
+    supportTitle: 'Support & getting started', supportMeta: 'LidLid support: DMG installation, first launch, MacBook closed-lid keep-awake and common questions.',
+    supportIntro: 'From download to your next move, follow these three steps. If something gets in the way, send us feedback.',
+    feedback: 'Report a problem or share feedback', installHeading: 'Install and use',
+    supportSteps: [
+      ['Install LidLid', 'Download the DMG, drag LidLid into Applications, then launch it from Applications. Requires an Apple Silicon MacBook and macOS 14 or later. Intel Macs are not currently supported.'],
+      ['Turn on this session', 'Start the local task you want to keep running. Click the owl in your menu bar, turn on the switch and wait for On before closing the lid. Disconnect external displays and use one lid-sleep controller at a time.'],
+      ['Reopen to finish', 'Reopening returns LidLid to Off. You can also switch it off manually. Before enabling, choose Until reopened or a limit of 30 minutes, 1, 2, 4 or 8 hours.'],
+    ],
+    firstLaunch: 'If macOS blocks the first launch', firstLaunchText: 'The current DMG is not notarized. If the first launch is blocked, review it in System Settings → Privacy & Security and follow the system prompts to allow it. Use the GitHub Release download linked from this site.',
+    supportFaq: [
+      ['How do I change the language?', 'Open Options → Language and select English, 简体中文 or System default. The interface changes immediately.'],
+      ['Does it detect when my task finishes?', 'LidLid does not read AI conversations or automatically detect task completion. Reopening, manual off, the selected time limit or a protection condition ends the session.'],
+      ['Why did my task stop anyway?', 'Check that LidLid showed On, no external display was connected, and no battery or thermal condition ended the session. Tasks may still need an internet connection or your approval. Changing Wi-Fi networks or VPNs can also interrupt connections.'],
+      ['What should I include in a report?', 'Share your MacBook model, macOS version, LidLid version and the steps that caused the issue. Redact personal information in screenshots. Do not upload code, AI conversations, keys or other sensitive content.'],
+    ],
+    supportNote: 'Keep your Mac ventilated. End the session before putting it in a bag or sleeve. Online tasks still need a connection.',
+    privacyLink: 'Read the privacy policy', back: 'Back to home', notFound: 'This page took a different path.',
+  },
+};
+
+function header(locale, page) {
+  const t = copy[locale], route = routes[locale], other = locale === 'zh' ? 'en' : 'zh';
+  return `<a class="skip" href="#main">${t.skip}</a><header class="site-header"><div class="wrap nav"><a class="brand" href="${route.home}" aria-label="${t.brand} ${locale === 'zh' ? '首页' : 'home'}"><img src="/assets/icon.png" width="37" height="37" alt="">${t.brand}${locale === 'zh' ? '<small>LidLid</small>' : ''}</a><nav class="nav-links" aria-label="${locale === 'zh' ? '主要导航' : 'Main navigation'}"><a href="${route.home}#why">${t.nav[0]}</a><a href="${route.home}#get-started">${t.nav[1]}</a><a href="${route.support}"${page === 'support' ? ' aria-current="page"' : ''}>${t.nav[2]}</a></nav><div class="nav-actions"><a class="language" href="${routes[other][page]}" lang="${copy[other].lang}" aria-label="${t.otherLabel}">${t.other}</a><a class="button small" href="${e(site.download)}">${t.download}${downloadIcon}</a></div></div></header>`;
+}
+function storeEntry(t) {
+  return site.appStoreUrl ? `<a class="store-pending" href="${e(site.appStoreUrl)}">${t.storeAvailable} ${arrow}</a>` : `<p class="store-pending">${t.storePending}</p>`;
+}
+function footer(locale) {
+  const t = copy[locale], route = routes[locale];
+  return `<footer class="site-footer"><div class="wrap"><div class="footer-top"><a class="brand" href="${route.home}"><img src="/assets/icon.png" width="31" height="31" alt="">${t.brand}</a><nav class="footer-links" aria-label="${locale === 'zh' ? '页脚导航' : 'Footer navigation'}"><a href="${route.privacy}">${t.footer[0]}</a><a href="${route.support}">${t.footer[1]}</a><a class="external" href="${site.github}" target="_blank" rel="noopener noreferrer">${t.footer[2]} ↗</a></nav></div><div class="footer-bottom"><p>© 2026 ${site.developer} · ${t.brand}</p><p>${t.footerLine}</p></div></div></footer>`;
+}
+function faq(items) {
+  return `<div class="faq-list">${items.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`;
+}
+function home(locale) {
+  const t = copy[locale], route = routes[locale], asset = locale;
+  return `<main id="main"><section class="wrap hero"><div class="hero-copy"><div class="eyebrow">${t.eyebrow}</div><h1>${t.heading}</h1><p>${t.lead}</p><div class="hero-actions"><a class="button" href="${e(site.download)}">${downloadIcon}${t.download}</a><button class="button secondary" type="button" data-play-demo>${play}${t.demo}</button></div><p class="compat">${t.compat}</p></div><div class="hero-visual"><div class="hero-art"><img src="/assets/hero-${asset}.jpg" width="1400" height="700" alt="${t.artAlt}" fetchpriority="high"></div><span class="art-caption">${t.artLabel}</span><div class="hero-app"><img src="/assets/interface-on-${asset}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" alt="${t.uiOn}"></div></div></section><div class="wrap work-types"><span>${t.workIntro}</span><ul>${t.work.map(word => `<li>${word}</li>`).join('')}</ul></div><section class="wrap section" id="why"><div class="section-heading"><div><span class="overline">${t.storyLabel}</span><h2>${t.storyTitle}</h2></div><p>${t.storyLead}</p></div><div class="story-picture"><img src="/assets/story-${asset}.jpg" width="1400" height="700" loading="lazy" alt="${t.storyAlt}"></div><p class="image-note">${t.imageNote}</p><div class="feature-strip">${t.features.map(([kind, title, body]) => `<div class="feature">${roundIcon(kind)}<h3>${title}</h3><p>${body}</p></div>`).join('')}</div></section><section class="section interface-section"><div class="wrap interface-grid"><div class="interface-stage"><div class="interface-image-wrap" id="interface-panel" role="tabpanel" aria-labelledby="preview-on"><img data-interface-preview data-on-width="${uiSizes[locale].on[0]}" data-on-height="${uiSizes[locale].on[1]}" data-off-width="${uiSizes[locale].off[0]}" data-off-height="${uiSizes[locale].off[1]}" src="/assets/interface-on-${asset}.jpg" data-on="/assets/interface-on-${asset}.jpg" data-off="/assets/interface-off-${asset}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" loading="lazy" alt="${t.uiOn}"></div><div class="state-tabs" role="tablist" aria-label="${t.previewLabel}"><button id="preview-on" role="tab" type="button" aria-selected="true" aria-controls="interface-panel" data-preview-state="on" data-image-alt="${t.uiOn}">${owl(true)}${t.on}</button><button id="preview-off" role="tab" type="button" aria-selected="false" aria-controls="interface-panel" tabindex="-1" data-preview-state="off" data-image-alt="${t.uiOff}">${owl(false)}${t.off}</button></div><p class="preview-caption">${t.previewLabel}</p></div><div class="interface-copy"><span class="overline">${t.interfaceLabel}</span><h2>${t.interfaceTitle}</h2><p>${t.interfaceLead}</p><ul class="check-list">${t.checks.map(item => `<li>${item}</li>`).join('')}</ul><a class="text-link" href="#get-started">${t.interfaceLink}${arrow}</a></div></div></section><section class="wrap section" id="get-started"><div class="section-heading"><div><span class="overline">${t.guideLabel}</span><h2>${t.guideTitle}</h2></div><p>${t.guideLead}</p></div><ol class="steps" style="list-style:none;padding-left:0">${t.steps.map(([title, body], index) => `<li><span class="step-number">0${index + 1}</span><h3>${title}</h3><p>${body}</p></li>`).join('')}</ol><p class="guide-note">${t.guideNote} <a class="text-link" href="${route.support}#install">${t.guideHelp} ${arrow}</a></p></section><section class="wrap section faq-layout"><div class="faq-heading"><span class="overline">FAQ</span><h2>${t.faqTitle}</h2><p>${t.faqLead}</p><a class="text-link" href="${route.support}">${t.faqLink}${arrow}</a></div>${faq(t.faq)}</section><section class="wrap closing" id="app-store"><div><h2>${t.closingTitle}</h2><p>${t.closingLead}</p></div><div class="closing-actions"><a class="button light" href="${e(site.download)}">${downloadIcon}${t.download}</a>${storeEntry(t)}</div></section></main><dialog id="demo-dialog" aria-labelledby="demo-heading"><div class="dialog-head"><h2 id="demo-heading">${t.demoTitle}</h2><button type="button" class="dialog-close" data-close-dialog aria-label="${t.close}">×</button></div><video class="demo-video" controls playsinline preload="none" poster="/assets/hero-${asset}.jpg"><source src="/assets/demo-${asset}.mp4" type="video/mp4"></video></dialog>`;
+}
+function privacy(locale) {
+  const t = copy[locale];
+  return `<main id="main" class="wrap"><article class="document"><span class="overline">${t.brand} · PRIVACY</span><h1>${t.privacyTitle}</h1><p class="updated">${t.updated}</p><p class="intro">${t.privacyIntro}</p>${t.privacySections.map(([title, body]) => `<section><h2>${title}</h2>${body}</section>`).join('')}</article></main>`;
+}
+function support(locale) {
+  const t = copy[locale], route = routes[locale];
+  return `<main id="main" class="wrap"><article class="document"><span class="overline">${t.brand} · SUPPORT</span><h1>${t.supportTitle}</h1><p class="intro">${t.supportIntro}</p><div class="support-actions"><a class="button" href="${e(site.download)}">${downloadIcon}${t.download}</a><a class="button secondary" href="${site.support}" target="_blank" rel="noopener noreferrer">${t.feedback} ${arrow}</a></div><h2 id="install">${t.installHeading}</h2><ol class="support-steps">${t.supportSteps.map(([title, body]) => `<li><strong>${title}</strong>${body}</li>`).join('')}</ol><div class="support-media"><img src="/assets/interface-on-${locale}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" alt="${t.uiOn}"></div><section><h2>${t.firstLaunch}</h2><p>${t.firstLaunchText}</p></section><section><h2>${t.faqTitle}</h2>${faq(t.supportFaq)}</section><p class="notice">${t.supportNote}</p><a class="text-link" href="${route.privacy}">${t.privacyLink}${arrow}</a></article></main>`;
+}
+function schema(locale, page) {
+  const t = copy[locale], url = base + routes[locale][page];
+  const graph = [{ '@type': 'WebSite', '@id': base + '/#website', name: 'LidLid', alternateName: '盖盖', url: base + '/' }, { '@type': 'WebPage', '@id': url + '#webpage', url, name: page === 'home' ? t.title : page === 'privacy' ? t.privacyTitle : t.supportTitle, inLanguage: t.lang, isPartOf: { '@id': base + '/#website' } }];
+  if (page === 'home') graph.push({ '@type': 'SoftwareApplication', name: 'LidLid', alternateName: '盖盖', applicationCategory: 'UtilitiesApplication', operatingSystem: 'macOS 14 or later; Apple Silicon MacBook', softwareVersion: site.version, url, description: t.description, image: `${base}/assets/hero-${locale}.jpg`, screenshot: `${base}/assets/interface-on-${locale}.jpg`, downloadUrl: site.download, author: { '@type': 'Person', name: site.developer }, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', url: site.download } }, { '@type': 'FAQPage', mainEntity: t.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: plain(a) } })) });
+  return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
+}
+function layout(locale, page, body) {
+  const t = copy[locale], canonical = base + routes[locale][page];
+  const title = page === 'home' ? t.title : `${page === 'privacy' ? t.privacyTitle : t.supportTitle} — ${locale === 'zh' ? '盖盖 · LidLid' : 'LidLid'}`;
+  const description = page === 'home' ? t.description : page === 'privacy' ? t.privacyMeta : t.supportMeta;
+  return `<!doctype html><html lang="${t.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${e(title)}</title><meta name="description" content="${e(description)}"><meta name="theme-color" content="#fbfaf6"><link rel="canonical" href="${canonical}"><link rel="alternate" hreflang="zh-CN" href="${base + routes.zh[page]}"><link rel="alternate" hreflang="en" href="${base + routes.en[page]}"><link rel="alternate" hreflang="x-default" href="${base + routes.zh[page]}"><meta property="og:type" content="website"><meta property="og:title" content="${e(title)}"><meta property="og:description" content="${e(description)}"><meta property="og:url" content="${canonical}"><meta property="og:site_name" content="LidLid · 盖盖"><meta property="og:locale" content="${locale === 'zh' ? 'zh_CN' : 'en_US'}"><meta property="og:image" content="${base}/assets/hero-${locale}.jpg"><meta property="og:image:width" content="1400"><meta property="og:image:height" content="700"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${e(title)}"><meta name="twitter:description" content="${e(description)}"><meta name="twitter:image" content="${base}/assets/hero-${locale}.jpg"><link rel="icon" type="image/png" href="/assets/favicon.png"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png"><link rel="stylesheet" href="/site.css"><script type="application/ld+json">${schema(locale, page)}</script><script src="/site.js" defer></script></head><body>${header(locale, page)}${body}${footer(locale)}</body></html>`;
+}
+
+await rm(out, { recursive: true, force: true });
+await mkdir(out, { recursive: true });
+await cp(path.join(root, 'public'), out, { recursive: true });
+const pages = [];
+for (const locale of ['zh', 'en']) {
+  for (const page of ['home', 'privacy', 'support']) {
+    const route = routes[locale][page];
+    const directory = path.join(out, route);
+    await mkdir(directory, { recursive: true });
+    const html = layout(locale, page, page === 'home' ? home(locale) : page === 'privacy' ? privacy(locale) : support(locale));
+    await writeFile(path.join(directory, 'index.html'), html);
+    pages.push({ locale, page, route });
+  }
+}
+const notFound = layout('zh', 'home', `<main class="wrap not-found" id="main"><h1>404</h1><p>${copy.zh.notFound} / Page not found.</p><a class="button" href="/">${copy.zh.back}${arrow}</a></main>`)
+  .replace(/<title>.*?<\/title>/, '<title>404 · 盖盖 LidLid</title>')
+  .replace(/<script type="application\/ld\+json">.*?<\/script>/, '')
+  .replace('<meta name="theme-color"', '<meta name="robots" content="noindex"><meta name="theme-color"');
+await writeFile(path.join(out, '404.html'), notFound);
+await writeFile(path.join(out, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${base}/sitemap.xml\n`);
+await writeFile(path.join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${pages.map(({ page, route }) => `<url><loc>${base + route}</loc><lastmod>${site.updated}</lastmod><xhtml:link rel="alternate" hreflang="zh-CN" href="${base + routes.zh[page]}"/><xhtml:link rel="alternate" hreflang="en" href="${base + routes.en[page]}"/></url>`).join('')}</urlset>`);
+console.log(`Built ${pages.length} localized pages, 404, sitemap and robots for ${base}`);

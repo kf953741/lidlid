@@ -6,6 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg">下载盖盖 DMG</a> ·
+  <a href="https://lidlid.vercel.app/">官网</a> ·
   <a href="docs/USAGE.zh-CN.md">上手教程</a> ·
   <a href="README.md">English</a>
 </p>
