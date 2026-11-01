@@ -1,6 +1,6 @@
 import AppKit
 
-/// Compile with OwlMenuSymbol.swift to render the exact production vectors.
+/// Compile with GuardianMenuSymbol.swift to render the exact production vectors.
 @main
 struct MenuSymbolPreview {
     static func main() throws {
@@ -30,8 +30,8 @@ struct MenuSymbolPreview {
         text(chinese ? "闭眼休息，睁眼工作。" : "Eyes closed to rest. Eyes wide open to work.", 54, 65, 13, secondary)
         text(chinese ? "已关闭 / Off" : "Off", 215, 103, 17, ink, .medium)
         text(chinese ? "已开启 / On" : "On", 615, 103, 17, ink, .medium)
-        OwlMenuSymbol.draw(.off, in: rect(238, 145, 64, 64), color: ink)
-        OwlMenuSymbol.draw(.on, in: rect(638, 145, 64, 64), color: ink)
+        GuardianMenuSymbol.draw(.off, in: rect(238, 145, 64, 64), color: ink)
+        GuardianMenuSymbol.draw(.on, in: rect(638, 145, 64, 64), color: ink)
         text(chinese ? "轻轮廓 · 闭眼" : "Light outline · Closed eyes", 208, 228, 13, secondary)
         text(chinese ? "实心轮廓 · 大圆眼" : "Solid silhouette · Wide eyes", 596, 228, 13, secondary)
         for dark in [false, true] {
@@ -41,8 +41,8 @@ struct MenuSymbolPreview {
             let foreground: NSColor = dark ? .white : .black
             text(chinese ? (dark ? "深色菜单栏" : "浅色菜单栏") : (dark ? "Dark menu bar" : "Light menu bar"),
                 78, top + 25, 12, foreground.withAlphaComponent(0.75))
-            OwlMenuSymbol.draw(.off, in: rect(260, top + 27, 18, 18), color: foreground)
-            OwlMenuSymbol.draw(.on, in: rect(660, top + 27, 18, 18), color: foreground)
+            GuardianMenuSymbol.draw(.off, in: rect(260, top + 27, 18, 18), color: foreground)
+            GuardianMenuSymbol.draw(.on, in: rect(660, top + 27, 18, 18), color: foreground)
             text(chinese ? "关闭" : "Off", 292, top + 25, 12, foreground)
             text(chinese ? "开启" : "On", 692, top + 25, 12, foreground)
         }

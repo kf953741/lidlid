@@ -1,6 +1,6 @@
 LidLid is a menu bar utility for Apple Silicon MacBooks running macOS 14 or later. It requires a built-in lid sensor and battery; please review on a MacBook rather than a desktop Mac or Intel Mac. No account, demo credentials or in-app purchase is required by this build.
 
-The app has no Dock icon. Launching it opens its menu bar popover. Click the owl in the menu bar to reopen it. Language can be changed in Options.
+The app has no Dock icon. Launching it opens its menu bar popover. Click the LidLid icon in the menu bar to reopen it. Language can be changed in Options.
 
 To review the core feature:
 1. Use a MacBook with its lid open and no external display connected. Battery operation is supported; if testing on battery, use a charge above 10%.

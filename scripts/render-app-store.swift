@@ -63,7 +63,7 @@ func footer(_ chinese: Bool) {
 }
 
 func header(_ chinese: Bool, _ page: Int) {
-    draw(load("Resources/AppIcon.png"), 86, 57, 52)
+    draw(load("docs/assets/app-icon.png"), 86, 57, 52)
     text(chinese ? "盖盖 · LidLid" : "LidLid", 153, 70, 450, 42, 25, ink, .semibold)
     text(String(format: "%02d / 04", page), 1266, 75, 100, 27, 15, muted, .medium)
 }

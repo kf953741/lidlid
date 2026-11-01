@@ -1,0 +1,9 @@
+{
+  "generator": "built-in image_gen",
+  "purpose": "Replace embedded legacy owl icon only, retaining localized campaign text and scene",
+  "prompt": "Use case: precise-object-edit.\nEdit ONLY the small app icon at the upper left of IMAGE 1 (the wide marketing illustration).\nReplace the existing OWL icon with the EXACT approved blue plush guardian holding up a laptop shown in IMAGE 2. Fit the full new icon artwork into the same small rounded-square icon position at the same scale. It must be recognizably the supplied blue character-and-laptop icon, not an owl or a generic blue dot.\nIMAGE 1 is the EDIT TARGET. IMAGE 2 is the replacement icon reference only; do not change its identity, palette or create a new mascot.\nEverything else in IMAGE 1 is locked: keep the wide 2:1 aspect ratio, layout, all typography and exact words, character identity and walking pose, the closed laptop in his hand, background plants, windows, palette, lighting and composition. Do not move text, rewrite any copy, add labels or change the illustration. No other edits.\nPreserve all current English or Chinese text exactly as it appears in image 1, including the brand name. One wide edited banner only, not a board or mockup.",
+  "localizedFiles": [
+    "hero-mobility.png",
+    "zh-CN/hero-mobility.png"
+  ]
+}

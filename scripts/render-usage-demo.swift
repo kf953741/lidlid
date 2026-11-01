@@ -69,10 +69,10 @@ for language in ["zh-CN", "en"] {
     let after = walkingImage(artwork, right: true)
     let screenshots = ["off", "on", "reopened"].map { image("docs/assets/\(language)/demo-\($0).jpg") }
     let titles = chinese ? [
-        "任务还在跑，\n你已经要走了。", "点开菜单栏的\n猫头鹰。", "打开开关，\n这次合盖不休眠。",
+        "任务还在跑，\n你已经要走了。", "点开菜单栏的\n盖盖图标。", "打开开关，\n这次合盖不休眠。",
         "合上电脑，\n从容出发。", "再次开盖，\n本次自动结束。", "合上盖子，\n带着任务走。",
     ] : [
-        "Task still running?\nTime to head out.", "Open the owl\nin your menu bar.", "Switch it on.\nClose the lid.",
+        "Task still running?\nTime to head out.", "Open LidLid\nin your menu bar.", "Switch it on.\nClose the lid.",
         "Carry your Mac.\nLet the work continue.", "Reopen the lid.\nThe session ends.", "Close the lid.\nCarry on.",
     ]
     let details = chinese ? [

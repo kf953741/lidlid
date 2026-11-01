@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/assets/app-icon.png" width="72" alt="LidLid owl app icon"></p>
+<p align="center"><img src="docs/assets/app-icon.png" width="72" alt="LidLid blue guardian app icon"></p>
 
 <h1 align="center">LidLid · 盖盖<br>Keep your MacBook awake with the lid closed</h1>
 
@@ -43,7 +43,7 @@
 <details>
 <summary>Menu-bar icons and workflow</summary>
 
-![Owl menu-bar icons: closed eyes when off, open eyes when on.](docs/assets/en/menu-states.png)
+![Guardian menu-bar icons: closed eyes when off, open eyes when on.](docs/assets/en/menu-states.png)
 
 ![LidLid workflow: enable, close the lid, reopen to end the session automatically.](docs/assets/workflow.svg)
 
@@ -54,7 +54,7 @@
 For **Apple Silicon (M-series) MacBooks on macOS 14 or later**, without an external display connected. Intel Macs are not currently supported.
 
 1. [Download the DMG](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg), drag LidLid into **Applications**, then launch it.
-2. Click the owl in your menu bar, turn on the switch and wait for **On**.
+2. Click the LidLid icon in your menu bar, turn on the switch and wait for **On**.
 3. Close the lid and take your Mac with you. Reopening ends the session; you can also switch it off manually.
 
 For first-launch help and language settings, see the [two-minute setup guide](docs/USAGE.md).

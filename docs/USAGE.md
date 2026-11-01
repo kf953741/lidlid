@@ -12,7 +12,7 @@ Your task is still running, but you need to go. With LidLid, turn on one switch,
 
 LidLid is for **Apple Silicon MacBook Air and MacBook Pro, macOS 14 or later**. No external monitor is needed. Intel Macs are not currently supported.
 
-Open the [DMG installer](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg), drag LidLid into **Applications**, then launch it. Look for the owl in your menu bar.
+Open the [DMG installer](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg), drag LidLid into **Applications**, then launch it. Look for the LidLid icon in your menu bar.
 
 This build is not notarized. If macOS blocks the first launch, review and allow it in System Settings → Privacy & Security.
 
@@ -23,10 +23,10 @@ This build is not notarized. If macOS blocks the first launch, review and allow 
 
 ## 2. Switch on while your task is running
 
-Start your local Codex or Claude Code task, build or download as usual. When you need to leave, click the owl and turn on **Keep awake for this lid close**. Wait until LidLid shows **On**, then close the lid.
+Start your local Codex or Claude Code task, build or download as usual. When you need to leave, click the LidLid icon and turn on **Keep awake for this lid close**. Wait until LidLid shows **On**, then close the lid.
 
 <p align="center">
-  <img src="assets/en/demo-off.jpg" width="320" alt="Actual English LidLid interface: switch off, owl eyes closed">
+  <img src="assets/en/demo-off.jpg" width="320" alt="Actual English LidLid interface: switch off, guardian eyes closed">
   <img src="assets/en/demo-on.jpg" width="320" alt="Actual English LidLid interface: keep awake enabled, showing On">
 </p>
 
@@ -36,7 +36,7 @@ The default **Time limit** is **Until reopened**. Before switching on, you can c
 
 Close your MacBook and take it with you. When you open the lid again, LidLid returns to **Off** automatically. Turn it on again next time you need it. You can also switch it off manually at any time.
 
-<p align="center"><img src="assets/en/demo-reopened.jpg" width="340" alt="Actual interface after reopening: Off, session complete, next lid close sleeps normally"></p>
+<p align="center"><img src="assets/en/demo-reopened.jpg" width="340" alt="LidLid Off state: the session has ended"></p>
 
 Keep your Mac ventilated while carrying it; end the session before putting it in a bag or sleeve. Online tasks still need a connection. Switching Wi-Fi networks or VPNs can interrupt them. LidLid ends the session at 10% on battery power or on serious thermal pressure.
 

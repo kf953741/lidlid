@@ -9,16 +9,7 @@ SIGN_IDENTITY="${LIDLID_CODE_SIGN_IDENTITY:--}"
 mkdir -p "$APP/Contents/Helpers" "$APP/Contents/MacOS" "$APP/Contents/Resources" "$SCRATCH/LidLid.iconset"
 cp "$BIN_DIR/LidOnce" "$APP/Contents/MacOS/LidLid"
 cp "$BIN_DIR/LidOnceAgent" "$APP/Contents/Helpers/LidLidAgent"
-if [[ -f "$ROOT/Resources/AppIcon.png" ]]; then
-    cp "$ROOT/Resources/AppIcon.png" "$SCRATCH/icon.png"
-else
-    swift "$ROOT/scripts/icon.swift" "$SCRATCH/icon.png"
-fi
-for size in 16 32 128 256 512; do
-    sips -z "$size" "$size" "$SCRATCH/icon.png" --out "$SCRATCH/LidLid.iconset/icon_${size}x${size}.png" >/dev/null
-    double=$((size * 2))
-    sips -z "$double" "$double" "$SCRATCH/icon.png" --out "$SCRATCH/LidLid.iconset/icon_${size}x${size}@2x.png" >/dev/null
-done
+swift "$ROOT/scripts/export-brand-assets.swift" iconset "$ROOT/Resources/AppIcon.png" "$SCRATCH/LidLid.iconset"
 iconutil -c icns "$SCRATCH/LidLid.iconset" -o "$APP/Contents/Resources/LidLid.icns"
 for localization in en zh-Hans; do
     ditto "$ROOT/Resources/$localization.lproj" "$APP/Contents/Resources/$localization.lproj"

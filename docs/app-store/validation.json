@@ -1,6 +1,6 @@
 {
   "version": "1.3.0",
-  "build": "6",
+  "build": "7",
   "publicSupportEmail": "kf953741@gmail.com",
   "screenshots": [
     {
@@ -73,7 +73,7 @@
       "name": 29,
       "subtitle": 24,
       "promotional_text": 160,
-      "description": 1897,
+      "description": 1909,
       "release_notes": 202,
       "keywordBytes": 82
     }

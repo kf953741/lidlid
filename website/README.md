@@ -30,6 +30,7 @@ The project builds this directory with Node.js 24 and serves `dist/`. Production
 - `build.mjs` contains the localized page copy and generates the canonical URLs, alternate language links, structured data, sitemap and robots file.
 - `privacy-copy.mjs` is the shared source for the public privacy pages and the Mac App Store policy exports in `docs/app-store/`.
 - `public/` holds the shared CSS/JavaScript and optimized copies of the existing project artwork and actual app screenshots. Walking scenes are illustrations; videos combine those illustrations with native captures.
+- The approved icon master is `Resources/AppIcon.png` at the repository root. `scripts/export-brand-assets.swift` exports the website icons and native macOS iconset; `scripts/export-ui-captures.swift` exports the localized captures and `ui-sizes.json` so preview dimensions match the real images. The build fingerprints icon URLs to refresh cached branding.
 - Add `appStoreUrl` only after the listing is available. Update download copy, version, pricing metadata and privacy text to match the released app when distribution changes.
 
 Public pages:

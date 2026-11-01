@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/assets/app-icon.png" width="72" alt="盖盖 · LidLid 猫头鹰图标"></p>
+<p align="center"><img src="docs/assets/app-icon.png" width="72" alt="盖盖 · LidLid 蓝色绒团图标"></p>
 
 <h1 align="center">盖盖 · LidLid<br>MacBook 合盖不休眠</h1>
 
@@ -43,7 +43,7 @@
 <details>
 <summary>查看菜单栏图标与使用流程</summary>
 
-![猫头鹰菜单栏图标：闭眼为关闭，睁眼为开启。](docs/assets/zh-CN/menu-states.png)
+![小绒团菜单栏图标：闭眼为关闭，睁眼为开启。](docs/assets/zh-CN/menu-states.png)
 
 ![盖盖使用流程：开启本次、合上盖子、再次开盖后自动结束。](docs/assets/workflow.zh-CN.svg)
 
@@ -54,7 +54,7 @@
 适用于 **M 系列 MacBook、macOS 14 或更新版本**，不连接外接屏。目前不支持 Intel Mac。
 
 1. [下载 DMG](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg)，打开后将「盖盖」拖入「应用程序」，再打开它。
-2. 点击菜单栏猫头鹰，打开开关，确认显示「**已开启**」。
+2. 点击菜单栏图标，打开开关，确认显示「**已开启**」。
 3. 合盖带走，开盖自动结束。也可以随时手动关闭开关。
 
 首次打开被 macOS 拦截、切换语言等操作，见[两分钟上手教程](docs/USAGE.zh-CN.md)。

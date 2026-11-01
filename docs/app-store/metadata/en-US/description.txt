@@ -15,7 +15,7 @@ Set a boundary for this session
 Choose 30 minutes, 1, 2, 4 or 8 hours, or keep the session until you reopen the lid. With a time limit, the session ends when you reopen the lid or reach the limit, whichever comes first.
 
 Small controls. Clear state.
-• An owl in your menu bar: open eyes when on, closed eyes when off
+• A guardian in your menu bar: open eyes when on, closed eyes when off
 • Ends at 10% battery while running on battery power
 • Ends when macOS reports serious or critical thermal pressure
 • Optional launch at login
@@ -23,7 +23,7 @@ Small controls. Clear state.
 • No account, advertising or tracking; preferences and diagnostic records stay on your Mac
 
 Getting started
-1. Open the owl in your menu bar.
+1. Open the LidLid icon in your menu bar.
 2. Switch on and wait for On.
 3. Close the lid. Reopening ends the session.
 

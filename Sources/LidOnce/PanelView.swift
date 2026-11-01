@@ -34,7 +34,7 @@ struct PanelView: View {
     private var main: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 8) {
-                Image(nsImage: OwlMenuSymbol.image(for: model.enabled ? .on : .off, size: 20))
+                Image(nsImage: GuardianMenuSymbol.image(for: model.enabled ? .on : .off, size: 20))
                     .renderingMode(.template)
                     .foregroundStyle(PanelStyle.accent)
                     .accessibilityHidden(true)

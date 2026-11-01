@@ -58,7 +58,7 @@ for (const size of [16, 32, 128, 256, 512]) for (const scale of [1, 2]) {
   images.push({ size: `${size}x${size}`, idiom: 'mac', filename, scale: `${scale}x` });
 }
 await writeFile(path.join(iconDir, 'Contents.json'), JSON.stringify({ images, info: { version: 1, author: 'xcode' } }, null, 2) + '\n');
-await copyFile(path.join(iconDir, 'icon_512x512@2x.png'), path.join(out, 'assets/AppIcon-1024.png'));
+await copyFile(path.join(root, 'Resources/AppIcon.png'), path.join(out, 'assets/AppIcon-1024.png'));
 await copyFile(path.join(root, 'dist/LidLid.app/Contents/Resources/LidLid.icns'), path.join(out, 'assets/LidLid.icns'));
 await copyFile(path.join(root, 'Resources/PrivacyInfo.xcprivacy'), path.join(out, 'privacy/PrivacyInfo.xcprivacy'));
 await writeFile(path.join(out, 'validation.json'), JSON.stringify(report, null, 2) + '\n');

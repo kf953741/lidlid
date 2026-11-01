@@ -12,7 +12,7 @@
 
 盖盖适用于 **M 系列 MacBook Air／MacBook Pro、macOS 14 或更新版本**。不需要外接显示器，目前不支持 Intel Mac。
 
-打开 [DMG 安装包](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg)，把「盖盖」拖入「应用程序」，再打开它。菜单栏会出现一只猫头鹰。
+打开 [DMG 安装包](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg)，把「盖盖」拖入「应用程序」，再打开它。菜单栏会出现一只盖盖图标。
 
 安装包尚未经过 Apple 公证。如果首次打开被拦截，请在「系统设置 → 隐私与安全性」检查并确认打开。
 
@@ -23,10 +23,10 @@
 
 ## 2. 任务在跑时，打开盖盖开关
 
-先照常在 Mac 本机启动 Codex、Claude Code、编译或下载任务。准备走时，点击菜单栏的猫头鹰，打开「**本次合盖不休眠**」。看到「**已开启**」，就可以合盖。
+先照常在 Mac 本机启动 Codex、Claude Code、编译或下载任务。准备走时，点击菜单栏图标，打开「**本次合盖不休眠**」。看到「**已开启**」，就可以合盖。
 
 <p align="center">
-  <img src="assets/zh-CN/demo-off.jpg" width="320" alt="盖盖真实中文界面：开关关闭，猫头鹰闭眼">
+  <img src="assets/zh-CN/demo-off.jpg" width="320" alt="盖盖真实中文界面：开关关闭，小绒团闭眼">
   <img src="assets/zh-CN/demo-on.jpg" width="320" alt="盖盖真实中文界面：打开本次合盖不休眠，显示已开启">
 </p>
 

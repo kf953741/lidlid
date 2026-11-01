@@ -201,9 +201,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         status?.button?.setAccessibilityLabel(model.brandName)
         status?.button?.image = model.state.error
             ? NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: model.text(model.state.message))
-            : OwlMenuSymbol.image(for: model.enabled ? .on : .off)
+            : GuardianMenuSymbol.image(for: model.enabled ? .on : .off)
         if !model.state.error {
-            status?.button?.image?.accessibilityDescription = model.text(OwlMenuSymbol.label(model.enabled ? .on : .off))
+            status?.button?.image?.accessibilityDescription = model.text(GuardianMenuSymbol.label(model.enabled ? .on : .off))
         }
         status?.button?.title = ""
         status?.button?.toolTip = "\(model.brandName) · \(model.title)"
