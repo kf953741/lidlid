@@ -10,6 +10,8 @@
 - review-notes.en.txt 是审核说明；中文说明供核对，不包含个人审核联系方式。
 - assets 中提供现有品牌图标的标准尺寸导出和 AppIcon.appiconset。
 
+公开客服邮箱：[kf953741@gmail.com](mailto:kf953741@gmail.com)。客服与隐私咨询统一通过邮件联系。
+
 ## 仍需开发者填写或完成
 
 | 项目 | 状态与处理 |
@@ -17,7 +19,6 @@
 | Apple Developer 会员、Team ID、App Store Connect 应用记录 | 使用自己的开发者账户核实和创建 |
 | Bundle ID | 当前为 dev.kf.lidonce，注册后与构建保持一致 |
 | 名称可用性、SKU | 创建应用时核实；建议内部 SKU 为 LIDLID_MAC |
-| 公开客服邮箱 | 尚未提供；现有支持入口是 GitHub Issue，提交前补齐合适的直接联系方式 |
 | Apple 审核联系人姓名、电话、邮箱 | 提交时填写，仅供 Apple 使用；不要提交到公开 Git 仓库 |
 | 免费或付费、价格、销售地区 | 尚未选定，不在宣传素材中写价格 |
 | 付费协议、银行与税务信息 | 仅在收费或提供内购时需要完成相应配置 |

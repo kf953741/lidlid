@@ -63,7 +63,7 @@ const copy = {
     ],
     closingTitle: '任务继续，<br>你也继续出发。', closingLead: '让下一次离开工位，少一点等待。',
     storePending: 'Mac App Store 版本筹备中', storeAvailable: '在 Mac App Store 查看',
-    footer: ['隐私政策', '支持与帮助', 'GitHub'], footerLine: '为需要出发的你而做。',
+    footer: ['隐私政策', '支持与帮助', '源代码'], footerLine: '为需要出发的你而做。',
     skip: '跳到主要内容', close: '关闭演示', demoTitle: '盖盖 · 20 秒使用演示',
     privacyTitle: '隐私政策', privacyMeta: '盖盖 LidLid 的隐私政策：本机偏好、诊断记录、官网托管与问题反馈。',
     privacyIntro: privacyCopy.zh.intro,
@@ -71,7 +71,7 @@ const copy = {
     updated: '更新日期：2026 年 11 月 1 日',
     supportTitle: '支持与使用指南', supportMeta: '盖盖 LidLid 支持：DMG 安装、首次打开、MacBook 合盖不休眠和常见问题。',
     supportIntro: '从下载安装到合盖出发，跟着下面三步就好。遇到问题，也可以直接反馈给我们。',
-    feedback: '反馈问题或建议', installHeading: '安装与使用',
+    feedback: '发送邮件', emailLabel: '邮件支持', emailHint: '欢迎发送使用问题、建议或隐私相关咨询。', installHeading: '安装与使用',
     supportSteps: [
       ['安装盖盖', '下载 DMG，打开后将「盖盖」拖入「应用程序」，再从「应用程序」启动。适用于 M 系列 MacBook、macOS 14 或更新版本，目前不支持 Intel Mac。'],
       ['开启本次合盖不休眠', '先启动你需要继续运行的本机任务。点击菜单栏猫头鹰，打开开关，确认显示「已开启」后再合盖。请先断开外接显示器，并避免同时运行其他合盖控制工具。'],
@@ -126,7 +126,7 @@ const copy = {
     ],
     closingTitle: 'Your task carries on.<br>So can you.', closingLead: 'Make your next move with a little less waiting.',
     storePending: 'Mac App Store version in preparation', storeAvailable: 'View on the Mac App Store',
-    footer: ['Privacy', 'Support', 'GitHub'], footerLine: 'Made for the moments you need to go.',
+    footer: ['Privacy', 'Support', 'Source code'], footerLine: 'Made for the moments you need to go.',
     skip: 'Skip to content', close: 'Close demo', demoTitle: 'LidLid · 20-second demo',
     privacyTitle: 'Privacy policy', privacyMeta: 'LidLid privacy: local preferences and diagnostics, website hosting and support requests.',
     privacyIntro: privacyCopy.en.intro,
@@ -134,7 +134,7 @@ const copy = {
     updated: 'Updated November 1, 2026',
     supportTitle: 'Support & getting started', supportMeta: 'LidLid support: DMG installation, first launch, MacBook closed-lid keep-awake and common questions.',
     supportIntro: 'From download to your next move, follow these three steps. If something gets in the way, send us feedback.',
-    feedback: 'Report a problem or share feedback', installHeading: 'Install and use',
+    feedback: 'Email support', emailLabel: 'Email support', emailHint: 'For help, feedback or privacy questions.', installHeading: 'Install and use',
     supportSteps: [
       ['Install LidLid', 'Download the DMG, drag LidLid into Applications, then launch it from Applications. Requires an Apple Silicon MacBook and macOS 14 or later. Intel Macs are not currently supported.'],
       ['Turn on this session', 'Start the local task you want to keep running. Click the owl in your menu bar, turn on the switch and wait for On before closing the lid. Disconnect external displays and use one lid-sleep controller at a time.'],
@@ -176,7 +176,7 @@ function privacy(locale) {
 }
 function support(locale) {
   const t = copy[locale], route = routes[locale];
-  return `<main id="main" class="wrap"><article class="document"><span class="overline">${t.brand} · SUPPORT</span><h1>${t.supportTitle}</h1><p class="intro">${t.supportIntro}</p><div class="support-actions"><a class="button" href="${e(site.download)}">${downloadIcon}${t.download}</a><a class="button secondary" href="${site.support}" target="_blank" rel="noopener noreferrer">${t.feedback} ${arrow}</a></div><h2 id="install">${t.installHeading}</h2><ol class="support-steps">${t.supportSteps.map(([title, body]) => `<li><strong>${title}</strong>${body}</li>`).join('')}</ol><div class="support-media"><img src="/assets/interface-on-${locale}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" alt="${t.uiOn}"></div><section><h2>${t.firstLaunch}</h2><p>${t.firstLaunchText}</p></section><section><h2>${t.faqTitle}</h2>${faq(t.supportFaq)}</section><p class="notice">${t.supportNote}</p><a class="text-link" href="${route.privacy}">${t.privacyLink}${arrow}</a></article></main>`;
+  return `<main id="main" class="wrap"><article class="document"><span class="overline">${t.brand} · SUPPORT</span><h1>${t.supportTitle}</h1><p class="intro">${t.supportIntro}</p><div class="support-actions"><a class="button" href="${e(site.download)}">${downloadIcon}${t.download}</a><a class="button secondary" href="mailto:${e(site.supportEmail)}">${t.feedback} ${arrow}</a></div><div class="support-contact"><p><strong>${t.emailLabel}</strong> <a href="mailto:${e(site.supportEmail)}">${e(site.supportEmail)}</a></p><p>${t.emailHint}</p></div><h2 id="install">${t.installHeading}</h2><ol class="support-steps">${t.supportSteps.map(([title, body]) => `<li><strong>${title}</strong>${body}</li>`).join('')}</ol><div class="support-media"><img src="/assets/interface-on-${locale}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" alt="${t.uiOn}"></div><section><h2>${t.firstLaunch}</h2><p>${t.firstLaunchText}</p></section><section><h2>${t.faqTitle}</h2>${faq(t.supportFaq)}</section><p class="notice">${t.supportNote}</p><a class="text-link" href="${route.privacy}">${t.privacyLink}${arrow}</a></article></main>`;
 }
 function schema(locale, page) {
   const t = copy[locale], url = base + routes[locale][page];

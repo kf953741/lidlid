@@ -63,6 +63,6 @@ Keep your Mac ventilated. End the session before putting it in a bag or sleeve. 
 
 ---
 
-[Share feedback or report a problem](https://github.com/kf953741/lidlid/issues). If LidLid helps you, give it a Star.
+Questions or feedback? Email [kf953741@gmail.com](mailto:kf953741@gmail.com). If LidLid helps you, give it a Star.
 
 [MIT license](LICENSE)

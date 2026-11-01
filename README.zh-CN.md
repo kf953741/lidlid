@@ -63,6 +63,6 @@
 
 ---
 
-欢迎[反馈问题或建议](https://github.com/kf953741/lidlid/issues)。喜欢盖盖，欢迎点一个 Star。
+问题或建议请发邮件至 [kf953741@gmail.com](mailto:kf953741@gmail.com)。喜欢盖盖，欢迎点一个 Star。
 
 [MIT 开源协议](LICENSE)
