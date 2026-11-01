@@ -17,3 +17,5 @@ body:has(dialog[open]){overflow:hidden}
 @media(min-width:391px) and (max-width:760px){.hero-art{height:clamp(440px,80vw,560px)}}
 
 .document .support-contact{padding:20px 23px;margin:0 0 34px;border:1px solid var(--line);border-radius:12px;background:#f0f3ea}.document .support-contact p{margin:0}.document .support-contact p+p{margin-top:7px;font-size:13px;color:var(--muted)}.document .support-contact a{overflow-wrap:anywhere}
+
+.document .support-actions a.button{color:#fff}.document .support-actions a.button.secondary{color:var(--ink)}
