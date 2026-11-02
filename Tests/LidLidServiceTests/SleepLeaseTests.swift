@@ -39,6 +39,7 @@ final class SleepLeaseTests: XCTestCase {
         let (service, power, journal) = fixture(); let owner = UUID()
         try service.begin(owner: owner, minutes: 0, now: 0, lidClosed: false)
         XCTAssertTrue(power.value); XCTAssertEqual(journal.value?.originalDisabled, false)
+        XCTAssertFalse(service.recoveryPending, "A healthy active session must not look like failed recovery")
         try service.tick(now: 1, lidClosed: false, safe: true)
         XCTAssertTrue(service.active)
         try service.tick(now: 2, lidClosed: true, safe: true)

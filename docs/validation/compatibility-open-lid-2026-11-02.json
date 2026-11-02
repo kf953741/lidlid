@@ -1,0 +1,71 @@
+{
+  "tests": [
+    {
+      "case": "manual cancel",
+      "passed": true,
+      "assertionsWhileArmed": 0,
+      "inheritedSandbox": true,
+      "originalSleepSettingRestored": true,
+      "onBattery": true,
+      "duplicateAgentRejected": true,
+      "cleanupReportedByAgent": true,
+      "serverLeaseExpiryObserved": false
+    },
+    {
+      "case": "parent pipe EOF",
+      "passed": true,
+      "assertionsWhileArmed": 0,
+      "inheritedSandbox": true,
+      "originalSleepSettingRestored": true,
+      "onBattery": true,
+      "duplicateAgentRejected": false,
+      "cleanupReportedByAgent": true,
+      "serverLeaseExpiryObserved": false
+    },
+    {
+      "case": "heartbeat timeout",
+      "passed": true,
+      "assertionsWhileArmed": 0,
+      "inheritedSandbox": true,
+      "originalSleepSettingRestored": true,
+      "onBattery": true,
+      "duplicateAgentRejected": false,
+      "cleanupReportedByAgent": true,
+      "serverLeaseExpiryObserved": false
+    },
+    {
+      "case": "agent SIGTERM",
+      "passed": true,
+      "assertionsWhileArmed": 0,
+      "inheritedSandbox": true,
+      "originalSleepSettingRestored": true,
+      "onBattery": true,
+      "duplicateAgentRejected": false,
+      "cleanupReportedByAgent": true,
+      "serverLeaseExpiryObserved": false
+    },
+    {
+      "case": "agent SIGKILL",
+      "passed": true,
+      "assertionsWhileArmed": 0,
+      "inheritedSandbox": true,
+      "originalSleepSettingRestored": true,
+      "onBattery": true,
+      "duplicateAgentRejected": false,
+      "cleanupReportedByAgent": false,
+      "serverLeaseExpiryObserved": false
+    },
+    {
+      "case": "agent lease expiry",
+      "passed": true,
+      "assertionsWhileArmed": 0,
+      "inheritedSandbox": true,
+      "originalSleepSettingRestored": true,
+      "onBattery": true,
+      "duplicateAgentRejected": false,
+      "cleanupReportedByAgent": true,
+      "serverLeaseExpiryObserved": true
+    }
+  ],
+  "physicalLidTest": "not performed"
+}

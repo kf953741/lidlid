@@ -1,6 +1,5 @@
 import AppKit
 import IOKit
-import IOKit.pwr_mgt
 import IOKit.ps
 import LidOnceCore
 
@@ -10,12 +9,11 @@ public struct PowerError: LocalizedError {
     public var errorDescription: String? { text }
 }
 
-/// Read-only lid/power access plus a process-scoped idle assertion. Persistent
-/// sleep settings are exclusively managed by the optional compatibility service.
+/// Read-only lid/power access. All keep-awake ownership belongs to the leased
+/// service, so a frozen worker cannot leave an unbounded idle assertion behind.
 public final class PowerDriver {
     public let root: io_service_t
     private var connection: io_connect_t = 0
-    private var assertions: [IOPMAssertionID] = []
     public init() throws {
         root = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOPMrootDomain"))
         guard root != 0 else { throw PowerError(text: "找不到合盖控制接口") }
@@ -26,7 +24,6 @@ public final class PowerDriver {
         }
     }
     deinit {
-        releaseAssertions()
         IOServiceClose(connection)
         IOObjectRelease(root)
     }
@@ -38,22 +35,7 @@ public final class PowerDriver {
               CFGetTypeID(value) == CFBooleanGetTypeID() else { return nil }
         return (value as! NSNumber).boolValue
     }
-    public func holdAssertions() throws {
-        guard assertions.isEmpty else { return }
-        var id: IOPMAssertionID = 0
-        let result = IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleSystemSleep as CFString,
-                                               IOPMAssertionLevel(kIOPMAssertionLevelOn),
-                                               "LidLid · 单次合盖" as CFString, &id)
-        guard result == kIOReturnSuccess else {
-            throw PowerError(text: "防睡眠请求失败：\(Self.hex(result))")
-        }
-        assertions.append(id)
-    }
 
-    public func releaseAssertions() {
-        assertions = assertions.filter { IOPMAssertionRelease($0) != kIOReturnSuccess }
-    }
-    public var hasAssertions: Bool { !assertions.isEmpty }
 }
 
 public struct BatteryReading {

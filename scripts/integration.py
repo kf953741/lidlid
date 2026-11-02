@@ -54,8 +54,13 @@ def sleep_disabled():
     return values[0] == "1"
 
 assert not sleep_disabled(), "Quit other sleep controllers before running this test"
-for scenario in ("manual cancel", "parent pipe EOF", "heartbeat timeout", "agent SIGTERM", "agent SIGKILL"):
+scenarios = ("manual cancel", "parent pipe EOF", "heartbeat timeout", "agent SIGTERM", "agent SIGKILL", "agent lease expiry")
+if len(sys.argv) > 2:
+    assert sys.argv[2] in scenarios, sys.argv[2]
+    scenarios = (sys.argv[2],)
+for scenario in scenarios:
     child, messages = start()
+    agent_pid = None
     try:
         wait(messages, "off", require_ready=True)
         send(child, "arm")
@@ -66,8 +71,10 @@ for scenario in ("manual cancel", "parent pipe EOF", "heartbeat timeout", "agent
         container = Path(armed["sandboxContainer"])
         assert str(container).endswith("/Library/Containers/dev.kf.lidonce/Data"), armed
         holds = assertions_for(agent_pid)
-        assert len(holds) == 1 and "PreventUserIdleSystemSleep" in holds[0], holds
+        assert not holds, "A frozen client must not retain an unbounded keep-awake assertion"
         if scenario == "manual cancel":
+            status = json.loads(subprocess.check_output([binary, "--compatibility-status"], text=True))
+            assert status["available"] and status["active"] and not status["recoveryPending"], status
             # A rejected second process must not clear the first process's hold.
             duplicate, duplicate_messages = start()
             try:
@@ -75,7 +82,7 @@ for scenario in ("manual cancel", "parent pipe EOF", "heartbeat timeout", "agent
                 assert rejected.get("error") and "另一个盖盖会话" in rejected["message"], rejected
                 duplicate.wait(timeout=6)
                 assert duplicate.returncode == 1, duplicate.returncode
-                assert len(assertions_for(agent_pid)) == 1
+                assert not assertions_for(agent_pid)
             finally:
                 if duplicate.poll() is None:
                     duplicate.stdin.close()
@@ -90,6 +97,16 @@ for scenario in ("manual cancel", "parent pipe EOF", "heartbeat timeout", "agent
             os.kill(agent_pid, signal.SIGTERM)
         elif scenario == "agent SIGKILL":
             os.kill(agent_pid, signal.SIGKILL)
+        elif scenario == "agent lease expiry":
+            # Freeze the client so its XPC connection stays open but it cannot
+            # renew. The daemon must restore without any client cleanup call.
+            os.kill(agent_pid, signal.SIGSTOP)
+            expiry_end = time.monotonic() + 35
+            while sleep_disabled() and time.monotonic() < expiry_end:
+                time.sleep(0.25)
+            assert not sleep_disabled(), "Frozen client's service lease did not expire"
+            assert not assertions_for(agent_pid), "Frozen client still owns an idle-sleep hold"
+            os.kill(agent_pid, signal.SIGCONT)
         # Heartbeat case intentionally sends nothing for 12 seconds.
         child.wait(timeout=18)
         assert child.returncode == (9 if scenario == "agent SIGKILL" else 0), child.returncode
@@ -98,15 +115,20 @@ for scenario in ("manual cancel", "parent pipe EOF", "heartbeat timeout", "agent
             time.sleep(0.25)
         assert not sleep_disabled(), "Original global sleep setting was not restored"
         assert not assertions_for(agent_pid)
-        events = (container / "Library/Application Support/LidOnce/events.log").read_text()
+        if scenario not in ("manual cancel", "agent SIGKILL"):
+            stopped = wait(messages, "off")
         if scenario != "agent SIGKILL":
-            assert any(f"pid={agent_pid} restore: original sleep setting confirmed;" in line
-                       for line in events.splitlines()), "Cleanup confirmation was not recorded"
+            assert stopped["phase"] == "off" and not stopped["error"], stopped
         report.append({"case": scenario, "passed": True, "assertionsWhileArmed": len(holds),
                        "inheritedSandbox": True, "originalSleepSettingRestored": True,
                        "onBattery": armed["onBattery"],
-                       "duplicateAgentRejected": scenario == "manual cancel"})
+                       "duplicateAgentRejected": scenario == "manual cancel",
+                       "cleanupReportedByAgent": scenario != "agent SIGKILL",
+                       "serverLeaseExpiryObserved": scenario == "agent lease expiry"})
     finally:
+        if scenario == "agent lease expiry" and agent_pid:
+            try: os.kill(agent_pid, signal.SIGCONT)
+            except ProcessLookupError: pass
         if child.poll() is None:
             try: child.stdin.close()
             except Exception: pass

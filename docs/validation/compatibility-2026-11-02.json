@@ -13,23 +13,47 @@
   "codeSigningTeam": "63ALH54858",
   "productionDeveloperIDAndNotarization": "pending",
   "missingComponentBehavior": "read-only sandbox status returns unavailable; no power settings changed",
-  "installedSystemService": "not installed; explicit local installation confirmation pending",
-  "realSandboxToRootXPC": "pending installation and macOS approval",
-  "realOpenLidRecoveryIntegration": "pending installation and macOS approval",
+  "installedSystemService": "installed and approved through macOS Service Management; root daemon running",
+  "realSandboxToRootXPC": "passed from the actual installed inherited-sandbox agent",
+  "realOpenLidRecoveryIntegration": {
+    "passed": 6,
+    "failed": 0,
+    "onBattery": true,
+    "cases": [
+      "manual cancel",
+      "parent pipe EOF",
+      "heartbeat timeout",
+      "agent SIGTERM",
+      "agent SIGKILL",
+      "agent lease expiry"
+    ]
+  },
   "physicalClosedLidRegression": "not performed",
   "productionReleasePublished": false,
   "artifacts": {
     "LidLid-1.4.0-macOS-arm64.dmg": {
-      "bytes": 4893104,
-      "sha256": "dec915643b8d752f72597a43b7fce47478dc9e125d9483201039486df4efb7eb",
+      "bytes": 4891259,
+      "sha256": "ba9803fc6b0edd4b5c75e50a66f633ddc31eacb2a2163d7fd6b24d310af3a685",
       "signature": "Apple Development (local testing only)",
       "diskImageChecksum": "passed"
     },
     "LidLid-Compatibility-1.0.0-macOS-arm64.dmg": {
-      "bytes": 2556677,
-      "sha256": "72165ac7fa46a6b261cba6874b61d5931fe5ee3a01dd57698a81ada475af8fa5",
+      "bytes": 2877461,
+      "sha256": "899bcd00a360c9803e31dccff02ec1623cff265d3d42e6576f40a61b5b149408",
       "signature": "Apple Development (local testing only)",
       "diskImageChecksum": "passed"
     }
-  }
+  },
+  "workerIndependentIdleAssertion": false,
+  "componentRestoreRemoveAndReinstall": "passed with system sleep disabled state returning to 0",
+  "componentChineseAndEnglishUI": "verified in native interface",
+  "mainInstalledPath": "/Users/kf/Applications/LidLid.app",
+  "mainNativeUISwitch": "On/Off reflected actual system SleepDisabled 1/0; version 1.4.0 in Options",
+  "daemonForcedCrashOrPowerCycleRecovery": "not tested on hardware; injected controller recovery tests passed",
+  "device": {
+    "hardware": "Mac17,8",
+    "macOS": "27.2",
+    "build": "26B123"
+  },
+  "untrustedAdHocClient": "rejected by the installed service; no settings changed"
 }

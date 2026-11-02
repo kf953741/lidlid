@@ -115,7 +115,6 @@ final class SessionAgent {
             guard let percent = battery.percent else { throw PowerError(text: "无法读取电量，请稍后再试") }
             guard !battery.onBattery || percent > 10 else { throw PowerError(text: "电量不高于 10%，请接通电源") }
             snapshot.phase = .starting; snapshot.message = "正在确认合盖控制…"; snapshot.error = false; publish()
-            try driver.holdAssertions()
             ownsSession = true
             operationPending = true
             let token = generation
@@ -138,7 +137,7 @@ final class SessionAgent {
                 }
             }
         } catch {
-            if ownsSession || driver.hasAssertions { stop(error.localizedDescription, error: true) }
+            if ownsSession { stop(error.localizedDescription, error: true) }
             else { snapshot.phase = .off; snapshot.message = error.localizedDescription; snapshot.error = true; publish() }
         }
     }
@@ -230,7 +229,7 @@ final class SessionAgent {
         operationPending = false
         snapshot.message = message; snapshot.error = error
         session.reset(); snapshot.deadline = nil
-        if ownsSession || driver.hasAssertions {
+        if ownsSession {
             restoring = true; snapshot.phase = .restoring; restoreAttempts = 0; restore()
         } else { snapshot.phase = .off; publish(); if exiting { exit(0) } }
     }
@@ -244,17 +243,16 @@ final class SessionAgent {
             self.compatibility.status { [weak self] result in
                 guard let self, token == self.generation else { return }
                 self.operationPending = false
-                self.driver.releaseAssertions()
                 let serviceConfirmed: Bool
                 if case .success(let status) = result { serviceConfirmed = !status.active && !status.recoveryPending }
                 else { serviceConfirmed = false }
                 // The service only starts from SleepDisabled=false. A direct
                 // kernel read of that exact global setting can also confirm
                 // restoration if the service connection is unavailable.
-                if (serviceConfirmed || self.driver.bool("SleepDisabled") == false), !self.driver.hasAssertions {
+                if (serviceConfirmed || self.driver.bool("SleepDisabled") == false) {
                     self.ownsSession = false; self.restoring = false; self.snapshot.phase = .off
                     self.snapshot.compatibilityReady = serviceConfirmed
-                    EventLog.write("restore: original sleep setting confirmed; service=\(serviceConfirmed); assertions released")
+                    EventLog.write("restore: original sleep setting confirmed; service=\(serviceConfirmed)")
                     self.publish()
                     if self.exiting { exit(0) }
                 } else {

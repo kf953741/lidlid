@@ -66,6 +66,9 @@ public final class SleepLease {
             throw error
         }
         owner = id; expiry = now + 30
+        // A journal during a healthy session is intentional, not a recovery
+        // failure. Active ownership already keeps the daemon's timer running.
+        recoveryPending = false
         deadline = minutes == 0 ? nil : now + Double(minutes * 60)
         sawClosed = false
     }
