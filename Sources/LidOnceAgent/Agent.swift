@@ -2,15 +2,19 @@ import AppKit
 import IOKit
 import LidOnceCore
 import LidOnceSystem
+import LidLidServiceProtocol
 
-/// A separate unprivileged process owns the global kernel flag. The UI keeps
-/// its stdin pipe open and sends heartbeats. EOF, a hung UI, lid-open, battery,
-/// thermal pressure, manual sleep, or an optional deadline all release the hold.
+/// Sandboxed session worker. The independently installed service owns a short
+/// renewable lease; this process never changes persistent system sleep settings.
 final class SessionAgent {
     let driver: PowerDriver
     private var session = OneShot()
     private var snapshot = Snapshot()
-    private var ownsFlag = false
+    private var ownsSession = false
+    private let compatibility = CompatibilityClient()
+    private var operationPending = false
+    private var generation = 0
+    private var lastCompatibilityCheck: TimeInterval = -10
     private var restoring = false
     private var restoreAttempts = 0
     private var exiting = false
@@ -21,12 +25,10 @@ final class SessionAgent {
     private var observers: [NSObjectProtocol] = []
     private var signals: [DispatchSourceSignal] = []
     private var lastPublished = Data()
-    private var lastPowerOnBattery: Bool?
     private var lockFD: Int32 = -1
-    private var lastKernelRefresh = ProcessInfo.processInfo.systemUptime
 
     init() throws {
-        // A second UI/agent may never reset an existing session's global flag.
+        // A second UI/agent may never take over an existing session.
         let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("LidOnce", isDirectory: true)
         try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true,
@@ -60,7 +62,7 @@ final class SessionAgent {
         for name in [NSWorkspace.screensDidSleepNotification, NSWorkspace.screensDidWakeNotification,
                      NSWorkspace.didWakeNotification] {
             observers.append(center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
-                self?.refreshFlag()
+                self?.checkCompatibility()
             })
         }
         observers.append(center.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { [weak self] _ in
@@ -94,8 +96,11 @@ final class SessionAgent {
         }
     }
     private func arm(minutes: Int) {
-        guard !ownsFlag, !restoring, !exiting else { return }
+        guard !ownsSession, !restoring, !exiting else { return }
         do {
+            guard snapshot.compatibilityReady else { throw PowerError(text: snapshot.compatibilityMessage) }
+            generation += 1
+            if operationPending { compatibility.invalidate(); operationPending = false }
             #if !arch(arm64)
             throw PowerError(text: "此版本仅支持 Apple Silicon MacBook")
             #endif
@@ -103,9 +108,6 @@ final class SessionAgent {
             guard !conflictingApp() else { throw PowerError(text: "请先退出 Clamshell，避免两个软件同时控制合盖") }
             guard driver.bool("AppleClamshellState") == false else { throw PowerError(text: "请先打开电脑盖子") }
             guard try externalDisplayCount() == 0 else { throw PowerError(text: "请断开外接显示器后再启用") }
-            guard driver.bool("SleepDisabled") == false else {
-                throw PowerError(text: "其他程序正在接管睡眠，请先关闭它的防睡眠功能")
-            }
             guard ProcessInfo.processInfo.thermalState.rawValue < ProcessInfo.ThermalState.serious.rawValue else {
                 throw PowerError(text: "温度过高，冷却后再启用")
             }
@@ -114,26 +116,39 @@ final class SessionAgent {
             guard !battery.onBattery || percent > 10 else { throw PowerError(text: "电量不高于 10%，请接通电源") }
             snapshot.phase = .starting; snapshot.message = "正在确认合盖控制…"; snapshot.error = false; publish()
             try driver.holdAssertions()
-            // Set ownership BEFORE calling; any failure rolls back even if the call partially applied.
-            ownsFlag = true
-            try driver.suppressLidSleep(true)
-            lastKernelRefresh = ProcessInfo.processInfo.systemUptime
-            EventLog.write("arm: selector12(true) accepted; minutes=\(minutes)")
-            guard session.arm(now: ProcessInfo.processInfo.systemUptime, minutes: minutes, lidClosed: false) else {
-                throw PowerError(text: "会话状态异常")
+            ownsSession = true
+            operationPending = true
+            let token = generation
+            compatibility.begin(minutes: minutes) { [weak self] result in
+                guard let self, token == self.generation, !self.restoring else { return }
+                self.operationPending = false
+                switch result {
+                case .success:
+                    guard self.session.arm(now: ProcessInfo.processInfo.systemUptime, minutes: minutes, lidClosed: false) else {
+                        self.stop("会话状态异常", error: true); return
+                    }
+                    EventLog.write("arm: compatibility lease confirmed; minutes=\(minutes)")
+                    self.snapshot.compatibilityReady = true
+                    self.snapshot.message = "现在可以合盖，开盖后自动结束"
+                    self.snapshot.phase = .armed
+                    self.snapshot.deadline = minutes > 0 ? Date().timeIntervalSince1970 + Double(minutes * 60) : nil
+                    self.lastCompatibilityCheck = ProcessInfo.processInfo.systemUptime
+                    self.tick()
+                case .failure(let error): self.stop(error.localizedDescription, error: true)
+                }
             }
-            snapshot.message = "现在可以合盖，开盖后自动结束"
-            snapshot.phase = .armed
-            snapshot.deadline = minutes > 0 ? Date().timeIntervalSince1970 + Double(minutes * 60) : nil
-            tick()
         } catch {
-            if ownsFlag || driver.hasAssertions { stop(error.localizedDescription, error: true) }
+            if ownsSession || driver.hasAssertions { stop(error.localizedDescription, error: true) }
             else { snapshot.phase = .off; snapshot.message = error.localizedDescription; snapshot.error = true; publish() }
         }
     }
     private func lidChanged(_ closed: Bool) {
         snapshot.lidClosed = closed
-        guard ownsFlag, !restoring else { publish(); return }
+        guard ownsSession, !restoring else { publish(); return }
+        if snapshot.phase == .starting {
+            if closed { stop("请先打开电脑盖子", error: true) }
+            return
+        }
         if session.observe(closed: closed) {
             EventLog.write("lid opened: consuming one-shot session")
             stop("本次已完成，下次合盖将正常睡眠"); return
@@ -153,10 +168,32 @@ final class SessionAgent {
         }
         publish()
     }
-    private func refreshFlag() {
-        guard ownsFlag, !restoring else { return }
-        do { try driver.suppressLidSleep(true) }
-        catch { stop(error.localizedDescription, error: true) }
+    private func checkCompatibility() {
+        guard !operationPending, !restoring else { return }
+        operationPending = true
+        lastCompatibilityCheck = ProcessInfo.processInfo.systemUptime
+        let token = generation
+        if ownsSession {
+            compatibility.renew { [weak self] result in
+                guard let self, token == self.generation else { return }
+                self.operationPending = false
+                if case .failure(let error) = result { self.stop(error.localizedDescription, error: true) }
+            }
+        } else {
+            compatibility.status { [weak self] result in
+                guard let self, token == self.generation else { return }
+                self.operationPending = false
+                switch result {
+                case .success(let status):
+                    self.snapshot.compatibilityReady = !status.recoveryPending && !status.active
+                    self.snapshot.compatibilityMessage = status.recoveryPending ? "兼容组件正在恢复睡眠，请保持开盖" : "兼容组件已就绪"
+                case .failure(let error):
+                    self.snapshot.compatibilityReady = false
+                    self.snapshot.compatibilityMessage = error.localizedDescription
+                }
+                self.publish()
+            }
+        }
     }
     private func tick() {
         let battery = batteryReading()
@@ -164,7 +201,7 @@ final class SessionAgent {
         snapshot.thermal = thermalLabel()
         snapshot.causesSleep = driver.bool("AppleClamshellCausesSleep")
         if restoring { restore(); return }
-        if ownsFlag {
+        if ownsSession {
             if ProcessInfo.processInfo.systemUptime - lastHeartbeat > 12 { finish(); return }
             if ProcessInfo.processInfo.thermalState.rawValue >= ProcessInfo.ThermalState.serious.rawValue {
                 stop("温度过高，已恢复正常睡眠", error: true); return
@@ -179,43 +216,58 @@ final class SessionAgent {
                 stop("合盖传感器读取中断，已恢复正常睡眠", error: true); return
             }
             lidChanged(closed)
-            guard ownsFlag, !restoring else { return }
-            // CausesSleep is a cached aggregate value. Apple's implementation
-            // does NOT republish it when selector 12 changes its mask. It is
-            // diagnostic data, never a read-back of our own hold or cleanup.
-            let now = ProcessInfo.processInfo.systemUptime
-            if now - lastKernelRefresh >= 1 || lastPowerOnBattery != battery.onBattery {
-                refreshFlag(); lastKernelRefresh = now
-            }
+            guard ownsSession, !restoring else { return }
         } else { snapshot.lidClosed = driver.bool("AppleClamshellState") }
-        lastPowerOnBattery = battery.onBattery
+        if ProcessInfo.processInfo.systemUptime - lastCompatibilityCheck >= CompatibilityService.renewalSeconds {
+            checkCompatibility()
+        }
         publish()
     }
     private func stop(_ message: String, error: Bool = false) {
-        if ownsFlag { EventLog.write("stop: \(message)") }
+        if ownsSession { EventLog.write("stop: \(message)") }
+        generation += 1
+        if operationPending { compatibility.invalidate() }
+        operationPending = false
         snapshot.message = message; snapshot.error = error
         session.reset(); snapshot.deadline = nil
-        if ownsFlag || driver.hasAssertions {
+        if ownsSession || driver.hasAssertions {
             restoring = true; snapshot.phase = .restoring; restoreAttempts = 0; restore()
         } else { snapshot.phase = .off; publish(); if exiting { exit(0) } }
     }
     private func restore() {
+        guard !operationPending else { return }
+        operationPending = true
         restoreAttempts += 1
-        do {
-            if ownsFlag { try driver.suppressLidSleep(false) }
-            driver.releaseAssertions()
-            guard !driver.hasAssertions else { throw PowerError(text: "等待防睡眠请求释放") }
-            ownsFlag = false; restoring = false; snapshot.phase = .off
-            EventLog.write("restore: selector12(false) accepted; assertions released")
-            snapshot.causesSleep = driver.bool("AppleClamshellCausesSleep")
-            publish()
-            if exiting { exit(0) }
-        } catch {
-            if restoreAttempts > 12 {
-                snapshot.message = "恢复尚未确认，正在重试。请保持开盖；必要时重启 Mac。"
-                snapshot.error = true
+        let token = generation
+        compatibility.end { [weak self] _ in
+            guard let self, token == self.generation else { return }
+            self.compatibility.status { [weak self] result in
+                guard let self, token == self.generation else { return }
+                self.operationPending = false
+                self.driver.releaseAssertions()
+                let serviceConfirmed: Bool
+                if case .success(let status) = result { serviceConfirmed = !status.active && !status.recoveryPending }
+                else { serviceConfirmed = false }
+                // The service only starts from SleepDisabled=false. A direct
+                // kernel read of that exact global setting can also confirm
+                // restoration if the service connection is unavailable.
+                if (serviceConfirmed || self.driver.bool("SleepDisabled") == false), !self.driver.hasAssertions {
+                    self.ownsSession = false; self.restoring = false; self.snapshot.phase = .off
+                    self.snapshot.compatibilityReady = serviceConfirmed
+                    EventLog.write("restore: original sleep setting confirmed; service=\(serviceConfirmed); assertions released")
+                    self.publish()
+                    if self.exiting { exit(0) }
+                } else {
+                    // Invalidating the old connection also revokes its lease.
+                    // Never report Off before the service confirms restoration.
+                    self.compatibility.invalidate()
+                    if self.restoreAttempts > 3 {
+                        self.snapshot.message = "兼容组件正在恢复睡眠，请保持开盖"
+                        self.snapshot.error = true
+                    }
+                    self.publish()
+                }
             }
-            publish()
         }
     }
     private func finish() {

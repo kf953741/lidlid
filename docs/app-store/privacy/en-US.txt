@@ -1,8 +1,13 @@
 LidLid Privacy Policy
 
-Updated November 1, 2026
+Updated November 2, 2026
 
 LidLid is a Mac menu bar utility developed by Fei Kang. The app runs locally, requires no account, does not upload usage data to the developer, and includes no advertising or tracking SDK.
+
+Free compatibility component
+The new Store-targeted app can connect to the free compatibility component you install separately and approve in macOS. It accepts local LidLid session requests, reads sleep, lid, battery and thermal state, and temporarily manages system sleep. A private administrator-owned recovery record stores only a schema version and the original boolean setting. Successful restoration removes it; failed restoration retains it for retries. macOS may also retain service diagnostics.
+
+Before deleting the component, choose Restore sleep & remove service in its window. Do not delete recovery records first. The component does not read projects or AI conversations, or upload data automatically.
 
 Information handled on your Mac
 LidLid stores your language and time-limit preferences. It reads lid state, battery level, power source, system thermal state and elapsed time to manage the session you enable. It also checks whether the potentially conflicting Clamshell lid-control app is running.

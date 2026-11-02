@@ -1,7 +1,7 @@
 export const site = {
   url: process.env.SITE_URL || 'https://lidlid.vercel.app',
   version: '1.2.0',
-  updated: '2026-11-01',
+  updated: '2026-11-02',
   developer: 'Fei Kang',
   github: 'https://github.com/kf953741/lidlid',
   supportEmail: 'kf953741@gmail.com',

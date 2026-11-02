@@ -7,6 +7,10 @@ export const privacyCopy = {
     "intro": "盖盖（LidLid）由 Fei Kang 开发，是一个在 Mac 本机运行的菜单栏工具。应用无需账号，不向开发者上传使用数据，也没有广告或追踪 SDK。",
     "sections": [
       [
+        "免费兼容组件",
+        "<p>支持商店分发的新版主应用可连接你独立安装并经 macOS 授权的免费兼容组件。组件只在本机接收盖盖的会话请求，读取睡眠、合盖、电量和温度状态，并临时管理系统睡眠设置。组件在管理员专用目录保存恢复原设置所需的版本号和一个布尔值；正常恢复后删除该记录，恢复失败时保留并重试。系统也可能保留组件运行诊断。</p><p>移除组件前，请先在组件窗口选择「恢复睡眠并移除服务」，再删除应用。请勿先删除恢复记录。组件不读取项目或 AI 对话，也不自动上传数据。</p>"
+      ],
+      [
         "应用在本机处理的信息",
         "<p>盖盖保存你选择的界面语言和最长保持时间，读取合盖状态、电量、电源来源、系统温度状态和运行计时，用来管理你开启的本次会话。应用也会检查可能冲突的 Clamshell 合盖控制应用是否运行。</p><p>本机诊断记录包括开启、合盖、结束、恢复状态、错误和盖盖自身的进程标识。盖盖不读取你的项目、代码、文件内容、AI 对话或浏览记录。</p>"
       ],
@@ -36,6 +40,10 @@ export const privacyCopy = {
     "title": "LidLid Privacy Policy",
     "intro": "LidLid is a Mac menu bar utility developed by Fei Kang. The app runs locally, requires no account, does not upload usage data to the developer, and includes no advertising or tracking SDK.",
     "sections": [
+      [
+        "Free compatibility component",
+        "<p>The new Store-targeted app can connect to the free compatibility component you install separately and approve in macOS. It accepts local LidLid session requests, reads sleep, lid, battery and thermal state, and temporarily manages system sleep. A private administrator-owned recovery record stores only a schema version and the original boolean setting. Successful restoration removes it; failed restoration retains it for retries. macOS may also retain service diagnostics.</p><p>Before deleting the component, choose Restore sleep & remove service in its window. Do not delete recovery records first. The component does not read projects or AI conversations, or upload data automatically.</p>"
+      ],
       [
         "Information handled on your Mac",
         "<p>LidLid stores your language and time-limit preferences. It reads lid state, battery level, power source, system thermal state and elapsed time to manage the session you enable. It also checks whether the potentially conflicting Clamshell lid-control app is running.</p><p>Local diagnostic records describe activation, lid events, ending, restoration, errors and identifiers of LidLid’s own processes. LidLid does not read your projects, code, file contents, AI conversations or browsing history.</p>"

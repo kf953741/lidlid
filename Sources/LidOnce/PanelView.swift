@@ -84,6 +84,16 @@ struct PanelView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 18)
 
+            if !model.state.compatibilityReady && !model.enabled {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(model.text(model.state.compatibilityMessage))
+                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Button(model.text("设置免费兼容组件"), action: model.openCompatibility)
+                        .buttonStyle(.link).font(.system(size: 12))
+                        .accessibilityIdentifier("compatibility-setup")
+                }.padding(.top, 16)
+            }
             if model.conflict || model.state.error {
                 notice.padding(.top, 16)
             }
@@ -170,6 +180,8 @@ struct PanelView: View {
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 18)
+            Button(model.text("管理兼容组件"), action: model.openCompatibility)
+                .buttonStyle(.link).font(.system(size: 11)).padding(.top, 16)
             HStack(spacing: 16) {
                 Link(model.text("隐私政策"), destination: URL(string: model.language.resolved() == .simplifiedChinese
                     ? "https://lidlid.vercel.app/privacy/" : "https://lidlid.vercel.app/en/privacy/")!)

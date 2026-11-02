@@ -40,6 +40,8 @@ public struct Command: Codable {
 }
 
 public struct Snapshot: Codable {
+    public var compatibilityReady = false
+    public var compatibilityMessage = "请先安装并授权盖盖兼容组件"
     public var phase: Phase = .off
     public var agentPID: Int32? = nil
     public var sandboxContainer: String? = nil

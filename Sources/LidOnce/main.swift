@@ -3,11 +3,12 @@ import LidOnceCore
 import LidOnceSystem
 
 signal(SIGPIPE, SIG_IGN)
-if CommandLine.arguments.contains("--agent") || CommandLine.arguments.contains("--sandbox-check") {
+if CommandLine.arguments.contains("--agent") || CommandLine.arguments.contains("--sandbox-check") || CommandLine.arguments.contains("--compatibility-status") {
     // Developer integration entry point. The power owner is the exact same
     // inherited-sandbox executable launched by the UI, never an unsandboxed copy.
     let child = AgentProcess.make()
     if CommandLine.arguments.contains("--sandbox-check") { child.arguments = ["--sandbox-check"] }
+    if CommandLine.arguments.contains("--compatibility-status") { child.arguments = ["--compatibility-status"] }
     child.standardInput = FileHandle.standardInput
     child.standardOutput = FileHandle.standardOutput
     child.standardError = FileHandle.standardError

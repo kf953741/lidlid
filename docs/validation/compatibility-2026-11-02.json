@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-02",
+  "mainVersion": "1.4.0",
+  "mainBuild": "8",
+  "compatibilityVersion": "1.0.0",
+  "unitTests": {
+    "passed": 24,
+    "failed": 0,
+    "scope": "state, localization, injected sleep/journal failure recovery, anonymous XPC protocol transport"
+  },
+  "mainSandbox": "passed with Apple Development signing; ad-hoc CI-style sandbox check also passed",
+  "compatibilityBundle": "signature, entitlements, LaunchDaemon plist and read-only parser self-test passed",
+  "codeSigningTeam": "63ALH54858",
+  "productionDeveloperIDAndNotarization": "pending",
+  "missingComponentBehavior": "read-only sandbox status returns unavailable; no power settings changed",
+  "installedSystemService": "not installed; explicit local installation confirmation pending",
+  "realSandboxToRootXPC": "pending installation and macOS approval",
+  "realOpenLidRecoveryIntegration": "pending installation and macOS approval",
+  "physicalClosedLidRegression": "not performed",
+  "productionReleasePublished": false,
+  "artifacts": {
+    "LidLid-1.4.0-macOS-arm64.dmg": {
+      "bytes": 4893104,
+      "sha256": "dec915643b8d752f72597a43b7fce47478dc9e125d9483201039486df4efb7eb",
+      "signature": "Apple Development (local testing only)",
+      "diskImageChecksum": "passed"
+    },
+    "LidLid-Compatibility-1.0.0-macOS-arm64.dmg": {
+      "bytes": 2556677,
+      "sha256": "72165ac7fa46a6b261cba6874b61d5931fe5ee3a01dd57698a81ada475af8fa5",
+      "signature": "Apple Development (local testing only)",
+      "diskImageChecksum": "passed"
+    }
+  }
+}

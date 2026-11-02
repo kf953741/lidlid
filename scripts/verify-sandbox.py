@@ -16,7 +16,8 @@ def entitlements(path):
     return plistlib.loads(result.stdout)
 
 subprocess.run(["codesign", "--verify", "--deep", "--strict", str(app)], check=True)
-assert entitlements(app) == {"com.apple.security.app-sandbox": True}
+assert entitlements(app) == {"com.apple.security.app-sandbox": True,
+                             "com.apple.security.application-groups": ["63ALH54858.dev.kf.lidonce"]}
 assert entitlements(helper) == {"com.apple.security.app-sandbox": True,
                                 "com.apple.security.inherit": True}
 with (app / "Contents/Info.plist").open("rb") as file:

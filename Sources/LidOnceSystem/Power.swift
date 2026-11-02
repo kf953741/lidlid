@@ -10,8 +10,8 @@ public struct PowerError: LocalizedError {
     public var errorDescription: String? { text }
 }
 
-/// Uses the clamshell selector declared by the macOS SDK in IOPMLibDefs.h.
-/// SDK availability does not guarantee behavior on every model or App Review approval.
+/// Read-only lid/power access plus a process-scoped idle assertion. Persistent
+/// sleep settings are exclusively managed by the optional compatibility service.
 public final class PowerDriver {
     public let root: io_service_t
     private var connection: io_connect_t = 0
@@ -37,13 +37,6 @@ public final class PowerDriver {
         guard let value = IORegistryEntryCreateCFProperty(root, key as CFString, kCFAllocatorDefault, 0)?.takeRetainedValue(),
               CFGetTypeID(value) == CFBooleanGetTypeID() else { return nil }
         return (value as! NSNumber).boolValue
-    }
-    public func suppressLidSleep(_ suppress: Bool) throws {
-        var value: UInt64 = suppress ? 1 : 0
-        let result = IOConnectCallScalarMethod(connection, UInt32(kPMSetClamshellSleepState), &value, 1, nil, nil)
-        guard result == kIOReturnSuccess else {
-            throw PowerError(text: "系统拒绝合盖设置：\(Self.hex(result))")
-        }
     }
     public func holdAssertions() throws {
         guard assertions.isEmpty else { return }

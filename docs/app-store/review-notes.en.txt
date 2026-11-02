@@ -1,20 +1,21 @@
-LidLid is a menu bar utility for Apple Silicon MacBooks running macOS 14 or later. It requires a built-in lid sensor and battery; please review on a MacBook rather than a desktop Mac or Intel Mac. No account, demo credentials or in-app purchase is required by this build.
+LidLid is a sandboxed menu bar utility for Apple Silicon MacBooks on macOS 14 or later. A MacBook with a working lid sensor and battery is required. No account or in-app purchase is required by this development build; pricing is not finalized.
 
-The app has no Dock icon. Launching it opens its menu bar popover. Click the LidLid icon in the menu bar to reopen it. Language can be changed in Options.
+Version 1.4 connects to an optional, free LidLid Compatibility app that the user independently obtains outside the Mac App Store. Full closed-lid operation, including on battery without an external display, requires this separate component. This dependency must be disclosed in the product description and first-use flow. The production component URL and final hardware validation must be supplied before submission. This document is preparation, not a claim of App Review acceptance.
 
-To review the core feature:
-1. Use a MacBook with its lid open and no external display connected. Battery operation is supported; if testing on battery, use a charge above 10%.
-2. Open LidLid and switch on. Wait for On.
-3. Close the lid while an independent, expendable local task is running.
-4. Reopen the lid. LidLid ends this session automatically and returns to Off.
-5. A later lid close uses normal system sleep unless another session is explicitly enabled.
+The Store app never installs the component, registers a root service, collects an administrator password, downloads executable code, or runs as root. Its setup button opens the independently installed component or the product support page. The component is a separate Developer ID-signed and notarized distribution, approved by the user through macOS Service Management. Do not submit while the production signed/notarized download is unavailable.
 
-Users may choose a time limit. The session ends when the lid reopens or the limit is reached, whichever comes first. It also ends at 10% battery when on battery power, on serious or critical thermal pressure, if an external display appears, or if required lid/battery readings fail. Please keep the Mac ventilated and end the session before putting it in a bag or sleeve.
+The sandboxed main app embeds a sandbox-inheriting unprivileged session worker. The only additional entitlement is a Team-ID-scoped application group for the named XPC connection. No temporary sandbox exceptions, network access, Accessibility, camera, microphone or broad file access are requested. Main app and component authenticate each other's Apple-anchored signing team and bundle identifiers.
 
-Implementation: the app uses the macOS SDK constant kPMSetClamshellSleepState (declared in IOPMLibDefs.h, included by IOPMLib.h) with IOConnectCallScalarMethod, plus kIOPMAssertionTypePreventUserIdleSystemSleep. A real lid close requests display sleep with the system pmset displaysleepnow command. It does not use pmset disablesleep, request administrator privileges, install a privileged daemon or download executable code.
+The external service accepts only status, begin, renew, end and prepare-for-removal. It temporarily changes the system-wide SleepDisabled setting with fixed pmset arguments. Before mutation it records the original value in a private root-owned recovery journal. It restores and verifies that value after lid reopening, session expiry, safety cutoff, client disconnect, removal, or service restart recovery. A 30-second continuous-clock lease is renewed every 5 seconds. There is no general shell or command API. This external component is not embedded in the Store app.
 
-Both executables are bundled and signed. The main app has App Sandbox enabled. Contents/Helpers/LidLidAgent inherits the parent's sandbox and shares its container; anonymous pipes carry commands and heartbeats. UI and agent failure handling attempts to restore normal sleep. The app does not contain a general command runner or request temporary sandbox exceptions, network access, camera, microphone, Accessibility or broad file access.
+Review flow once the final component URL and actual hardware test are complete:
+1. Independently install the free component in /Applications. Open it, choose Install service, and approve macOS's background-service request in System Settings if necessary.
+2. Open LidLid. It has no Dock icon; launch opens its menu-bar popover. Options changes language between English and Simplified Chinese.
+3. Keep the lid open, disconnect external displays, and ensure battery is above 10% if on battery power. Start an expendable local task.
+4. Enable the switch and wait for On, then close the lid. Battery power and no external display are supported by the intended feature.
+5. Reopen. The session ends automatically; a subsequent lid close uses normal sleep unless explicitly enabled again.
+6. To remove the external service, first disable LidLid, then choose Restore sleep & remove service in the compatibility app before deleting it.
 
-LidLid does not integrate with or operate coding assistants. Such tools are mentioned only as examples of tasks that benefit from keeping the Mac awake. Online tasks still require connectivity.
+Optional limits are 30 minutes, 1, 2, 4 and 8 hours, or until reopening. Battery <=10% on battery, serious/critical thermal pressure, sensor failure, and external display attachment end the session. Keep the Mac ventilated; turn LidLid off before putting it in a bag or choosing manual Sleep. The global override also temporarily prevents manual sleep while a session is active.
 
-Privacy Policy and Help & Support links are available in Options. The app has no account, advertising, analytics, tracking or automatic diagnostic uploads. Local preferences and diagnostic records are described in the policy.
+LidLid does not read code, AI conversations or file contents, or operate coding assistants. Online tasks still need connectivity. There is no account, advertising, analytics, tracking or automatic diagnostic upload. Preferences, diagnostic records and the compatibility recovery record stay local. Privacy and support links are in Options; support is by email.

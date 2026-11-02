@@ -22,6 +22,8 @@ Small controls. Clear state.
 • English and Simplified Chinese
 • No account, advertising or tracking; preferences and diagnostic records stay on your Mac
 
+First-time setup requires the separately installed, free LidLid Compatibility component and macOS background-service approval. The Store app stays sandboxed; it never asks for an administrator password or installs the component automatically. The component manages system sleep only during a session. Turn LidLid off before choosing Sleep.
+
 Getting started
 1. Open the LidLid icon in your menu bar.
 2. Switch on and wait for On.

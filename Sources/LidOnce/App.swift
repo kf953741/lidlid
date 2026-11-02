@@ -29,14 +29,15 @@ final class AppModel: ObservableObject {
     private var heartbeat: Timer?
     private var quitting = false
     private var requestedArm = false
-    private var repairDriver: PowerDriver?
+    private let repairClient = CompatibilityClient()
+    private var checkingRepair = false
     private var repairTimer: Timer?
 
     var busy: Bool { state.phase != .off }
     // The one-shot needs armed/closed internally; the person sees a single on state.
     var enabled: Bool { state.phase == .armed || state.phase == .closed || state.phase == .restoring }
     var changing: Bool { state.phase == .starting || state.phase == .restoring }
-    var canToggle: Bool { connected && !changing && (!conflict || enabled) }
+    var canToggle: Bool { connected && !changing && (!conflict || enabled) && (enabled || state.compatibilityReady) }
     var text: AppText { AppText(language: language) }
     var brandName: String { text("盖盖") }
     var detail: String {
@@ -114,12 +115,11 @@ final class AppModel: ObservableObject {
         output?.fileHandleForReading.readabilityHandler = nil
         heartbeat?.invalidate(); heartbeat = nil
         connected = false; process = nil
-        // A worker crash releases assertions automatically, but its kernel bit
-        // is global. The live parent performs the complementary cleanup.
+        // The worker's XPC disconnect revokes its lease. Confirm recovery via
+        // the independently running service before showing Off.
         if busy || requestedArm {
             state.phase = .restoring; state.error = true
             state.message = "合盖进程意外结束，正在恢复睡眠…"
-            repairDriver = try? PowerDriver()
             repairTimer = Timer(timeInterval: 0.25, repeats: true) { [weak self] _ in self?.repair() }
             RunLoop.main.add(repairTimer!, forMode: .common)
             repair()
@@ -128,19 +128,35 @@ final class AppModel: ObservableObject {
         changed?()
     }
     private func repair() {
-        guard let driver = repairDriver else {
-            state.message = "无法确认恢复，请保持开盖并重启 Mac"; changed?(); return
+        guard !checkingRepair else { return }
+        checkingRepair = true
+        repairClient.status { [weak self] result in
+            guard let self else { return }
+            self.checkingRepair = false
+            let confirmed: Bool
+            if case .success(let status) = result { confirmed = !status.active && !status.recoveryPending }
+            else { confirmed = (try? PowerDriver().bool("SleepDisabled")) == false }
+            if confirmed {
+                EventLog.write("parent recovery: original sleep setting confirmed after agent exit")
+                self.repairTimer?.invalidate(); self.repairTimer = nil
+                self.state.phase = .off; self.state.error = true
+                self.state.message = "意外退出后已恢复睡眠，请重新打开盖盖"
+                self.requestedArm = false
+                if self.quitting { self.readyToQuit?() }
+            } else { self.state.message = "兼容组件正在恢复睡眠，请保持开盖" }
+            self.changed?()
         }
-        do {
-            try driver.suppressLidSleep(false)
-            EventLog.write("parent recovery: selector12(false) accepted after agent exit")
-            repairTimer?.invalidate(); repairTimer = nil; repairDriver = nil
-            state.phase = .off; state.error = true
-            state.message = "意外退出后已恢复睡眠，请重新打开盖盖"
-            requestedArm = false
-            changed?()
-            if quitting { readyToQuit?() }
-        } catch { state.message = "恢复尚未确认，正在重试；请保持开盖"; changed?() }
+    }
+    func openCompatibility() {
+        if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "dev.kf.lidonce.compatibility") {
+            NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration())
+        } else {
+            // User installs the free component independently; the sandboxed
+            // Store app never downloads, installs, or elevates another program.
+            NSWorkspace.shared.open(URL(string: language.resolved() == .simplifiedChinese
+                ? "https://lidlid.vercel.app/support/#compatibility"
+                : "https://lidlid.vercel.app/en/support/#compatibility")!)
+        }
     }
     func exitReference() {
         for app in NSRunningApplication.runningApplications(withBundleIdentifier: "com.rathonyi.clamshell") { app.terminate() }

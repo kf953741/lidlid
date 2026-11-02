@@ -70,7 +70,7 @@ const copy = {
     privacyTitle: '隐私政策', privacyMeta: '盖盖 LidLid 的隐私政策：本机偏好、诊断记录、官网托管与问题反馈。',
     privacyIntro: privacyCopy.zh.intro,
     privacySections: privacyCopy.zh.sections,
-    updated: '更新日期：2026 年 11 月 1 日',
+    updated: '更新日期：2026 年 11 月 2 日',
     supportTitle: '支持与使用指南', supportMeta: '盖盖 LidLid 支持：DMG 安装、首次打开、MacBook 合盖不休眠和常见问题。',
     supportIntro: '从下载安装到合盖出发，跟着下面三步就好。遇到问题，也可以直接反馈给我们。',
     feedback: '发送邮件', emailLabel: '邮件支持', emailHint: '欢迎发送使用问题、建议或隐私相关咨询。', installHeading: '安装与使用',
@@ -86,6 +86,9 @@ const copy = {
       ['为什么任务还是没有继续？', '先检查是否显示「已开启」、是否连接了外接屏、是否触发低电量或高温保护。任务本身仍可能需要网络连接或用户确认；切换 Wi-Fi、VPN 时也可能断开连接。'],
       ['反馈问题时，需要提供什么？', '提供 MacBook 型号、macOS 版本、盖盖版本，以及出现问题时的操作步骤即可。请先遮住截图中的私人信息，不要上传代码、AI 对话、密钥或其他敏感内容。'],
     ],
+    compatibilityTitle: '下一版商店版：免费兼容组件',
+    compatibilityBody: '新版盖盖通过独立的免费兼容组件提供不插电、无外接屏的合盖运行。首次使用时，将组件放入「应用程序」，打开并按 macOS 提示允许后台服务，再回到盖盖开启会话。主应用保持沙盒运行，不会索取管理员密码或自动安装组件。组件正在开发验证，正式签名与公证下载包尚未发布。',
+    compatibilityRemove: '移除前，先关闭盖盖，再在兼容组件中点「恢复睡眠并移除服务」。需要主动睡眠时，也请先关闭盖盖。',
     supportNote: '保持通风，放入包或保护套前先结束本次。联网任务仍需网络连接。',
     privacyLink: '阅读隐私政策', back: '返回首页', notFound: '这一页走丢了。',
   },
@@ -133,7 +136,7 @@ const copy = {
     privacyTitle: 'Privacy policy', privacyMeta: 'LidLid privacy: local preferences and diagnostics, website hosting and support requests.',
     privacyIntro: privacyCopy.en.intro,
     privacySections: privacyCopy.en.sections,
-    updated: 'Updated November 1, 2026',
+    updated: 'Updated November 2, 2026',
     supportTitle: 'Support & getting started', supportMeta: 'LidLid support: DMG installation, first launch, MacBook closed-lid keep-awake and common questions.',
     supportIntro: 'From download to your next move, follow these three steps. If something gets in the way, send us feedback.',
     feedback: 'Email support', emailLabel: 'Email support', emailHint: 'For help, feedback or privacy questions.', installHeading: 'Install and use',
@@ -149,6 +152,9 @@ const copy = {
       ['Why did my task stop anyway?', 'Check that LidLid showed On, no external display was connected, and no battery or thermal condition ended the session. Tasks may still need an internet connection or your approval. Changing Wi-Fi networks or VPNs can also interrupt connections.'],
       ['What should I include in a report?', 'Share your MacBook model, macOS version, LidLid version and the steps that caused the issue. Redact personal information in screenshots. Do not upload code, AI conversations, keys or other sensitive content.'],
     ],
+    compatibilityTitle: 'Next Store version: free compatibility component',
+    compatibilityBody: 'The next LidLid version connects to a separately installed free component for closed-lid sessions on battery without an external display. Place the component in Applications, launch it and approve its background service in macOS, then return to LidLid. The main app stays sandboxed and never requests an administrator password or installs the component. Development validation is ongoing; the signed and notarized production download is not available yet.',
+    compatibilityRemove: 'Before deletion, turn LidLid off and choose Restore sleep & remove service in the component. Turn LidLid off before choosing Sleep as well.',
     supportNote: 'Keep your Mac ventilated. End the session before putting it in a bag or sleeve. Online tasks still need a connection.',
     privacyLink: 'Read the privacy policy', back: 'Back to home', notFound: 'This page took a different path.',
   },
@@ -178,7 +184,7 @@ function privacy(locale) {
 }
 function support(locale) {
   const t = copy[locale], route = routes[locale];
-  return `<main id="main" class="wrap"><article class="document"><span class="overline">${t.brand} · SUPPORT</span><h1>${t.supportTitle}</h1><p class="intro">${t.supportIntro}</p><div class="support-actions"><a class="button" href="${e(site.download)}">${downloadIcon}${t.download}</a><a class="button secondary" href="mailto:${e(site.supportEmail)}">${t.feedback} ${arrow}</a></div><div class="support-contact"><p><strong>${t.emailLabel}</strong> <a href="mailto:${e(site.supportEmail)}">${e(site.supportEmail)}</a></p><p>${t.emailHint}</p></div><h2 id="install">${t.installHeading}</h2><ol class="support-steps">${t.supportSteps.map(([title, body]) => `<li><strong>${title}</strong>${body}</li>`).join('')}</ol><div class="support-media"><img src="/assets/interface-on-${locale}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" alt="${t.uiOn}"></div><section><h2>${t.firstLaunch}</h2><p>${t.firstLaunchText}</p></section><section><h2>${t.faqTitle}</h2>${faq(t.supportFaq)}</section><p class="notice">${t.supportNote}</p><a class="text-link" href="${route.privacy}">${t.privacyLink}${arrow}</a></article></main>`;
+  return `<main id="main" class="wrap"><article class="document"><span class="overline">${t.brand} · SUPPORT</span><h1>${t.supportTitle}</h1><p class="intro">${t.supportIntro}</p><div class="support-actions"><a class="button" href="${e(site.download)}">${downloadIcon}${t.download}</a><a class="button secondary" href="mailto:${e(site.supportEmail)}">${t.feedback} ${arrow}</a></div><div class="support-contact"><p><strong>${t.emailLabel}</strong> <a href="mailto:${e(site.supportEmail)}">${e(site.supportEmail)}</a></p><p>${t.emailHint}</p></div><h2 id="install">${t.installHeading}</h2><ol class="support-steps">${t.supportSteps.map(([title, body]) => `<li><strong>${title}</strong>${body}</li>`).join('')}</ol><div class="support-media"><img src="/assets/interface-on-${locale}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" alt="${t.uiOn}"></div><section id="compatibility"><h2>${t.compatibilityTitle}</h2><p>${t.compatibilityBody}</p><p>${t.compatibilityRemove}</p></section><section><h2>${t.firstLaunch}</h2><p>${t.firstLaunchText}</p></section><section><h2>${t.faqTitle}</h2>${faq(t.supportFaq)}</section><p class="notice">${t.supportNote}</p><a class="text-link" href="${route.privacy}">${t.privacyLink}${arrow}</a></article></main>`;
 }
 function schema(locale, page) {
   const t = copy[locale], url = base + routes[locale][page];

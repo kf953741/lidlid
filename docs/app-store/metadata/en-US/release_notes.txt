@@ -1,1 +1,1 @@
-Meet LidLid. One switch keeps your Mac awake for this lid close; reopening ends the session. Includes time limits, low-battery and thermal stop conditions, and English and Simplified Chinese interfaces.
+Adds support for the free, separately installed compatibility component, replacing a lid-control mechanism that macOS could override. Initial setup requires macOS service approval. Includes automatic ending on reopening, time limits, low-battery and thermal protection.

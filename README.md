@@ -61,6 +61,9 @@ For first-launch help and language settings, see the [two-minute setup guide](do
 
 Keep your Mac ventilated. End the session before putting it in a bag or sleeve. Online tasks still need a connection.
 
+The upcoming Mac App Store version uses a separately installed free compatibility component; see the [setup guide](docs/COMPATIBILITY.md). The public DMG is still 1.2.0.
+
+
 ---
 
 Questions or feedback? Email [kf953741@gmail.com](mailto:kf953741@gmail.com). If LidLid helps you, give it a Star.
