@@ -2,7 +2,7 @@
   "version": "1.5.1",
   "build": "10",
   "publicSupportEmail": "kf953741@gmail.com",
-  "screenshotCaptureVersion": "1.3.0 (needs recapture for 1.5.1)",
+  "screenshotCaptureVersion": "Options: 1.5.1 (both languages); other captures: 1.3.0 (need recapture for 1.5.1)",
   "submissionReady": false,
   "screenshots": [
     {
