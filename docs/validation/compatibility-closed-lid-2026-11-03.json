@@ -1,0 +1,17 @@
+{
+  "status": "first phase passed; normal sleep phase pending",
+  "clientDate": "2026-11-03",
+  "condition": "battery, no external display",
+  "closedUTC": "2026-11-02T16:21:20.079Z",
+  "openedUTC": "2026-11-02T16:23:38.084Z",
+  "closedSeconds": 138.00536799430847,
+  "samples": 138,
+  "maxSampleGapSeconds": 1.004647970199585,
+  "continuousWorkProgress": true,
+  "sleepDisabledThroughoutClosed": true,
+  "sleepDisabledAfterReopen": false,
+  "displayWakeRegression": "not explicitly triggered during this closed-lid interval",
+  "normalSubsequentSleep": "pending",
+  "applicationVersion": "1.4.0 (before open-lid feature)",
+  "userReportedAutoOff": true
+}

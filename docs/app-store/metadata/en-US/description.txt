@@ -2,6 +2,9 @@ Your work is still running. You need to go.
 
 LidLid is a small menu bar app for MacBooks. Switch it on before closing your laptop to keep local work running as you move to another spot. No more balancing an open laptop while you walk.
 
+Keep awake while open, too
+An independent switch prevents idle system sleep while the lid is open. Your display can still sleep normally. It pauses on lid close or manual sleep, resumes after reopening and wake, and turns off when you quit LidLid. This mode does not require the compatibility component.
+
 One session for this lid close
 Turn it on when you need it. Reopening the lid ends the session automatically. Turn it on again for the next time you need it.
 
@@ -22,7 +25,7 @@ Small controls. Clear state.
 • English and Simplified Chinese
 • No account, advertising or tracking; preferences and diagnostic records stay on your Mac
 
-First-time setup requires the separately installed, free LidLid Compatibility component and macOS background-service approval. The Store app stays sandboxed; it never asks for an administrator password or installs the component automatically. The component manages system sleep only during a session. Turn LidLid off before choosing Sleep.
+Full closed-lid operation requires the separately installed, free LidLid Compatibility component and macOS background-service approval. The Store app stays sandboxed; it never asks for an administrator password or installs the component automatically. The component manages system sleep only during a session. Turn LidLid off before choosing Sleep.
 
 Getting started
 1. Open the LidLid icon in your menu bar.

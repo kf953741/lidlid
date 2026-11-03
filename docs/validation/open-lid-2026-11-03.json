@@ -1,0 +1,214 @@
+{
+  "date": "2026-11-03",
+  "version": "1.5.0",
+  "build": "9",
+  "unitTestsPassed": 30,
+  "openLidIntegrationPassed": 7,
+  "sandboxStandaloneIntegrationPassed": 1,
+  "displaySleepObserved": true,
+  "closedLidIntegrationPassed": 6,
+  "sandboxAndSignatureCheck": "passed, no entitlement changes",
+  "compatibilityComponentRequiredForOpenLid": false,
+  "compatibilityServiceUpdated": false,
+  "publicDownloadReleased": false,
+  "installedBundleVersionVerified": true,
+  "nativeUI": "pending manual unlock after successful display sleep test",
+  "physicalPauseAndResumeForNewOpenLidMode": "not performed; injected sensor/manual-sleep transition tests passed",
+  "physicalClosedLidBaseline": "1.4.0 battery test passed for 138 seconds; subsequent normal sleep and display-wake regression remain pending",
+  "dmg": {
+    "name": "LidLid-1.5.0-macOS-arm64.dmg",
+    "bytes": 4911497,
+    "sha256": "24d438bbe8e060fe6fcd6d851f5c310c489e86b10305c3a529c6b0f0046295a1",
+    "signing": "Apple Development; local testing only",
+    "checksum": "passed"
+  },
+  "results": {
+    "tests": [
+      {
+        "case": "manual off and sustained renewal",
+        "passed": true,
+        "inheritedSandbox": true,
+        "assertionType": "PreventUserIdleSystemSleep",
+        "systemTimeoutSeconds": 30,
+        "privilegedServiceUnavailable": false,
+        "idleModeDoesNotChangeSleepDisabled": true,
+        "closedLidModeAlsoExercised": false,
+        "finalSleepDisabled": false
+      },
+      {
+        "case": "parent EOF",
+        "passed": true,
+        "inheritedSandbox": true,
+        "assertionType": "PreventUserIdleSystemSleep",
+        "systemTimeoutSeconds": 30,
+        "privilegedServiceUnavailable": false,
+        "idleModeDoesNotChangeSleepDisabled": true,
+        "closedLidModeAlsoExercised": false,
+        "finalSleepDisabled": false
+      },
+      {
+        "case": "heartbeat timeout",
+        "passed": true,
+        "inheritedSandbox": true,
+        "assertionType": "PreventUserIdleSystemSleep",
+        "systemTimeoutSeconds": 30,
+        "privilegedServiceUnavailable": false,
+        "idleModeDoesNotChangeSleepDisabled": true,
+        "closedLidModeAlsoExercised": false,
+        "finalSleepDisabled": false
+      },
+      {
+        "case": "agent SIGTERM",
+        "passed": true,
+        "inheritedSandbox": true,
+        "assertionType": "PreventUserIdleSystemSleep",
+        "systemTimeoutSeconds": 30,
+        "privilegedServiceUnavailable": false,
+        "idleModeDoesNotChangeSleepDisabled": true,
+        "closedLidModeAlsoExercised": false,
+        "finalSleepDisabled": false
+      },
+      {
+        "case": "agent SIGKILL",
+        "passed": true,
+        "inheritedSandbox": true,
+        "assertionType": "PreventUserIdleSystemSleep",
+        "systemTimeoutSeconds": 30,
+        "privilegedServiceUnavailable": false,
+        "idleModeDoesNotChangeSleepDisabled": true,
+        "closedLidModeAlsoExercised": false,
+        "finalSleepDisabled": false
+      },
+      {
+        "case": "frozen assertion expiry",
+        "passed": true,
+        "inheritedSandbox": true,
+        "assertionType": "PreventUserIdleSystemSleep",
+        "systemTimeoutSeconds": 30,
+        "privilegedServiceUnavailable": false,
+        "idleModeDoesNotChangeSleepDisabled": true,
+        "closedLidModeAlsoExercised": false,
+        "finalSleepDisabled": false
+      },
+      {
+        "case": "independent closed-lid switch",
+        "passed": true,
+        "inheritedSandbox": true,
+        "assertionType": "PreventUserIdleSystemSleep",
+        "systemTimeoutSeconds": 30,
+        "privilegedServiceUnavailable": false,
+        "idleModeDoesNotChangeSleepDisabled": true,
+        "closedLidModeAlsoExercised": true,
+        "finalSleepDisabled": false
+      }
+    ],
+    "displaySleepHeldByLidLid": false,
+    "physicalLidTest": "not performed by this script",
+    "standaloneSandboxTest": {
+      "tests": [
+        {
+          "case": "manual off and sustained renewal",
+          "passed": true,
+          "inheritedSandbox": true,
+          "assertionType": "PreventUserIdleSystemSleep",
+          "systemTimeoutSeconds": 30,
+          "idleModeDoesNotChangeSleepDisabled": true,
+          "closedLidModeAlsoExercised": false,
+          "finalSleepDisabled": false,
+          "privilegedServiceUnavailable": true
+        }
+      ],
+      "displaySleepHeldByLidLid": false,
+      "physicalLidTest": "not performed by this script"
+    },
+    "displaySleepTest": {
+      "tests": [
+        {
+          "case": "display can sleep",
+          "passed": true,
+          "inheritedSandbox": true,
+          "assertionType": "PreventUserIdleSystemSleep",
+          "systemTimeoutSeconds": 30,
+          "idleModeDoesNotChangeSleepDisabled": true,
+          "closedLidModeAlsoExercised": false,
+          "finalSleepDisabled": false,
+          "displaySleepObserved": true,
+          "privilegedServiceUnavailable": true
+        }
+      ],
+      "displaySleepHeldByLidLid": false,
+      "physicalLidTest": "not performed by this script"
+    },
+    "closedLidRegression": {
+      "tests": [
+        {
+          "case": "manual cancel",
+          "passed": true,
+          "assertionsWhileArmed": 0,
+          "inheritedSandbox": true,
+          "originalSleepSettingRestored": true,
+          "onBattery": false,
+          "duplicateAgentRejected": true,
+          "cleanupReportedByAgent": true,
+          "serverLeaseExpiryObserved": false
+        },
+        {
+          "case": "parent pipe EOF",
+          "passed": true,
+          "assertionsWhileArmed": 0,
+          "inheritedSandbox": true,
+          "originalSleepSettingRestored": true,
+          "onBattery": false,
+          "duplicateAgentRejected": false,
+          "cleanupReportedByAgent": true,
+          "serverLeaseExpiryObserved": false
+        },
+        {
+          "case": "heartbeat timeout",
+          "passed": true,
+          "assertionsWhileArmed": 0,
+          "inheritedSandbox": true,
+          "originalSleepSettingRestored": true,
+          "onBattery": false,
+          "duplicateAgentRejected": false,
+          "cleanupReportedByAgent": true,
+          "serverLeaseExpiryObserved": false
+        },
+        {
+          "case": "agent SIGTERM",
+          "passed": true,
+          "assertionsWhileArmed": 0,
+          "inheritedSandbox": true,
+          "originalSleepSettingRestored": true,
+          "onBattery": false,
+          "duplicateAgentRejected": false,
+          "cleanupReportedByAgent": true,
+          "serverLeaseExpiryObserved": false
+        },
+        {
+          "case": "agent SIGKILL",
+          "passed": true,
+          "assertionsWhileArmed": 0,
+          "inheritedSandbox": true,
+          "originalSleepSettingRestored": true,
+          "onBattery": false,
+          "duplicateAgentRejected": false,
+          "cleanupReportedByAgent": false,
+          "serverLeaseExpiryObserved": false
+        },
+        {
+          "case": "agent lease expiry",
+          "passed": true,
+          "assertionsWhileArmed": 0,
+          "inheritedSandbox": true,
+          "originalSleepSettingRestored": true,
+          "onBattery": false,
+          "duplicateAgentRejected": false,
+          "cleanupReportedByAgent": true,
+          "serverLeaseExpiryObserved": true
+        }
+      ],
+      "physicalLidTest": "not performed"
+    }
+  }
+}

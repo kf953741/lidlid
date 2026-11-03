@@ -9,6 +9,8 @@ import LidLidServiceProtocol
 final class SessionAgent {
     let driver: PowerDriver
     private var session = OneShot()
+    private let openLid = OpenLidSession(assertion: OpenLidAssertion())
+    private var systemSleeping = false
     private var snapshot = Snapshot()
     private var ownsSession = false
     private let compatibility = CompatibilityClient()
@@ -62,11 +64,15 @@ final class SessionAgent {
         for name in [NSWorkspace.screensDidSleepNotification, NSWorkspace.screensDidWakeNotification,
                      NSWorkspace.didWakeNotification] {
             observers.append(center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
+                if name == NSWorkspace.didWakeNotification { self?.systemSleeping = false }
                 self?.checkCompatibility()
             })
         }
         observers.append(center.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { [weak self] _ in
-            self?.stop("系统正在睡眠，本次已结束")
+            guard let self else { return }
+            self.systemSleeping = true
+            self.updateOpenLid()
+            self.stop("系统正在睡眠，本次已结束")
         })
         for code in [SIGTERM, SIGINT, SIGHUP] {
             signal(code, SIG_IGN)
@@ -90,10 +96,55 @@ final class SessionAgent {
         lastHeartbeat = ProcessInfo.processInfo.systemUptime
         switch command.action {
         case "arm": arm(minutes: command.minutes ?? 0)
+        case "open-awake-on": setOpenLid(true)
+        case "open-awake-off": setOpenLid(false)
         case "stop": stop("已取消，恢复正常合盖睡眠")
         case "quit": finish()
         default: break
         }
+    }
+    private func setOpenLid(_ enabled: Bool) {
+        guard !exiting else { return }
+        do {
+            snapshot.openAwakeError = false
+            if enabled, let message = openLidSafetyIssue() { throw PowerError(text: message) }
+            try openLid.setEnabled(enabled, now: ProcessInfo.processInfo.systemUptime,
+                                   lidClosed: driver.bool("AppleClamshellState"), systemSleeping: systemSleeping)
+            EventLog.write("open-lid idle protection requested=\(enabled); bounded assertion=30s")
+            updateOpenLid()
+        } catch { failOpenLid(error.localizedDescription) }
+        publish()
+    }
+    private func failOpenLid(_ message: String) {
+        try? openLid.disable()
+        snapshot.openAwakeError = true
+        snapshot.openAwakeMessage = message
+        snapshot.openAwakeRequested = openLid.requested
+        snapshot.openAwakeActive = openLid.active
+    }
+    private func openLidSafetyIssue() -> String? {
+        let battery = batteryReading()
+        if battery.percent == nil { return "无法读取电量，开盖不休眠已关闭" }
+        if battery.onBattery && battery.percent! <= 10 { return "电量已降至 10%，开盖不休眠已关闭" }
+        if ProcessInfo.processInfo.thermalState.rawValue >= ProcessInfo.ThermalState.serious.rawValue {
+            return "温度过高，开盖不休眠已关闭"
+        }
+        return nil
+    }
+    private func updateOpenLid() {
+        if (openLid.requested || openLid.active), let message = openLidSafetyIssue() {
+            failOpenLid(message); return
+        }
+        do {
+            try openLid.tick(now: ProcessInfo.processInfo.systemUptime,
+                             lidClosed: driver.bool("AppleClamshellState"), systemSleeping: systemSleeping)
+            snapshot.openAwakeRequested = openLid.requested
+            snapshot.openAwakeActive = openLid.active
+            if !snapshot.openAwakeError {
+                snapshot.openAwakeMessage = openLid.requested && !openLid.active
+                    ? "合盖或睡眠时暂停，开盖唤醒后恢复" : "屏幕仍可自动熄灭，合盖时暂停"
+            }
+        } catch { failOpenLid(error.localizedDescription) }
     }
     private func arm(minutes: Int) {
         guard !ownsSession, !restoring, !exiting else { return }
@@ -143,6 +194,7 @@ final class SessionAgent {
     }
     private func lidChanged(_ closed: Bool) {
         snapshot.lidClosed = closed
+        updateOpenLid()
         guard ownsSession, !restoring else { publish(); return }
         if snapshot.phase == .starting {
             if closed { stop("请先打开电脑盖子", error: true) }
@@ -195,13 +247,17 @@ final class SessionAgent {
         }
     }
     private func tick() {
+        if (ownsSession || openLid.requested || openLid.active), ProcessInfo.processInfo.systemUptime - lastHeartbeat > 12 {
+            finish(); return
+        }
+        updateOpenLid()
         let battery = batteryReading()
         snapshot.battery = battery.percent; snapshot.onBattery = battery.onBattery
         snapshot.thermal = thermalLabel()
         snapshot.causesSleep = driver.bool("AppleClamshellCausesSleep")
+        if exiting && !ownsSession && !restoring && !openLid.active { publish(); exit(0) }
         if restoring { restore(); return }
         if ownsSession {
-            if ProcessInfo.processInfo.systemUptime - lastHeartbeat > 12 { finish(); return }
             if ProcessInfo.processInfo.thermalState.rawValue >= ProcessInfo.ThermalState.serious.rawValue {
                 stop("温度过高，已恢复正常睡眠", error: true); return
             }
@@ -231,7 +287,7 @@ final class SessionAgent {
         session.reset(); snapshot.deadline = nil
         if ownsSession {
             restoring = true; snapshot.phase = .restoring; restoreAttempts = 0; restore()
-        } else { snapshot.phase = .off; publish(); if exiting { exit(0) } }
+        } else { snapshot.phase = .off; publish(); if exiting && !openLid.active { exit(0) } }
     }
     private func restore() {
         guard !operationPending else { return }
@@ -254,7 +310,7 @@ final class SessionAgent {
                     self.snapshot.compatibilityReady = serviceConfirmed
                     EventLog.write("restore: original sleep setting confirmed; service=\(serviceConfirmed)")
                     self.publish()
-                    if self.exiting { exit(0) }
+                    if self.exiting && !self.openLid.active { exit(0) }
                 } else {
                     // Invalidating the old connection also revokes its lease.
                     // Never report Off before the service confirms restoration.
@@ -271,6 +327,9 @@ final class SessionAgent {
     private func finish() {
         guard !exiting else { return }
         exiting = true
+        do { try openLid.disable() } catch { failOpenLid(error.localizedDescription) }
+        snapshot.openAwakeRequested = openLid.requested
+        snapshot.openAwakeActive = openLid.active
         stop("会话已结束，恢复正常睡眠")
     }
     private func publish() {

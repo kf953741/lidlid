@@ -43,6 +43,10 @@ public struct Snapshot: Codable {
     public var compatibilityReady = false
     public var compatibilityMessage = "请先安装并授权盖盖兼容组件"
     public var phase: Phase = .off
+    public var openAwakeRequested = false
+    public var openAwakeActive = false
+    public var openAwakeMessage = "屏幕仍可自动熄灭，合盖时暂停"
+    public var openAwakeError = false
     public var agentPID: Int32? = nil
     public var sandboxContainer: String? = nil
     public var message = "点一次，下次合盖继续运行"

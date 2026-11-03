@@ -1,1 +1,1 @@
-Adds support for the free, separately installed compatibility component, replacing a lid-control mechanism that macOS could override. Initial setup requires macOS service approval. Includes automatic ending on reopening, time limits, low-battery and thermal protection.
+Adds an independent open-lid keep-awake switch. Prevent idle system sleep while allowing display sleep. Pauses on lid close or manual sleep and resumes after reopening and wake. Works without the compatibility component. One-shot closed-lid sessions remain separately controlled.

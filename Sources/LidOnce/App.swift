@@ -34,6 +34,13 @@ final class AppModel: ObservableObject {
     private var repairTimer: Timer?
 
     var busy: Bool { state.phase != .off }
+    var openAwakeEnabled: Bool { state.openAwakeRequested || state.openAwakeActive }
+    var anySessionActive: Bool { busy || openAwakeEnabled }
+    var menuAwake: Bool { enabled || openAwakeEnabled }
+    var canToggleOpenAwake: Bool { connected && !quitting && !(!state.openAwakeRequested && state.openAwakeActive) }
+    var menuLabel: String {
+        text(enabled ? "盖盖：已开启，仅本次合盖不休眠" : openAwakeEnabled ? "盖盖：开盖不休眠已开启" : "盖盖：已关闭")
+    }
     // The one-shot needs armed/closed internally; the person sees a single on state.
     var enabled: Bool { state.phase == .armed || state.phase == .closed || state.phase == .restoring }
     var changing: Bool { state.phase == .starting || state.phase == .restoring }
@@ -93,7 +100,7 @@ final class AppModel: ObservableObject {
             state = update; connected = true
             if update.phase == .off { requestedArm = false }
             changed?()
-            if quitting && update.phase == .off { send(Command("quit")) }
+            if quitting && update.phase == .off && !update.openAwakeRequested && !update.openAwakeActive { send(Command("quit")) }
         }
     }
     func send(_ command: Command) {
@@ -106,6 +113,10 @@ final class AppModel: ObservableObject {
         if busy { send(Command("stop")) }
         else { requestedArm = true; send(Command("arm", minutes: maximumMinutes)) }
     }
+    func setOpenAwake(_ enabled: Bool) {
+        guard canToggleOpenAwake else { return }
+        send(Command(enabled ? "open-awake-on" : "open-awake-off"))
+    }
     func quit() {
         quitting = true
         if process?.isRunning == true { send(Command("quit")) }
@@ -117,7 +128,7 @@ final class AppModel: ObservableObject {
         connected = false; process = nil
         // The worker's XPC disconnect revokes its lease. Confirm recovery via
         // the independently running service before showing Off.
-        if busy || requestedArm {
+        if anySessionActive || requestedArm {
             state.phase = .restoring; state.error = true
             state.message = "合盖进程意外结束，正在恢复睡眠…"
             repairTimer = Timer(timeInterval: 0.25, repeats: true) { [weak self] _ in self?.repair() }
@@ -140,6 +151,7 @@ final class AppModel: ObservableObject {
                 EventLog.write("parent recovery: original sleep setting confirmed after agent exit")
                 self.repairTimer?.invalidate(); self.repairTimer = nil
                 self.state.phase = .off; self.state.error = true
+                self.state.openAwakeRequested = false; self.state.openAwakeActive = false
                 self.state.message = "意外退出后已恢复睡眠，请重新打开盖盖"
                 self.requestedArm = false
                 if self.quitting { self.readyToQuit?() }
@@ -200,7 +212,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool { show(); return true }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
-        if allowsTermination || (!model.connected && !model.busy) { return .terminateNow }
+        if allowsTermination || (!model.connected && !model.anySessionActive) { return .terminateNow }
         model.quit(); return .terminateLater
     }
     @objc private func clicked() {
@@ -215,13 +227,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     private func updateIcon() {
         status?.button?.setAccessibilityLabel(model.brandName)
-        status?.button?.image = model.state.error
-            ? NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: model.text(model.state.message))
-            : GuardianMenuSymbol.image(for: model.enabled ? .on : .off)
-        if !model.state.error {
-            status?.button?.image?.accessibilityDescription = model.text(GuardianMenuSymbol.label(model.enabled ? .on : .off))
+        status?.button?.image = (model.state.error || model.state.openAwakeError)
+            ? NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: model.text(model.state.error ? model.state.message : model.state.openAwakeMessage))
+            : GuardianMenuSymbol.image(for: model.menuAwake ? .on : .off)
+        if !model.state.error && !model.state.openAwakeError {
+            status?.button?.image?.accessibilityDescription = model.menuLabel
         }
         status?.button?.title = ""
-        status?.button?.toolTip = "\(model.brandName) · \(model.title)"
+        status?.button?.toolTip = model.menuLabel
     }
 }

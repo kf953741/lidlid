@@ -1,6 +1,6 @@
 # Closed-lid compatibility architecture
 
-The commercial distribution target remains the Mac App Store. The Store app remains sandboxed. The user independently installs a free, Developer ID signed and notarized compatibility app from the product website. Approval is requested by macOS Service Management, never by collecting a password in LidLid. App Review approval is not implied by this architecture.
+The commercial distribution target remains the Mac App Store. The Store app remains sandboxed. Version 1.5 also has an independent open-lid mode that requires no privileged component. The user independently installs a free, Developer ID signed and notarized compatibility app from the product website. Approval is requested by macOS Service Management, never by collecting a password in LidLid. App Review approval is not implied by this architecture.
 
 ## Cause and change
 
@@ -12,7 +12,7 @@ The independently installed component registers a root LaunchDaemon through `SMA
 
 - The App Group-prefixed Mach service allows sandbox lookup without a temporary sandbox exception. The inherited worker shares the main sandbox. Client and service pin each other's Apple-anchored Team ID and bundle identifiers. Only the current console user's approved clients are accepted.
 - There is one session owner per XPC connection; another connection cannot renew or cancel it. Removal explicitly pauses all new sessions before restoring. No generic shell, caller-supplied file path, sudoers rule, password storage, private power entitlement or remote service is exposed.
-- A 30-second continuous-clock lease is renewed every 5 seconds. The worker's UI heartbeat timeout remains 12 seconds. The worker owns no independent idle-sleep assertion, so a frozen worker cannot outlive the daemon lease with another sleep hold. The daemon independently observes lid reopening, battery <=10% on battery, thermal pressure, sensor loss and optional duration. The worker additionally checks displays and the competing app. Clock adjustments do not extend daemon leases.
+- A 30-second continuous-clock lease is renewed every 5 seconds. The worker's UI heartbeat timeout remains 12 seconds. Closed-lid mode owns no additional idle assertion. Optional open-lid mode uses a public PreventUserIdleSystemSleep assertion with TimeoutActionRelease after 30 seconds, renewed every 5 seconds; it releases on physical close/system sleep and never changes SleepDisabled. Neither hold can remain unbounded after a worker freeze. The daemon independently observes lid reopening, battery <=10% on battery, thermal pressure, sensor loss and optional duration. The worker additionally checks displays and the competing app. Clock adjustments do not extend daemon leases.
 - Before mutation, the root daemon writes a root-owned 0600 recovery journal in a fixed 0700 directory using no-follow directory-relative operations, full file sync and rename. The journal contains only schema and the original boolean. Startup, termination, disconnect, expiry, removal and safety stops restore and read back the original setting before clearing the journal. Failed restoration retains the journal and retries.
 - Existing `SleepDisabled=1` is refused; LidLid does not claim ownership of another utility's override. A different application's later change causes the session to stop rather than fight over settings. Concurrent external sleep controllers remain unsupported.
 - This global setting temporarily prevents manual sleep as well. Users must turn LidLid off before choosing Sleep or putting the Mac in a bag. Shutdown/forced power-off is not intercepted.
@@ -29,6 +29,8 @@ Checks:
 
 ```sh
 swift test
+# With the UI quit and lid open:
+python3 scripts/integration-open-lid.py dist/LidLid.app/Contents/MacOS/LidLid
 python3 scripts/verify-sandbox.py dist/LidLid.app
 python3 scripts/verify-compatibility.py 'dist/LidLid Compatibility.app'
 dist/LidLid.app/Contents/MacOS/LidLid --compatibility-status
@@ -45,3 +47,5 @@ Unit tests use injected power/journal objects. They cover restoration failure, c
 - [Apple powerd assertion policy](https://github.com/apple-oss-distributions/PowerManagement/blob/main/pmconfigd/PMAssertions.c)
 - [Apple root-domain user client](https://github.com/apple-oss-distributions/xnu/blob/main/iokit/Kernel/RootDomainUserClient.cpp)
 - [Rouse Store listing](https://apps.apple.com/us/app/rouse-stay-awake/id6760773101?mt=12) and [public companion architecture](https://github.com/JaminZhou/Rouse-Closed-Lid-Helper), consulted as implementation references; no third-party helper code is bundled.
+
+Open-lid assertion and timeout semantics are defined by [Apple IOPMLib.h](https://github.com/apple-oss-distributions/IOKitUser/blob/main/pwr_mgt.subproj/IOPMLib.h). It prevents idle system sleep while allowing display, clamshell and manual sleep. No display assertion or fake user activity is used.

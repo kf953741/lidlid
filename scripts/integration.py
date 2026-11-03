@@ -17,7 +17,7 @@ binary = os.path.abspath(sys.argv[1])
 report = []
 
 def assertions_for(pid):
-    result = subprocess.check_output(["/usr/bin/pmset", "-g", "assertions"], text=True)
+    result = subprocess.check_output(["/usr/bin/pmset", "-g", "assertions"], text=True, errors="replace")
     return [line.strip() for line in result.splitlines() if f"pid {pid}(" in line and any(name in line for name in ("LidLid", "LidOnce"))]
 
 def start():

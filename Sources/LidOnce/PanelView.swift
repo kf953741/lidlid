@@ -111,6 +111,25 @@ struct PanelView: View {
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 16)
+
+            Divider().opacity(0.6).padding(.vertical, 18)
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(model.text("开盖不休眠")).font(.system(size: 12, weight: .medium))
+                    Text(model.text(model.state.openAwakeMessage))
+                        .font(.system(size: 11))
+                        .foregroundStyle(model.state.openAwakeError ? Color.orange : Color.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+                Toggle(model.text("开盖不休眠"), isOn: Binding(
+                    get: { model.openAwakeEnabled }, set: model.setOpenAwake
+                ))
+                .toggleStyle(.switch).labelsHidden().controlSize(.small)
+                .disabled(!model.canToggleOpenAwake)
+                .accessibilityIdentifier("open-awake-switch")
+            }
+
         }
     }
 

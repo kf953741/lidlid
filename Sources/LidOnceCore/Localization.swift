@@ -42,6 +42,8 @@ public struct AppText {
     }
 
     private static let englishPrefixes = [
+        "开盖防休眠请求失败：": "Open-lid keep-awake request failed: ",
+        "开盖防休眠恢复失败：": "Could not release open-lid keep-awake: ",
         "无法启动合盖进程：": "Couldn't start the session process: ",
         "无法打开合盖接口：": "Couldn't open the lid-control interface: ",
         "系统拒绝合盖设置：": "macOS rejected the lid setting: ",
@@ -49,6 +51,15 @@ public struct AppText {
     ]
 
     private static let english = [
+        "开盖不休眠": "Keep awake with lid open",
+        "屏幕仍可自动熄灭，合盖时暂停": "Display can sleep. Pauses when you close the lid.",
+        "合盖或睡眠时暂停，开盖唤醒后恢复": "Paused while closed or asleep. Resumes on reopening and wake.",
+        "盖盖：开盖不休眠已开启": "LidLid: Open-lid keep-awake is on",
+        "无法读取合盖状态，开盖不休眠已关闭": "Lid readings unavailable. Open-lid keep-awake turned off.",
+        "开盖不休眠连接超时，请重新开启": "Open-lid keep-awake timed out. Turn it on again.",
+        "无法读取电量，开盖不休眠已关闭": "Battery readings unavailable. Open-lid keep-awake turned off.",
+        "电量已降至 10%，开盖不休眠已关闭": "Battery reached 10%. Open-lid keep-awake turned off.",
+        "温度过高，开盖不休眠已关闭": "Your Mac is too hot. Open-lid keep-awake turned off.",
         "正在连接兼容服务…": "Connecting to compatibility service…",
         "盖盖兼容组件": "LidLid Compatibility",
         "让合盖运行更可靠": "Reliable closed-lid sessions",
