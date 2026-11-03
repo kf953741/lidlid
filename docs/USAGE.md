@@ -38,7 +38,7 @@ Close your MacBook and take it with you. When you open the lid again, LidLid ret
 
 <p align="center"><img src="assets/en/demo-reopened.jpg" width="340" alt="LidLid Off state: the session has ended"></p>
 
-Keep your Mac ventilated while carrying it; end the session before putting it in a bag or sleeve. Online tasks still need a connection. Switching Wi-Fi networks or VPNs can interrupt them. LidLid ends the session at 10% on battery power or on serious thermal pressure.
+Online tasks still need a connection. Switching Wi-Fi networks or VPNs can interrupt them. LidLid ends the session at 10% on battery power or on serious thermal pressure.
 
 ## Choose English or Chinese
 

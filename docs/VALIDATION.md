@@ -64,7 +64,7 @@ This was a small local calculation, not a recorded Codex or Claude Code session.
 
 ## First physical check
 
-Use a ventilated desk, sufficient charge, no external display, and one lid controller. Start with a short test and an expendable local task.
+Use a desk, sufficient charge, no external display, and one lid controller. Start with a short test and an expendable local task.
 
 1. Confirm that ordinary lid sleep behaves normally with LidLid off.
 2. Enable LidLid and verify that it shows **已开启** (On).
@@ -73,7 +73,7 @@ Use a ventilated desk, sufficient charge, no external display, and one lid contr
 5. Confirm LidLid returns to off. Close the lid again and check that ordinary sleep is restored.
 6. [Report the model, OS, power source, duration, and both results](mailto:kf953741@gmail.com).
 
-Do not deliberately overheat the Mac, drain its battery to test the cutoff, or put it in a bag during this check. Keep the lid open and restart if restoration is uncertain.
+Do not deliberately overheat the Mac, drain its battery to test the cutoff during this check. Keep the lid open and restart if restoration is uncertain.
 
 ## Optional real API check
 

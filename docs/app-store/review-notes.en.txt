@@ -18,6 +18,6 @@ Review flow once the final component URL and actual hardware test are complete:
 5. Reopen. The session ends automatically; a subsequent lid close uses normal sleep unless explicitly enabled again.
 6. To remove the external service, first disable LidLid, then choose Restore sleep & remove service in the compatibility app before deleting it.
 
-Optional limits are 30 minutes, 1, 2, 4 and 8 hours, or until reopening. Battery <=10% on battery, serious/critical thermal pressure, sensor failure, and external display attachment end the session. Keep the Mac ventilated; turn LidLid off before putting it in a bag or choosing manual Sleep. The global override also temporarily prevents manual sleep while a session is active.
+Optional limits are 30 minutes, 1, 2, 4 and 8 hours, or until reopening. Battery <=10% on battery, serious/critical thermal pressure, sensor failure, and external display attachment end the session. Turn LidLid off before choosing manual Sleep. The global override also temporarily prevents manual sleep while a session is active.
 
 LidLid does not read code, AI conversations or file contents, or operate coding assistants. Online tasks still need connectivity. There is no account, advertising, analytics, tracking or automatic diagnostic upload. Preferences, diagnostic records and the compatibility recovery record stay local. Privacy and support links are in Options; support is by email.

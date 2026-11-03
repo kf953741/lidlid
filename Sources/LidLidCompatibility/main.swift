@@ -106,7 +106,7 @@ struct CompatibilityApp: App {
                         Button(model.text("恢复睡眠并移除服务")) { model.remove() }
                     }
                 }.disabled(model.busy)
-                Text(model.text("使用期间请保持通风。需要主动睡眠或放入包中时，请先关闭盖盖。移除组件前，请先点“恢复睡眠并移除服务”。"))
+                Text(model.text("需要主动睡眠时，请先关闭盖盖。移除组件前，请先点“恢复睡眠并移除服务”。"))
                     .font(.footnote).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }.padding(28).frame(width: 570).onAppear { model.refresh() }
         }.windowResizability(.contentSize)

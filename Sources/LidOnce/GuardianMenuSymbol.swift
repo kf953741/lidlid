@@ -1,20 +1,20 @@
 import AppKit
 
 /// Original vector artwork. Designed on a 24-unit grid for an 18 pt status item.
-/// Use as a template image so macOS supplies the menu-bar foreground color.
-/// The user sees only off/on. Both internal armed and lid-closed phases map to on.
-/// Reopening the lid consumes the one-shot session and returns the icon to off.
+/// Closed-lid sessions use native template ink; open-lid protection uses the
+/// brand blue so the two independently enabled modes are easy to distinguish.
 enum GuardianMenuState: String, CaseIterable {
-    case off, on
+    case off, on, openLid
 }
 
 enum GuardianMenuSymbol {
+    static let openLidColor = NSColor(srgbRed: 0.26, green: 0.50, blue: 0.94, alpha: 1)
     static func image(for state: GuardianMenuState, size: CGFloat = 18) -> NSImage {
         let image = NSImage(size: NSSize(width: size, height: size), flipped: false) { rect in
-            draw(state, in: rect, color: .black)
+            draw(state, in: rect, color: state == .openLid ? openLidColor : .black)
             return true
         }
-        image.isTemplate = true
+        image.isTemplate = state != .openLid
         image.accessibilityDescription = label(state)
         return image
     }
@@ -23,6 +23,7 @@ enum GuardianMenuSymbol {
         switch state {
         case .off: return "盖盖：已关闭"
         case .on: return "盖盖：已开启，仅本次合盖不休眠"
+        case .openLid: return "盖盖：开盖不休眠已开启"
         }
     }
 

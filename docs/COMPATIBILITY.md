@@ -6,7 +6,7 @@ The upcoming Mac App Store version remains a sandboxed Store app. Full closed-li
 2. Open it and choose Install service. Follow macOS approval prompts, including System Settings → General → Login Items & Extensions if requested.
 3. Return to LidLid, enable the session, and wait for On before closing the lid. Reopening ends it automatically.
 
-Keep the component in Applications. Keep your Mac ventilated. Turn LidLid off before choosing manual Sleep or putting your Mac in a bag or sleeve. The active session temporarily prevents manual sleep as well. Online work still needs an internet connection.
+Keep the component in Applications. Turn LidLid off before choosing manual Sleep. The active session temporarily prevents manual sleep as well. Online work still needs an internet connection.
 
 To remove: switch LidLid off, open the component, choose Restore sleep & remove service, then delete the component only after successful restoration. Do not delete its recovery record first.
 

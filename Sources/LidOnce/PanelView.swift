@@ -34,8 +34,8 @@ struct PanelView: View {
     private var main: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 8) {
-                Image(nsImage: GuardianMenuSymbol.image(for: model.menuAwake ? .on : .off, size: 20))
-                    .renderingMode(.template)
+                Image(nsImage: GuardianMenuSymbol.image(for: model.menuState, size: 20))
+                    .renderingMode(model.openAwakeEnabled ? .original : .template)
                     .foregroundStyle(PanelStyle.accent)
                     .accessibilityHidden(true)
                 Text(model.brandName)
@@ -194,11 +194,6 @@ struct PanelView: View {
             settingRow(model.text("低电量保护"), "10%")
             settingRow(model.text("高温保护"), model.text("自动")).padding(.top, 16)
             settingRow(model.text("当前电量"), model.state.battery.map { "\($0)%" } ?? model.text("读取中")).padding(.top, 16)
-            Text(model.text("保持通风，放入包内前先结束本次。"))
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 18)
             Button(model.text("管理兼容组件"), action: model.openCompatibility)
                 .buttonStyle(.link).font(.system(size: 11)).padding(.top, 16)
             HStack(spacing: 16) {

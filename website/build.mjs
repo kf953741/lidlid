@@ -60,7 +60,6 @@ const copy = {
     faq: [
       ['MacBook 合盖后，Codex、Claude 还能继续运行吗？', '盖盖面向运行在 Mac 本机的 Codex、Claude Code、编译和下载任务。开启后，本机会在这次合盖期间保持唤醒；任务仍需要它所需的网络连接和用户授权。已经在云端执行的任务，可以独立运行。'],
       ['需要插电或外接显示器吗？', '不需要外接显示器，电池供电也能使用。当前版本面向不连接外接屏的 M 系列 MacBook；电池供电降至 10% 时会结束本次。'],
-      ['可以合盖后直接放进包里吗？', '移动时请保持电脑通风。放入背包或保护套之前，先结束本次合盖不休眠。'],
       ['Mac App Store 版本可以下载了吗？', 'Mac App Store 版本正在筹备，目前请使用本站提供的 DMG 下载入口。正式上架后，我们会在这里更新商店链接。'],
     ],
     closingTitle: '任务继续，<br>你也继续出发。', closingLead: '让下一次离开工位，少一点等待。',
@@ -90,7 +89,7 @@ const copy = {
     compatibilityTitle: '下一版商店版：免费兼容组件',
     compatibilityBody: '新版盖盖通过独立的免费兼容组件提供不插电、无外接屏的合盖运行。首次使用时，将组件放入「应用程序」，打开并按 macOS 提示允许后台服务，再回到盖盖开启会话。主应用保持沙盒运行，不会索取管理员密码或自动安装组件；独立的开盖不休眠功能无需此组件。组件正在开发验证，正式签名与公证下载包尚未发布。',
     compatibilityRemove: '移除前，先关闭盖盖，再在兼容组件中点「恢复睡眠并移除服务」。需要主动睡眠时，也请先关闭盖盖。',
-    supportNote: '保持通风，放入包或保护套前先结束本次。联网任务仍需网络连接。',
+    supportNote: '联网任务仍需网络连接。',
     privacyLink: '阅读隐私政策', back: '返回首页', notFound: '这一页走丢了。',
   },
   en: {
@@ -127,7 +126,6 @@ const copy = {
     faq: [
       ['Will Codex and Claude Code keep running with the lid closed?', 'LidLid is for Codex, Claude Code, builds and downloads running locally on your Mac. It keeps your Mac awake for this session. Tasks still need their required internet connection and user approvals. Jobs already running in the cloud can run independently.'],
       ['Do I need power or an external monitor?', 'No external monitor is needed, and LidLid can run on battery. The current version is for Apple Silicon MacBooks without an external display connected. A session ends at 10% on battery power.'],
-      ['Can I put my running MacBook in a bag?', 'Keep your Mac ventilated while carrying it. End the session before putting it in a bag or sleeve.'],
       ['Is LidLid available on the Mac App Store?', 'A Mac App Store version is planned. For now, use the DMG download on this site. We will add the store link when a listing is available.'],
     ],
     closingTitle: 'Your task carries on.<br>So can you.', closingLead: 'Make your next move with a little less waiting.',
@@ -157,7 +155,7 @@ const copy = {
     compatibilityTitle: 'Next Store version: free compatibility component',
     compatibilityBody: 'The next LidLid version connects to a separately installed free component for closed-lid sessions on battery without an external display. Place the component in Applications, launch it and approve its background service in macOS, then return to LidLid. The main app stays sandboxed and never requests an administrator password or installs the component. Its independent open-lid mode works without this component. Development validation is ongoing; the signed and notarized production download is not available yet.',
     compatibilityRemove: 'Before deletion, turn LidLid off and choose Restore sleep & remove service in the component. Turn LidLid off before choosing Sleep as well.',
-    supportNote: 'Keep your Mac ventilated. End the session before putting it in a bag or sleeve. Online tasks still need a connection.',
+    supportNote: 'Online tasks still need a connection.',
     privacyLink: 'Read the privacy policy', back: 'Back to home', notFound: 'This page took a different path.',
   },
 };

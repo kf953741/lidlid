@@ -1,1 +1,1 @@
-Adds an independent open-lid keep-awake switch. Prevent idle system sleep while allowing display sleep. Pauses on lid close or manual sleep and resumes after reopening and wake. Works without the compatibility component. One-shot closed-lid sessions remain separately controlled.
+Open-lid keep-awake now uses a blue guardian in the menu bar. One-shot closed-lid sessions keep the native monochrome icon. Simplified interface copy.

@@ -58,7 +58,7 @@ func footer(_ chinese: Bool) {
     rule.setStroke(); let line = NSBezierPath()
     line.move(to: NSPoint(x: 88, y: H - 828)); line.line(to: NSPoint(x: 1352, y: H - 828)); line.lineWidth = 0.7; line.stroke()
     text("Apple Silicon MacBook · macOS 14+", 88, 849, 450, 28, 14, muted)
-    text(chinese ? "联网任务仍需网络连接。保持通风，入包前结束本次。" : "Online work needs connectivity. End the session before placing your Mac in a bag.",
+    text(chinese ? "联网任务仍需网络连接。" : "Online work still needs a network connection.",
          625, 849, 727, 30, 13, muted)
 }
 

@@ -36,10 +36,11 @@ final class AppModel: ObservableObject {
     var busy: Bool { state.phase != .off }
     var openAwakeEnabled: Bool { state.openAwakeRequested || state.openAwakeActive }
     var anySessionActive: Bool { busy || openAwakeEnabled }
-    var menuAwake: Bool { enabled || openAwakeEnabled }
+    var menuState: GuardianMenuState { openAwakeEnabled ? .openLid : enabled ? .on : .off }
     var canToggleOpenAwake: Bool { connected && !quitting && !(!state.openAwakeRequested && state.openAwakeActive) }
     var menuLabel: String {
-        text(enabled ? "盖盖：已开启，仅本次合盖不休眠" : openAwakeEnabled ? "盖盖：开盖不休眠已开启" : "盖盖：已关闭")
+        text(openAwakeEnabled ? (enabled ? "盖盖：合盖与开盖不休眠已开启" : "盖盖：开盖不休眠已开启")
+             : enabled ? "盖盖：已开启，仅本次合盖不休眠" : "盖盖：已关闭")
     }
     // The one-shot needs armed/closed internally; the person sees a single on state.
     var enabled: Bool { state.phase == .armed || state.phase == .closed || state.phase == .restoring }
@@ -229,7 +230,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         status?.button?.setAccessibilityLabel(model.brandName)
         status?.button?.image = (model.state.error || model.state.openAwakeError)
             ? NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: model.text(model.state.error ? model.state.message : model.state.openAwakeMessage))
-            : GuardianMenuSymbol.image(for: model.menuAwake ? .on : .off)
+            : GuardianMenuSymbol.image(for: model.menuState)
         if !model.state.error && !model.state.openAwakeError {
             status?.button?.image?.accessibilityDescription = model.menuLabel
         }

@@ -51,6 +51,7 @@ public struct AppText {
     ]
 
     private static let english = [
+        "盖盖：合盖与开盖不休眠已开启": "LidLid: Closed-lid and open-lid keep-awake are on",
         "开盖不休眠": "Keep awake with lid open",
         "屏幕仍可自动熄灭，合盖时暂停": "Display can sleep. Pauses when you close the lid.",
         "合盖或睡眠时暂停，开盖唤醒后恢复": "Paused while closed or asleep. Resumes on reopening and wake.",
@@ -74,7 +75,7 @@ public struct AppText {
         "打开系统设置": "Open System Settings",
         "刷新状态": "Refresh",
         "恢复睡眠并移除服务": "Restore sleep & remove service",
-        "使用期间请保持通风。需要主动睡眠或放入包中时，请先关闭盖盖。移除组件前，请先点“恢复睡眠并移除服务”。": "Keep your Mac ventilated. Turn LidLid off before putting it in a bag or choosing Sleep. Use Restore sleep & remove service before deleting this app.",
+        "需要主动睡眠时，请先关闭盖盖。移除组件前，请先点“恢复睡眠并移除服务”。": "Turn LidLid off before choosing Sleep. Use Restore sleep & remove service before deleting this app.",
         "设置免费兼容组件": "Set up free compatibility component",
         "管理兼容组件": "Manage compatibility component",
         "请更新盖盖兼容组件": "Update LidLid Compatibility",
@@ -119,7 +120,6 @@ public struct AppText {
         "自动": "Automatic",
         "当前电量": "Battery level",
         "读取中": "Reading…",
-        "保持通风，放入包内前先结束本次。": "Keep your Mac ventilated. Turn off before putting it in a bag.",
         "退出盖盖": "Quit LidLid",
         "隐私政策": "Privacy Policy",
         "支持与帮助": "Help & Support",

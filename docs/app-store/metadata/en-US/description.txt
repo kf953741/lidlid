@@ -18,7 +18,7 @@ Set a boundary for this session
 Choose 30 minutes, 1, 2, 4 or 8 hours, or keep the session until you reopen the lid. With a time limit, the session ends when you reopen the lid or reach the limit, whichever comes first.
 
 Small controls. Clear state.
-• A guardian in your menu bar: open eyes when on, closed eyes when off
+• A menu bar guardian: closed eyes when off, monochrome for this lid close, blue for open-lid keep-awake
 • Ends at 10% battery while running on battery power
 • Ends when macOS reports serious or critical thermal pressure
 • Optional launch at login
@@ -35,4 +35,4 @@ Getting started
 Compatibility and use
 Requires an Apple Silicon MacBook and macOS 14 or later. Intel Macs and desktop Macs are not supported. Disconnect external displays before enabling a session.
 
-Keep your Mac ventilated. End the session before putting it in a bag or sleeve. LidLid does not make online tasks work offline, or save and manage work in other apps.
+LidLid does not make online tasks work offline, or save and manage work in other apps.
