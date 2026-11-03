@@ -12,13 +12,13 @@
   "compatibilityServiceUpdated": false,
   "publicDownloadReleased": false,
   "installedBundleVersionVerified": true,
-  "nativeUI": "pending manual unlock after successful display sleep test",
+  "nativeUI": "Chinese and English verified via native accessibility and screenshots; independent on/off controls confirmed",
   "physicalPauseAndResumeForNewOpenLidMode": "not performed; injected sensor/manual-sleep transition tests passed",
   "physicalClosedLidBaseline": "1.4.0 battery test passed for 138 seconds; subsequent normal sleep and display-wake regression remain pending",
   "dmg": {
     "name": "LidLid-1.5.0-macOS-arm64.dmg",
-    "bytes": 4911497,
-    "sha256": "24d438bbe8e060fe6fcd6d851f5c310c489e86b10305c3a529c6b0f0046295a1",
+    "bytes": 4911547,
+    "sha256": "16b3a109d3c8cc6650e9cca531d87727bbb658d315890085d98ba7600e407ba2",
     "signing": "Apple Development; local testing only",
     "checksum": "passed"
   },
@@ -210,5 +210,13 @@
       ],
       "physicalLidTest": "not performed"
     }
+  },
+  "menuAndPanelIcon": "awake when either open-lid or closed-lid protection is enabled",
+  "finalState": {
+    "language": "system default (Chinese)",
+    "openLidSwitch": false,
+    "previousClosedLidSessionRestored": true,
+    "globalSleepDisabled": true,
+    "privilegedRecoveryPending": false
   }
 }
