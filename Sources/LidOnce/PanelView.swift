@@ -132,7 +132,7 @@ struct PanelView: View {
 
             if model.store.isStoreEdition {
                 Divider().opacity(0.6).padding(.vertical, 18)
-                StoreAccessView(store: model.store, text: model.text)
+                StoreAccessView(store: model.store, text: model.text, compatibilityReady: model.state.compatibilityReady)
             }
 
         }

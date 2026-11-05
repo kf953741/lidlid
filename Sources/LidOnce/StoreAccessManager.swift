@@ -20,7 +20,10 @@ final class StoreAccessManager: ObservableObject {
         lastObserved: UserDefaults.standard.object(forKey: "storeLastObservedDate") as? Date,
         uptime: ProcessInfo.processInfo.systemUptime)
 
-    var allowsKeepAwake: Bool { !isStoreEdition || access.permitsKeepAwake(at: currentDate) }
+    var allowsStartingClosedLidSession: Bool { permits(Command("arm")) }
+    func permits(_ command: Command) -> Bool {
+        access.permits(command, inStoreEdition: isStoreEdition, at: currentDate)
+    }
     var canPurchase: Bool { !working && products[StoreProducts.trial] != nil && products[StoreProducts.lifetime] != nil }
     var lifetimePrice: String? { products[StoreProducts.lifetime]?.displayPrice }
     private var currentDate: Date { clock.now(wallTime: Date(), uptime: ProcessInfo.processInfo.systemUptime) }
@@ -43,7 +46,9 @@ final class StoreAccessManager: ObservableObject {
         }
         startup = Task { @MainActor [weak self] in
             guard let self else { return }
+            self.working = true
             await self.refreshEntitlements()
+            self.working = false
             await self.loadProducts()
         }
         let tick = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
@@ -58,7 +63,18 @@ final class StoreAccessManager: ObservableObject {
         Task { @MainActor [weak self] in await self?.loadProducts() }
     }
 
-    func purchase(_ productID: String) {
+    func canStartTrial(compatibilityReady: Bool) -> Bool {
+        isStoreEdition && canPurchase && access.permitsStartingTrial(compatibilityReady: compatibilityReady)
+    }
+
+    func startTrial(compatibilityReady: Bool) {
+        guard canStartTrial(compatibilityReady: compatibilityReady) else { return }
+        purchase(StoreProducts.trial)
+    }
+
+    func purchaseLifetime() { purchase(StoreProducts.lifetime) }
+
+    private func purchase(_ productID: String) {
         guard isStoreEdition && canPurchase, let product = products[productID] else { return }
         working = true; message = nil
         Task { @MainActor [weak self] in
@@ -89,7 +105,7 @@ final class StoreAccessManager: ObservableObject {
             do {
                 try await AppStore.sync()
                 await self.refreshEntitlements()
-                if !self.allowsKeepAwake { self.message = "没有可恢复的有效购买；已结束的试用不会重新开始。" }
+                if !self.allowsStartingClosedLidSession { self.message = "没有可恢复的有效购买；已结束的试用不会重新开始。" }
             } catch { self.message = "无法恢复购买，请检查 App Store 连接后重试。" }
         }
     }

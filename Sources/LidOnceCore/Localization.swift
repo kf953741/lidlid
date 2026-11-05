@@ -51,14 +51,16 @@ public struct AppText {
     ]
 
     private static let english = [
-        "永久版已解锁": "Lifetime access unlocked",
+        "开盖不休眠永久免费": "Open-lid keep-awake is always free",
+        "合盖永久版已解锁": "Closed-lid lifetime access unlocked",
         "正在检查购买…": "Checking purchases…",
-        "试用至：": "Trial ends: ",
-        "7 天试用已结束": "Your 7-day trial has ended",
-        "先试用，再决定": "Try it before you decide",
-        "试用结束后，合盖与开盖防休眠将关闭。永久版一次购买，不自动续费。完整合盖功能另需免费兼容组件。": "Both keep-awake modes turn off when the trial ends. Lifetime access is a one-time purchase, with no renewal. Closed-lid operation also requires the free compatibility component.",
-        "免费试用 7 天": "Start 7-day free trial",
-        "永久解锁 · ": "Lifetime access · ",
+        "合盖试用至：": "Closed-lid trial ends: ",
+        "合盖试用已结束": "Your closed-lid trial has ended",
+        "合盖先试用，再决定": "Try closed-lid keep-awake first",
+        "合盖试用 7 天。到期仅限制新会话，已开启的本次会话按原设置结束。永久版一次购买，不自动续费。合盖功能需免费兼容组件。": "Try closed-lid keep-awake for 7 days. Expiry blocks new sessions; your current session finishes as configured. Lifetime access is a one-time purchase, with no renewal. Closed-lid mode requires the free compatibility component.",
+        "设置好免费兼容组件后，可开始合盖试用。": "Set up the free compatibility component before starting your closed-lid trial.",
+        "免费试用合盖 7 天": "Try closed-lid mode free for 7 days",
+        "永久解锁合盖 · ": "Unlock closed-lid access · ",
         "正在加载永久版价格…": "Loading lifetime price…",
         "恢复购买": "Restore purchases",
         "重新加载商品": "Reload products",

@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-05",
+  "version": "1.6.1",
+  "build": "12",
+  "unitTests": {
+    "passed": 40,
+    "failed": 0
+  },
+  "storeControllerIntegration": {
+    "passed": 2,
+    "worker": "pipe-only fixture; no power APIs",
+    "cases": [
+      "armed before close survives expiry, manual stop, blocked next session",
+      "already closed survives expiry, reopening, blocked next session"
+    ],
+    "openLidFreeBeforeTrialAndAfterExpiry": true,
+    "expiryEmitsNoStopOrOpenAwakeOff": true,
+    "heartbeatsContinue": true
+  },
+  "trialStartsAfterComponentReadyAndUserClaim": true,
+  "pricing": {
+    "openLid": "free forever",
+    "closedLidTrialDays": 7,
+    "closedLidLifetimeUSD": "4.99",
+    "automaticRenewal": false
+  },
+  "developmentSignedBuilds": {
+    "openSource": "passed",
+    "storeStaging": "passed"
+  },
+  "sandboxChecks": {
+    "bothVariants": "passed",
+    "powerSettingsChanged": false
+  },
+  "realStoreKitPurchaseValidation": "pending App Store Connect configuration",
+  "physicalClosedLidRetest": "not performed; power-service logic unchanged",
+  "uploadedToAppStoreConnect": false,
+  "submittedForReview": false,
+  "installedDailyAppReplaced": false
+}

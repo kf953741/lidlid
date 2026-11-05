@@ -6,14 +6,14 @@ final class StoreAccessTests: XCTestCase {
     func testRequiresPurchaseAndRejectsUnrelatedProduct() {
         XCTAssertEqual(StoreAccess.evaluate([], now: start), .locked)
         XCTAssertEqual(StoreAccess.evaluate([.init(productID: "unrelated", originalPurchaseDate: start)], now: start), .locked)
-        XCTAssertFalse(StoreAccess.loading.permitsKeepAwake(at: start))
+        XCTAssertFalse(StoreAccess.loading.permitsStartingClosedLidSession(at: start))
     }
     func testTrialEndsAtExactlySevenDays() {
         let purchases = [StorePurchase(productID: StoreProducts.trial, originalPurchaseDate: start)]
         let end = start.addingTimeInterval(7 * 86400)
         XCTAssertEqual(StoreAccess.evaluate(purchases, now: end.addingTimeInterval(-1)), .trial(until: end))
         XCTAssertEqual(StoreAccess.evaluate(purchases, now: end), .expired)
-        XCTAssertFalse(StoreAccess.trial(until: end).permitsKeepAwake(at: end))
+        XCTAssertFalse(StoreAccess.trial(until: end).permitsStartingClosedLidSession(at: end))
     }
     func testRestoreDoesNotRestartTrial() {
         let old = StorePurchase(productID: StoreProducts.trial, originalPurchaseDate: start)
@@ -47,4 +47,30 @@ final class StoreAccessTests: XCTestCase {
         var relaunched = StoreAccessClock(wallTime: start.addingTimeInterval(-500), lastObserved: start, uptime: 10)
         XCTAssertEqual(relaunched.now(wallTime: start.addingTimeInterval(-500), uptime: 30), start.addingTimeInterval(20))
     }
+    func testOpenLidModeAndCleanupAreFreeInEveryStoreState() {
+        let states: [StoreAccess] = [.loading, .locked, .expired, .lifetime,
+                                    .trial(until: start.addingTimeInterval(-1))]
+        for state in states {
+            for action in ["open-awake-on", "open-awake-off", "ping", "stop", "quit"] {
+                XCTAssertTrue(state.permits(Command(action), inStoreEdition: true, at: start), "\(state) \(action)")
+            }
+        }
+    }
+    func testOnlyNewClosedLidStartsRequireAnActiveStoreEntitlement() {
+        for state in [StoreAccess.loading, .locked, .expired, .trial(until: start)] {
+            XCTAssertFalse(state.permits(Command("arm"), inStoreEdition: true, at: start))
+            XCTAssertTrue(state.permits(Command("arm"), inStoreEdition: false, at: start))
+        }
+        XCTAssertTrue(StoreAccess.lifetime.permits(Command("arm"), inStoreEdition: true, at: start))
+        XCTAssertTrue(StoreAccess.trial(until: start.addingTimeInterval(1))
+            .permits(Command("arm"), inStoreEdition: true, at: start))
+    }
+    func testTrialStartsOnlyOnceAfterCompatibilitySetup() {
+        XCTAssertFalse(StoreAccess.locked.permitsStartingTrial(compatibilityReady: false))
+        XCTAssertTrue(StoreAccess.locked.permitsStartingTrial(compatibilityReady: true))
+        for state in [StoreAccess.loading, .expired, .lifetime, .trial(until: start)] {
+            XCTAssertFalse(state.permitsStartingTrial(compatibilityReady: true))
+        }
+    }
+
 }

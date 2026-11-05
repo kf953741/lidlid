@@ -11,7 +11,7 @@
     "phone": null
   },
   "pricing": {
-    "model": "free download + 7-day trial + lifetime non-consumable IAP",
+    "model": "free open-lid keep-awake + 7-day closed-lid trial + lifetime closed-lid non-consumable IAP",
     "price": "4.99",
     "currency": "USD"
   },

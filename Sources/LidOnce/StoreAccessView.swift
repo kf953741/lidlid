@@ -4,38 +4,45 @@ import LidOnceCore
 struct StoreAccessView: View {
     @ObservedObject var store: StoreAccessManager
     let text: AppText
+    let compatibilityReady: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            Text(text("开盖不休眠永久免费")).font(.system(size: 11)).foregroundStyle(.secondary)
             switch store.access {
             case .lifetime:
-                Label(text("永久版已解锁"), systemImage: "checkmark.seal.fill")
+                Label(text("合盖永久版已解锁"), systemImage: "checkmark.seal.fill")
                     .font(.system(size: 12, weight: .medium))
             case .loading:
                 Text(text("正在检查购买…")).font(.system(size: 12))
             case .trial(let deadline):
-                Text(text("试用至：") + deadline.formatted(.dateTime.year().month(.abbreviated).day().hour().minute().locale(text.language.locale)))
+                Text(text("合盖试用至：") + deadline.formatted(.dateTime.year().month(.abbreviated).day().hour().minute().locale(text.language.locale)))
                     .font(.system(size: 12, weight: .medium))
             case .expired:
-                Text(text("7 天试用已结束")).font(.system(size: 14, weight: .medium))
+                Text(text("合盖试用已结束")).font(.system(size: 14, weight: .medium))
             case .locked:
-                Text(text("先试用，再决定")).font(.system(size: 14, weight: .medium))
+                Text(text("合盖先试用，再决定")).font(.system(size: 14, weight: .medium))
             }
             if store.access != .lifetime {
-                Text(text("试用结束后，合盖与开盖防休眠将关闭。永久版一次购买，不自动续费。完整合盖功能另需免费兼容组件。"))
+                Text(text("合盖试用 7 天。到期仅限制新会话，已开启的本次会话按原设置结束。永久版一次购买，不自动续费。合盖功能需免费兼容组件。"))
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
                 if store.access == .locked {
-                    Button(text("免费试用 7 天")) { store.purchase(StoreProducts.trial) }
+                    if !compatibilityReady {
+                        Text(text("设置好免费兼容组件后，可开始合盖试用。"))
+                            .font(.system(size: 11)).foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Button(text("免费试用合盖 7 天")) { store.startTrial(compatibilityReady: compatibilityReady) }
                         .buttonStyle(.borderedProminent)
-                        .disabled(!store.canPurchase)
+                        .disabled(!store.canStartTrial(compatibilityReady: compatibilityReady))
                         .accessibilityIdentifier("start-store-trial")
                 }
                 Button {
-                    store.purchase(StoreProducts.lifetime)
+                    store.purchaseLifetime()
                 } label: {
                     if let price = store.lifetimePrice {
-                        Text(text("永久解锁 · ") + price)
+                        Text(text("永久解锁合盖 · ") + price)
                     } else {
                         Text(text("正在加载永久版价格…"))
                     }

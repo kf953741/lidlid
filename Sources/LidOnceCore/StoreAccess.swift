@@ -24,12 +24,23 @@ public enum StoreAccess: Equatable {
     case loading, locked, expired, lifetime
     case trial(until: Date)
 
-    public func permitsKeepAwake(at now: Date) -> Bool {
+    public func permitsStartingClosedLidSession(at now: Date) -> Bool {
         switch self {
         case .lifetime: return true
         case .trial(let deadline): return now < deadline
         default: return false
         }
+    }
+
+    /// Licensing only guards a new closed-lid session. Heartbeats, cleanup and
+    /// the permanently free open-lid mode remain available in every state.
+    /// Entitlement changes never emit a stop command for an accepted session.
+    public func permits(_ command: Command, inStoreEdition: Bool, at now: Date) -> Bool {
+        command.action != "arm" || !inStoreEdition || permitsStartingClosedLidSession(at: now)
+    }
+
+    public func permitsStartingTrial(compatibilityReady: Bool) -> Bool {
+        self == .locked && compatibilityReady
     }
 
     public static func evaluate(_ purchases: [StorePurchase], now: Date) -> StoreAccess {

@@ -1,8 +1,8 @@
 {
-  "version": "1.6.0",
-  "build": "11",
+  "version": "1.6.1",
+  "build": "12",
   "publicSupportEmail": "kf953741@gmail.com",
-  "screenshotCaptureVersion": "Options: 1.5.1 (both languages); other captures: 1.3.0 (need recapture for 1.6.0)",
+  "screenshotCaptureVersion": "Options: 1.5.1 (both languages); other captures: 1.3.0 (need recapture for 1.6.1)",
   "submissionReady": false,
   "screenshots": [
     {
@@ -67,16 +67,16 @@
       "name": 16,
       "subtitle": 15,
       "promotional_text": 59,
-      "description": 1039,
-      "release_notes": 55,
+      "description": 1052,
+      "release_notes": 62,
       "keywordBytes": 87
     },
     "en-US": {
       "name": 29,
       "subtitle": 24,
       "promotional_text": 160,
-      "description": 2906,
-      "release_notes": 147,
+      "description": 2959,
+      "release_notes": 197,
       "keywordBytes": 82
     }
   }

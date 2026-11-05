@@ -18,6 +18,8 @@ jobs:
         run: swift --version
       - name: Run session and localization tests
         run: swift test
+      - name: Verify free open-lid mode and uninterrupted trial expiry
+        run: zsh scripts/test-store-model.sh
       - name: Build application bundle
         run: zsh scripts/build.sh
       - name: Verify local signature

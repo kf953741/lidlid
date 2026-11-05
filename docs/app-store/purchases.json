@@ -13,22 +13,42 @@
       "duration_seconds": 604800,
       "family_sharing": false,
       "localizations": {
-        "en-US": {"name": "7-day Trial", "description": "Try both keep-awake modes for 7 days."},
-        "zh-Hans": {"name": "7 天试用", "description": "免费试用合盖与开盖不休眠功能 7 天。"}
+        "en-US": {
+          "name": "7-day Trial",
+          "description": "Try closed-lid keep-awake for 7 days."
+        },
+        "zh-Hans": {
+          "name": "7 天试用",
+          "description": "免费试用合盖不休眠功能 7 天，开盖功能永久免费。"
+        }
       }
     },
     {
       "id": "dev.kf.lidonce.lifetime",
       "type": "non-consumable",
-      "reference_name": "LidLid Lifetime Access",
+      "reference_name": "LidLid Closed-Lid Lifetime",
       "price": "4.99",
       "family_sharing": false,
       "localizations": {
-        "en-US": {"name": "Lifetime Access", "description": "Unlock both keep-awake modes permanently."},
-        "zh-Hans": {"name": "永久解锁", "description": "一次购买，永久使用合盖与开盖不休眠功能。"}
+        "en-US": {
+          "name": "Closed-Lid Lifetime",
+          "description": "Unlock closed-lid keep-awake permanently."
+        },
+        "zh-Hans": {
+          "name": "合盖永久解锁",
+          "description": "一次购买，永久使用合盖不休眠功能。"
+        }
       }
     }
   ],
   "created_in_app_store_connect": false,
-  "sandbox_purchase_validation": "pending developer membership activation and product configuration"
+  "sandbox_purchase_validation": "pending developer membership activation and product configuration",
+  "free_features": [
+    "open-lid keep-awake"
+  ],
+  "paid_features": [
+    "closed-lid keep-awake sessions"
+  ],
+  "trial_activation": "User explicitly claims the trial after the compatibility component is ready.",
+  "trial_expiry": "Block new closed-lid sessions; accepted sessions finish under their original settings. Open-lid mode stays free."
 }
