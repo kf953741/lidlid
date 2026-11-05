@@ -6,6 +6,11 @@ APP="${LIDLID_APP_PATH:-${LIDONCE_APP_PATH:-$ROOT/dist/LidLid.app}}"
 swift build --package-path "$ROOT" -c release --scratch-path "$SCRATCH"
 BIN_DIR="$(swift build --package-path "$ROOT" -c release --scratch-path "$SCRATCH" --show-bin-path)"
 SIGN_IDENTITY="${LIDLID_CODE_SIGN_IDENTITY:--}"
+DISTRIBUTION="${LIDLID_DISTRIBUTION:-open-source}"
+case "$DISTRIBUTION" in
+    open-source|app-store) ;;
+    *) print -u2 'LIDLID_DISTRIBUTION must be open-source or app-store'; exit 2 ;;
+esac
 mkdir -p "$APP/Contents/Helpers" "$APP/Contents/MacOS" "$APP/Contents/Resources" "$SCRATCH/LidLid.iconset"
 cp "$BIN_DIR/LidOnce" "$APP/Contents/MacOS/LidLid"
 cp "$BIN_DIR/LidOnceAgent" "$APP/Contents/Helpers/LidLidAgent"
@@ -16,6 +21,7 @@ for localization in en zh-Hans; do
 done
 cp "$ROOT/Resources/PrivacyInfo.xcprivacy" "$APP/Contents/Resources/PrivacyInfo.xcprivacy"
 cp "$ROOT/Info.plist" "$APP/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :LidLidDistribution $DISTRIBUTION" "$APP/Contents/Info.plist"
 codesign --force --sign "$SIGN_IDENTITY" --identifier dev.kf.lidonce.agent \
     --entitlements "$ROOT/Entitlements/LidLidAgent.entitlements" "$APP/Contents/Helpers/LidLidAgent"
 codesign --force --sign "$SIGN_IDENTITY" --identifier dev.kf.lidonce \

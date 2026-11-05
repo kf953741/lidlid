@@ -36,3 +36,6 @@ Compatibility and use
 Requires an Apple Silicon MacBook and macOS 14 or later. Intel Macs and desktop Macs are not supported. Disconnect external displays before enabling a session.
 
 LidLid does not make online tasks work offline, or save and manage work in other apps.
+
+Try it before you decide
+Download the Store edition for free and start a 7-day trial. Both keep-awake modes turn off when the trial ends. Unlock lifetime access with a one-time Apple in-app purchase, with no automatic renewal. Restore purchases at any time; restoring an ended trial does not restart it. Full closed-lid operation also requires the separate free compatibility component.

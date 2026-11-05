@@ -3,6 +3,11 @@ import LidOnceCore
 import LidOnceSystem
 
 signal(SIGPIPE, SIG_IGN)
+if Bundle.main.object(forInfoDictionaryKey: "LidLidDistribution") as? String == "app-store",
+   CommandLine.arguments.contains("--agent") {
+    fputs("The App Store edition starts sessions through its licensed interface.\n", stderr)
+    exit(78)
+}
 if CommandLine.arguments.contains("--agent") || CommandLine.arguments.contains("--sandbox-check") || CommandLine.arguments.contains("--compatibility-status") {
     // Developer integration entry point. The power owner is the exact same
     // inherited-sandbox executable launched by the UI, never an unsandboxed copy.

@@ -1,10 +1,13 @@
 import AppKit
 import SwiftUI
+import Combine
 import ServiceManagement
 import LidOnceCore
 import LidOnceSystem
 
 final class AppModel: ObservableObject {
+    let store = StoreAccessManager()
+    private var storeChanges: AnyCancellable?
     @Published var state = Snapshot()
     @Published var connected = false
     @Published var conflict = conflictingApp()
@@ -33,11 +36,30 @@ final class AppModel: ObservableObject {
     private var checkingRepair = false
     private var repairTimer: Timer?
 
+    init() {
+        storeChanges = store.objectWillChange.sink { [weak self] _ in
+            // Published notifications precede mutation; check access after it.
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.objectWillChange.send()
+                self.enforceStoreAccess()
+                self.changed?()
+            }
+        }
+        store.start()
+    }
+
+    private func enforceStoreAccess() {
+        guard connected && !store.allowsKeepAwake else { return }
+        if state.phase == .armed || state.phase == .closed || state.phase == .starting { send(Command("stop")) }
+        if openAwakeEnabled { send(Command("open-awake-off")) }
+    }
+
     var busy: Bool { state.phase != .off }
     var openAwakeEnabled: Bool { state.openAwakeRequested || state.openAwakeActive }
     var anySessionActive: Bool { busy || openAwakeEnabled }
     var menuState: GuardianMenuState { openAwakeEnabled ? .openLid : enabled ? .on : .off }
-    var canToggleOpenAwake: Bool { connected && !quitting && !(!state.openAwakeRequested && state.openAwakeActive) }
+    var canToggleOpenAwake: Bool { connected && !quitting && (openAwakeEnabled || store.allowsKeepAwake) && !(!state.openAwakeRequested && state.openAwakeActive) }
     var menuLabel: String {
         text(openAwakeEnabled ? (enabled ? "盖盖：合盖与开盖不休眠已开启" : "盖盖：开盖不休眠已开启")
              : enabled ? "盖盖：已开启，仅本次合盖不休眠" : "盖盖：已关闭")
@@ -45,7 +67,7 @@ final class AppModel: ObservableObject {
     // The one-shot needs armed/closed internally; the person sees a single on state.
     var enabled: Bool { state.phase == .armed || state.phase == .closed || state.phase == .restoring }
     var changing: Bool { state.phase == .starting || state.phase == .restoring }
-    var canToggle: Bool { connected && !changing && (!conflict || enabled) && (enabled || state.compatibilityReady) }
+    var canToggle: Bool { connected && !changing && (enabled || store.allowsKeepAwake) && (!conflict || enabled) && (enabled || state.compatibilityReady) }
     var text: AppText { AppText(language: language) }
     var brandName: String { text("盖盖") }
     var detail: String {
@@ -105,6 +127,9 @@ final class AppModel: ObservableObject {
         }
     }
     func send(_ command: Command) {
+        if command.action == "arm" || command.action == "open-awake-on" {
+            guard store.allowsKeepAwake else { return }
+        }
         guard process?.isRunning == true, let handle = input?.fileHandleForWriting,
               let data = try? JSONEncoder().encode(command) else { return }
         try? handle.write(contentsOf: data + Data([10]))
@@ -217,7 +242,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         model.quit(); return .terminateLater
     }
     @objc private func clicked() {
-        if NSApp.currentEvent?.type == .rightMouseUp { model.toggle(); return }
+        if NSApp.currentEvent?.type == .rightMouseUp {
+            if !model.store.allowsKeepAwake && !model.enabled { show() }
+            else { model.toggle() }
+            return
+        }
         if popover.isShown { popover.performClose(nil) } else { show() }
     }
     private func show() {

@@ -1,1 +1,1 @@
-Open-lid keep-awake now uses a blue guardian in the menu bar. One-shot closed-lid sessions keep the native monochrome icon. Simplified interface copy.
+Adds a 7-day free trial and lifetime access with Apple in-app purchase and restore purchases. Open-lid keep-awake keeps its blue menu bar guardian.

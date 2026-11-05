@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-05",
+  "version": "1.6.0",
+  "build": "11",
+  "fullUnitSuite": {
+    "passed": 37,
+    "failed": 0
+  },
+  "finalStoreAccessTests": {
+    "passed": 7,
+    "failed": 0
+  },
+  "developmentSignedBuilds": {
+    "openSource": "passed",
+    "storeStaging": "passed"
+  },
+  "sandboxChecks": {
+    "bothVariants": "passed",
+    "powerSettingsChanged": false
+  },
+  "storeDeveloperSessionCLIRejected": true,
+  "missingDistributionCredentialsRefusePackaging": true,
+  "products": {
+    "trialDays": 7,
+    "lifetimeUSD": "4.99",
+    "type": "non-consumable",
+    "automaticRenewal": false
+  },
+  "liveStoreKitPurchaseValidation": "pending App Store Connect product configuration",
+  "storePurchaseUILayoutValidation": "pending configured StoreKit products",
+  "productionDistributionSigning": "pending",
+  "compatibilityComponentNotarization": "pending",
+  "uploadedToAppStoreConnect": false,
+  "submittedForReview": false,
+  "installedDailyAppReplaced": false
+}

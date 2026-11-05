@@ -130,6 +130,11 @@ struct PanelView: View {
                 .accessibilityIdentifier("open-awake-switch")
             }
 
+            if model.store.isStoreEdition {
+                Divider().opacity(0.6).padding(.vertical, 18)
+                StoreAccessView(store: model.store, text: model.text)
+            }
+
         }
     }
 
