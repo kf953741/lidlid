@@ -19,6 +19,20 @@ The independently installed component registers a root LaunchDaemon through `SMA
 
 ## Build and verify
 
+### Apple re-signing and client authentication (component 1.0.1)
+
+The installed TestFlight 1.6.1 (12) app and worker are signed by **TestFlight Beta Distribution**. Their leaf certificate does not carry our developer certificate's OU. Component 1.0.0 therefore rejected their XPC connections with `-67050`, even though their signed Team ID is still `63ALH54858`.
+
+Component 1.0.1 validates Apple certificate provenance, the signed CodeDirectory Team ID, and the three explicit client signing identifiers. The Apple-owned TestFlight and Mac App Store certificate families are accepted alongside our developer certificate; a self-reported entitlement is never sufficient. After validation, each connection receives a requirement pinned to the validated identifier and CDHash **before** exporting an object or processing messages. The kernel checks this pin against XPC's original peer, so a PID reused during discovery cannot substitute a different executable. No private audit-token API or per-release hash allowlist is used. The client still pins the Developer ID daemon's identifier and signing team.
+
+The local service test run passed 21 checks, including the actual Apple-distributed worker and running TestFlight process, a mismatched team, an unrelated Apple executable, and an ad-hoc impostor carrying forged team entitlements. The locally installed service remains 1.0.0 until the update is completed through Service Management. These checks do not establish that the updated root service has been installed, that a purchase succeeded, or that notarization completed.
+
+To repeat the optional live identity check with an observed running Beta process:
+
+```sh
+LIDLID_TEST_BETA_PID=<observed-beta-process-id> swift test --filter LidLidServiceTests
+```
+
 `zsh scripts/build.sh` and `zsh scripts/build-compatibility.sh` create separate bundles. By default they use ad-hoc signatures: XPC deliberately rejects these signatures. Never distribute them as a working production component.
 
 For local development, set `LIDLID_CODE_SIGN_IDENTITY` to an Apple Development identity for team `63ALH54858`. Use a matching Developer ID Application identity for external production distribution, enable hardened runtime, notarize and staple the component DMG. Configure Store provisioning and App Group under the same team, sign the main app for App Store distribution, then validate through App Store Connect. Credentials/profiles must remain outside Git.
@@ -44,6 +58,8 @@ Unit tests use injected power/journal objects. They cover restoration failure, c
 
 - [Apple App Review Guidelines, 2.4.5 and 2.5.1](https://developer.apple.com/app-store/review/guidelines/)
 - [Apple Service Management](https://developer.apple.com/documentation/servicemanagement/smappservice)
+- [Apple code signing requirements and distribution channels](https://developer.apple.com/documentation/technotes/tn3127-inside-code-signing-requirements/)
+- [Foundation peer code signing requirement](https://developer.apple.com/documentation/foundation/nsxpcconnection/setcodesigningrequirement(_:))
 - [Apple powerd assertion policy](https://github.com/apple-oss-distributions/PowerManagement/blob/main/pmconfigd/PMAssertions.c)
 - [Apple root-domain user client](https://github.com/apple-oss-distributions/xnu/blob/main/iokit/Kernel/RootDomainUserClient.cpp)
 - [Rouse Store listing](https://apps.apple.com/us/app/rouse-stay-awake/id6760773101?mt=12) and [public companion architecture](https://github.com/JaminZhou/Rouse-Closed-Lid-Helper), consulted as implementation references; no third-party helper code is bundled.

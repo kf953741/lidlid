@@ -11,14 +11,11 @@ public enum CompatibilityService {
     public static let leaseSeconds: TimeInterval = 30
     public static let renewalSeconds: TimeInterval = 5
     public static let daemonRequirement = "anchor apple generic and identifier \"\(daemonID)\" and certificate leaf[subject.OU] = \"\(team)\""
-    // The embedded agent inherits the parent's sandbox, including Mach lookup
-    // access, but has its own signing identifier. No unrelated signed app qualifies.
-    public static let clientRequirement = """
-    anchor apple generic and certificate leaf[subject.OU] = "\(team)" and (
-      identifier "dev.kf.lidonce" or identifier "dev.kf.lidonce.agent" or
-      identifier "\(helperID)"
-    )
-    """
+    // The worker inherits the parent's sandbox, but has its own signing ID.
+    // ServiceAuth also verifies the actual signing team and pins each XPC peer.
+    public static let clientIdentifiers: Set<String> = [
+        "dev.kf.lidonce", "dev.kf.lidonce.agent", helperID
+    ]
 }
 
 @objc public protocol LidLidSleepServiceProtocol {

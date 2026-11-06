@@ -14,12 +14,13 @@ let package = Package(
         .target(name: "LidOnceCore"),
         .target(name: "LidLidServiceCore"),
         .target(name: "LidLidServiceProtocol"),
+        .target(name: "LidLidServiceAuth", dependencies: ["LidLidServiceProtocol"]),
         .target(name: "LidOnceSystem", dependencies: ["LidOnceCore", "LidLidServiceProtocol"]),
         .executableTarget(name: "LidOnce", dependencies: ["LidOnceCore", "LidOnceSystem"]),
         .executableTarget(name: "LidOnceAgent", dependencies: ["LidOnceCore", "LidOnceSystem", "LidLidServiceProtocol"]),
         .executableTarget(name: "LidLidCompatibility", dependencies: ["LidOnceCore", "LidOnceSystem", "LidLidServiceProtocol"]),
-        .executableTarget(name: "LidLidSleepService", dependencies: ["LidLidServiceCore", "LidLidServiceProtocol", "LidOnceSystem"]),
+        .executableTarget(name: "LidLidSleepService", dependencies: ["LidLidServiceCore", "LidLidServiceProtocol", "LidLidServiceAuth", "LidOnceSystem"]),
         .testTarget(name: "LidOnceCoreTests", dependencies: ["LidOnceCore"]),
-        .testTarget(name: "LidLidServiceTests", dependencies: ["LidLidServiceCore", "LidLidServiceProtocol"])
+        .testTarget(name: "LidLidServiceTests", dependencies: ["LidLidServiceCore", "LidLidServiceProtocol", "LidLidServiceAuth"])
     ]
 )

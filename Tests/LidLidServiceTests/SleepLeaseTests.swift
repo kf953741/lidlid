@@ -151,13 +151,11 @@ final class SleepLeaseTests: XCTestCase {
         XCTAssertFalse(power.value)
         XCTAssertThrowsError(try service.begin(owner: UUID(), minutes: 0, now: 3, lidClosed: false))
     }
-    func testCodeSigningRequirementsCompile() {
-        for text in [CompatibilityService.clientRequirement, CompatibilityService.daemonRequirement] {
-            var requirement: SecRequirement?
-            XCTAssertEqual(SecRequirementCreateWithString(text as CFString, [], &requirement), errSecSuccess)
-        }
+    func testDaemonCodeSigningRequirementCompiles() {
+        var requirement: SecRequirement?
+        XCTAssertEqual(SecRequirementCreateWithString(CompatibilityService.daemonRequirement as CFString, [], &requirement), errSecSuccess)
         XCTAssertTrue(CompatibilityService.name.hasPrefix(CompatibilityService.group + "."))
-        XCTAssertFalse(CompatibilityService.clientRequirement.contains("anchor trusted"))
+        XCTAssertFalse(CompatibilityService.daemonRequirement.contains("anchor trusted"))
     }
     func testMalformedTimeNeverExtendsLease() throws {
         let (service, power, _) = fixture(); let owner = UUID()

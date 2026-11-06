@@ -47,7 +47,7 @@
     }
   ],
   "created_in_app_store_connect": true,
-  "sandbox_purchase_validation": "Pending real StoreKit sandbox purchase, cancellation, restore and revocation checks; products and pricing created in App Store Connect on 2026-11-06.",
+  "sandbox_purchase_validation": "Actual Apple-distributed TestFlight build installed with account-holder-only access. Products currently unavailable; real purchase, cancellation and restore remain pending. No purchase or receipt is simulated.",
   "free_features": [
     "open-lid keep-awake"
   ],

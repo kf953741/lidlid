@@ -4,6 +4,7 @@ import SystemConfiguration
 import OSLog
 import LidLidServiceCore
 import LidLidServiceProtocol
+import LidLidServiceAuth
 import LidOnceSystem
 
 let logger = Logger(subsystem: CompatibilityService.daemonID, category: "sleep")
@@ -79,6 +80,11 @@ final class Listener: NSObject, NSXPCListenerDelegate {
     init(controller: SleepLease, power: PowerDriver) { self.controller = controller; self.power = power }
     func listener(_ listener: NSXPCListener, shouldAcceptNewConnection connection: NSXPCConnection) -> Bool {
         guard consoleUser(connection.effectiveUserIdentifier) else { return false }
+        guard let signature = try? SleepServiceClientAuthentication.authenticate(
+            processIdentifier: connection.processIdentifier) else { return false }
+        // PID lookup alone is insufficient: XPC must bind the validated hash to
+        // its original peer before exporting an object or resuming messages.
+        connection.setCodeSigningRequirement(signature.connectionRequirement)
         let service = ServiceEndpoint(uid: connection.effectiveUserIdentifier, controller: controller, power: power)
         connection.exportedInterface = NSXPCInterface(with: LidLidSleepServiceProtocol.self)
         connection.exportedObject = service
@@ -106,7 +112,6 @@ do {
     catch { logger.fault("Startup restoration pending: \(error.localizedDescription, privacy: .public)") }
     let delegate = Listener(controller: controller, power: power)
     let listener = NSXPCListener(machServiceName: CompatibilityService.name)
-    listener.setConnectionCodeSigningRequirement(CompatibilityService.clientRequirement)
     listener.delegate = delegate
     listener.resume()
     let timer = DispatchSource.makeTimerSource(queue: .main)

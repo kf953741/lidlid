@@ -21,18 +21,52 @@
     "en-US": 5
   },
   "compatibility_notarization": {
-    "submission_id": "B1202170-AAD3-4A36-BBA1-AD53D5E6FB86",
-    "status": "In Progress",
-    "last_verified_local_time": "18:37 Asia/Shanghai",
-    "production_download": "Pending accepted notarization and verified export"
+    "candidate_version": "1.0.1",
+    "candidate_build": "2",
+    "status": "Signed candidate built; replacement notarization upload pending",
+    "cli_export": "Xcode CLI reports No Accounts; retry through the signed-in Xcode UI after owner unlocks the Mac. No credentials extracted.",
+    "previous_submission": {
+      "submission_id": "B1202170-AAD3-4A36-BBA1-AD53D5E6FB86",
+      "version": "1.0.0",
+      "last_observed_status": "In Progress",
+      "eligible_for_release": false,
+      "reason": "Superseded: does not authenticate Apple-re-signed TestFlight clients."
+    },
+    "production_download": "Pending notarization and verified export of the corrected component"
   },
   "storekit_validation": {
-    "status": "Pending live sandbox purchase and restore validation",
-    "preview_product_request": "StoreKit confirms Sandbox context and correct product identifiers; Apple has returned an empty product response. Continue purchase and restore tests after signing in to the newly created test account.",
+    "status": "Pending actual purchase, cancellation and restore; TestFlight app currently receives no products",
+    "preview_product_request": "Actual TestFlight build requests the two correct product identifiers; system StoreKit records an empty product response. Lifetime availability is USA and CHN; current prices verified as US$4.99 and CNY38.",
     "development_signing": "Apple Development-signed test copy now embeds an explicit macOS development profile for this device. Team, App ID, device inclusion, expiry and deep/strict signatures verified.",
     "review_images": "Current private IAP screenshots show actual unavailable-product state; refresh after validation.",
-    "test_app": "dist/sandbox-test/LidLid.app",
-    "sandbox_account": "Owner created one United States sandbox test account; device sign-in pending. Credentials omitted."
+    "test_app": "/Applications/LidLid.app",
+    "sandbox_account": "Created by owner but its 126 plus-address verification did not complete. Using the normal Apple Account through TestFlight instead; credentials omitted."
   },
-  "development_test_device": "Registered with owner authorization; private device identifier omitted."
+  "development_test_device": "Registered with owner authorization; private device identifier omitted.",
+  "testflight": {
+    "internal_group": "Owner validation",
+    "group_id": "99848693-44a8-40bc-85b8-4ce491f2ae7b",
+    "testers": 1,
+    "scope": "Account holder only; no external testers; automatic distribution disabled",
+    "build": "1.6.1 (12)",
+    "invitation": "Received at the original email address and redeemed through Apple TestFlight; invitation code not stored",
+    "installed_app": "/Applications/LidLid.app",
+    "signature_authority": "TestFlight Beta Distribution",
+    "beta_reports_active": true,
+    "app_store_receipt_present": true,
+    "deep_strict_signature_validation": "passed"
+  },
+  "compatibility_validation": {
+    "installed_service": "1.0.0, inactive with no recovery pending before update",
+    "reproduced_failure": "Actual Apple-re-signed worker rejected by the old certificate-OU-only XPC gate; system error -67050",
+    "fix": "Component 1.0.1 verifies Apple provenance, signed team and explicit identifier, then pins the validated CDHash to the original XPC peer before activation.",
+    "service_tests": {
+      "executed": 21,
+      "failures": 0,
+      "live_TestFlight_process_identity": "passed"
+    },
+    "signed_candidate_packaging": "passed; no root registration or power setting changes",
+    "runtime_update": "Pending owner unlock and Service Management update; not yet installed"
+  },
+  "current_handoff": "Mac locked; owner must unlock before further native UI, service update and transaction testing. App Review has not been submitted."
 }
