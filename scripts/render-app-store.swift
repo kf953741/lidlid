@@ -5,7 +5,7 @@ import AppKit
 let root = URL(fileURLWithPath: CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : FileManager.default.currentDirectoryPath)
 let out = root.appendingPathComponent("docs/app-store")
 let W: CGFloat = 1440, H: CGFloat = 900
-let names = ["01-close-and-go", "02-carry-with-ease", "03-open-lid-free", "04-time-limits", "05-local-and-private", "06-try-and-unlock"]
+let names = ["01-close-and-go", "02-carry-with-ease", "03-open-lid-free", "04-time-limits", "05-local-and-private"]
 let ink = NSColor(srgbRed: 0.06, green: 0.17, blue: 0.15, alpha: 1)
 let muted = NSColor(srgbRed: 0.36, green: 0.41, blue: 0.40, alpha: 1)
 let blue = NSColor(srgbRed: 0.22, green: 0.40, blue: 0.79, alpha: 1)
@@ -54,7 +54,7 @@ func native(_ cn: Bool, _ top: CGFloat, _ height: CGFloat, _ x: CGFloat, _ y: CG
 func header(_ cn: Bool, _ page: Int, dark: Bool = false) {
     draw(load("docs/assets/app-icon.png"), 72, 48, 58)
     text(cn ? "盖盖 · LidLid" : "LidLid", 146, 64, 600, 40, 25, dark ? cream : ink, .semibold)
-    if page > 0 { text(String(format: "%02d / 06", page), 1260, 67, 110, 30, 16, dark ? cream.withAlphaComponent(0.65) : muted) }
+    if page > 0 { text(String(format: "%02d / %02d", page, names.count), 1260, 67, 110, 30, 16, dark ? cream.withAlphaComponent(0.65) : muted) }
 }
 func footer(_ cn: Bool, dark: Bool = false) {
     let c = dark ? cream.withAlphaComponent(0.65) : muted
@@ -139,18 +139,6 @@ for locale in ["zh-Hans", "en-US"] {
         shadow { draw(load("docs/app-store/captures/\(locale)/options.png"), 856, 155, 484) }
         footer(cn)
     }
-    try render(names[5], locale) { cn in
-        header(cn, 6)
-        text(cn ? "先试用，再决定。" : "Try it. Then make it yours.", 74, 182, 1290, 100, cn ? 68 : 60, ink, .semibold, serif: true)
-        text("7", 72, 281, 225, 214, 178, blue, .medium)
-        text(cn ? "天免费试用" : "days free", 265, 382, 510, 64, 42, ink, .medium)
-        text(cn ? "合盖不休眠，给你完整 7 天体验。" : "Seven days to try closed-lid keep-awake.", 83, 512, 660, 70, 25, muted)
-        text(cn ? "¥38  永久解锁" : "$4.99  for life", 82, 620, 650, 70, 46, ink, .semibold)
-        text(cn ? "一次购买 · 不自动续费" : "One purchase. No subscription.", 83, 703, 650, 43, 23, muted)
-        shadow { draw(load("docs/assets/app-icon.png"), 956, 290, 285) }
-        native(cn, cn ? 728 : 785, cn ? 198 : 252, 790, 605, 570)
-        footer(cn)
-    }
     // Private IAP review attachment: complete real native capture, including
     // actual StoreKit availability. This is NOT a public product-page card.
     try render("review-purchase-ui", locale) { cn in
@@ -167,7 +155,7 @@ let overview = CGContext(data: nil, width: 1800, height: 1660, bitsPerComponent:
 NSGraphicsContext.saveGraphicsState(); NSGraphicsContext.current = NSGraphicsContext(cgContext: overview, flipped: false)
 cream.setFill(); NSRect(x: 0, y: 0, width: 1800, height: 1660).fill()
 for (row, locale) in ["zh-Hans", "en-US"].enumerated() {
-    let label = NSAttributedString(string: locale == "zh-Hans" ? "简体中文 · 六张商店截图" : "English · Six App Store screenshots", attributes: [.font: NSFont.systemFont(ofSize: 24, weight: .semibold), .foregroundColor: ink])
+    let label = NSAttributedString(string: locale == "zh-Hans" ? "简体中文 · 五张商店截图" : "English · Five App Store screenshots", attributes: [.font: NSFont.systemFont(ofSize: 24, weight: .semibold), .foregroundColor: ink])
     label.draw(at: NSPoint(x: 28, y: 1614 - row * 825))
     for (index, name) in names.enumerated() {
         let col = index % 3, r = index / 3
@@ -177,4 +165,4 @@ for (row, locale) in ["zh-Hans", "en-US"].enumerated() {
 }
 NSGraphicsContext.restoreGraphicsState()
 try NSBitmapImageRep(cgImage: overview.makeImage()!).representation(using: .png, properties: [:])!.write(to: out.appendingPathComponent("screenshots-overview.png"))
-print("Rendered six 2880 × 1800 opaque RGB screenshots per locale, plus private IAP review attachments.")
+print("Rendered five 2880 × 1800 opaque RGB screenshots per locale, plus private IAP review attachments.")

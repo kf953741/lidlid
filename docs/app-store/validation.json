@@ -42,13 +42,6 @@
       "colorType": "RGB, opaque"
     },
     {
-      "locale": "zh-Hans",
-      "file": "06-try-and-unlock.png",
-      "width": 2880,
-      "height": 1800,
-      "colorType": "RGB, opaque"
-    },
-    {
       "locale": "en-US",
       "file": "01-close-and-go.png",
       "width": 2880,
@@ -79,13 +72,6 @@
     {
       "locale": "en-US",
       "file": "05-local-and-private.png",
-      "width": 2880,
-      "height": 1800,
-      "colorType": "RGB, opaque"
-    },
-    {
-      "locale": "en-US",
-      "file": "06-try-and-unlock.png",
       "width": 2880,
       "height": 1800,
       "colorType": "RGB, opaque"

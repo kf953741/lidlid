@@ -4,11 +4,7 @@
   "build": "12",
   "verified_on": "2026-11-06",
   "destination": "App Store Connect draft version",
-  "verification": "Browser UI reloaded and each localized gallery independently showed the six ordered filenames and 6/10 count; this is not a remote asset hash comparison.",
-  "gallery_counts": {
-    "zh-Hans": 6,
-    "en-US": 6
-  },
+  "verification": "Local gallery now has exactly five validated 2880x1800 RGB PNGs per locale. App Store Connect synchronization is pending because browser control repeatedly timed out; the previous verified remote galleries each contained six images.",
   "assets": [
     {
       "locale": "zh-Hans",
@@ -23,22 +19,17 @@
     {
       "locale": "zh-Hans",
       "file": "screenshots/zh-Hans/03-open-lid-free.png",
-      "sha256": "5b0a0f3087927f2cb57471fd9ce36c7a7238d4fbf1e5e31774c4a6c965296922"
+      "sha256": "14a817f2af2da8e85426295f7cb42db71d000e75880ee21ac986eae9001d63f0"
     },
     {
       "locale": "zh-Hans",
       "file": "screenshots/zh-Hans/04-time-limits.png",
-      "sha256": "2ac50caec74828f168a242c6c21058967d385728e3b392c72225ab3bb8ccc875"
+      "sha256": "838ebc59e4cd1462c70c51952b3929368ba6979a4ff4b25ddffcd32795c27ec7"
     },
     {
       "locale": "zh-Hans",
       "file": "screenshots/zh-Hans/05-local-and-private.png",
-      "sha256": "9e00ed813fd71d4c4449513390ab0c8675de8c9af6d35a7c7274cd4464cc0169"
-    },
-    {
-      "locale": "zh-Hans",
-      "file": "screenshots/zh-Hans/06-try-and-unlock.png",
-      "sha256": "d3df5cdea0140daee47dc3dbd4c19f28ce86de06cad487c8c44cfc085231f87f"
+      "sha256": "6be0ff00b1f72ab44d26324224a3f71f3b3b943ca7984bffa113e0b680cdcab0"
     },
     {
       "locale": "en-US",
@@ -53,22 +44,17 @@
     {
       "locale": "en-US",
       "file": "screenshots/en-US/03-open-lid-free.png",
-      "sha256": "4facf055d6d2304754c9e291d44210566abc521fd8ebe1c8592401a73723e04f"
+      "sha256": "54965cf70e50fde06e70071b96e23670d3a78b39ac8637bc66266a3e4b2b1250"
     },
     {
       "locale": "en-US",
       "file": "screenshots/en-US/04-time-limits.png",
-      "sha256": "26a3e4fc72eccfa518c185bfc1b18921be1820fed95d55f5cbeed494e8fda95a"
+      "sha256": "d7b26a0cebebf82ec67c86b42bf97ec14df49a75c361fc675bad9c3857c37b74"
     },
     {
       "locale": "en-US",
       "file": "screenshots/en-US/05-local-and-private.png",
-      "sha256": "586cc77ce4fa560fbab91a6d77ffbe32c52747ab6e3db72b4d3c641e91784c44"
-    },
-    {
-      "locale": "en-US",
-      "file": "screenshots/en-US/06-try-and-unlock.png",
-      "sha256": "55b4277944859f296a8e84ddbc7df853ab5b1e0782e0d1937905aa6309d3d07f"
+      "sha256": "6acc9bdd328f2abcc85d61e02dbed3bc40044bd7cbdc0bdc306acccedd2605b6"
     }
   ],
   "iap_review_images": {
@@ -77,5 +63,14 @@
   },
   "iap_review_state": "Draft screenshot includes real unavailable-product state; refresh after actual purchase validation.",
   "review_note_state": "English text is under 4000 characters; web Save requires owner review-contact name and phone before completion.",
-  "release_state": "Prepare for Submission; manual release retained; owner approval required before App Review submission or public release."
+  "release_state": "Prepare for Submission; manual release retained; owner approval required before App Review submission or public release.",
+  "last_verified_gallery_counts": {
+    "zh-Hans": 6,
+    "en-US": 6
+  },
+  "target_gallery_counts": {
+    "zh-Hans": 5,
+    "en-US": 5
+  },
+  "status": "update-pending-browser-connection"
 }
