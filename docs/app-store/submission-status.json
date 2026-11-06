@@ -23,15 +23,16 @@
   "compatibility_notarization": {
     "submission_id": "B1202170-AAD3-4A36-BBA1-AD53D5E6FB86",
     "status": "In Progress",
-    "last_verified_local_time": "18:26 Asia/Shanghai",
+    "last_verified_local_time": "18:37 Asia/Shanghai",
     "production_download": "Pending accepted notarization and verified export"
   },
   "storekit_validation": {
     "status": "Pending live sandbox purchase and restore validation",
-    "preview_product_request": "System StoreKit log confirms Sandbox context and correct product identifiers; Apple returned an empty product response. No Sandbox Apple Account exists yet; owner creation pending.",
+    "preview_product_request": "StoreKit confirms Sandbox context and correct product identifiers; Apple has returned an empty product response. Continue purchase and restore tests after signing in to the newly created test account.",
     "development_signing": "Apple Development-signed test copy now embeds an explicit macOS development profile for this device. Team, App ID, device inclusion, expiry and deep/strict signatures verified.",
     "review_images": "Current private IAP screenshots show actual unavailable-product state; refresh after validation.",
-    "test_app": "dist/sandbox-test/LidLid.app"
+    "test_app": "dist/sandbox-test/LidLid.app",
+    "sandbox_account": "Owner created one United States sandbox test account; device sign-in pending. Credentials omitted."
   },
   "development_test_device": "Registered with owner authorization; private device identifier omitted."
 }
