@@ -10,7 +10,7 @@
   "release_mode": "manual",
   "review_contact": "Owner completed; field validation passed. Private values omitted.",
   "paid_apps_agreement": "Active; verified in the visible Agreements table",
-  "financial_information": "Owner completed separately; no banking or tax details stored here.",
+  "financial_information": "Status-only verification: bank account Available and both tax forms In Use. Private banking and tax values omitted.",
   "review_draft_items": [
     "macOS 1.6.1 (12)",
     "dev.kf.lidonce.trial7days",
@@ -23,8 +23,8 @@
   "compatibility_notarization": {
     "candidate_version": "1.0.1",
     "candidate_build": "2",
-    "status": "Signed candidate built; replacement notarization upload pending",
-    "cli_export": "Xcode CLI reports No Accounts; retry through the signed-in Xcode UI after owner unlocks the Mac. No credentials extracted.",
+    "status": "Uploaded through Xcode; Processing at the latest live status refresh",
+    "cli_export": "CLI account lookup failed; upload completed through the signed-in Xcode UI. No credentials extracted.",
     "previous_submission": {
       "submission_id": "B1202170-AAD3-4A36-BBA1-AD53D5E6FB86",
       "version": "1.0.0",
@@ -32,15 +32,20 @@
       "eligible_for_release": false,
       "reason": "Superseded: does not authenticate Apple-re-signed TestFlight clients."
     },
-    "production_download": "Pending notarization and verified export of the corrected component"
+    "production_download": "Pending Accepted notarization, verified export/staple and DMG publication",
+    "submission_id": "1A2CC6AF-01E3-4B33-BDF1-A632E5748B3A",
+    "uploaded_at": "2026-11-06T15:36:56Z",
+    "last_live_refresh": "2026-11-06 23:51 Asia/Shanghai"
   },
   "storekit_validation": {
     "status": "Pending actual purchase, cancellation and restore; TestFlight app currently receives no products",
-    "preview_product_request": "Actual TestFlight build requests the two correct product identifiers; system StoreKit records an empty product response. Lifetime availability is USA and CHN; current prices verified as US$4.99 and CNY38.",
+    "preview_product_request": "Actual TestFlight reload still unavailable. A deep/strict-verified development-profile probe separately requested trial, lifetime, and the pair; all three succeeded with zero raw products, before application filtering.",
     "development_signing": "Apple Development-signed test copy now embeds an explicit macOS development profile for this device. Team, App ID, device inclusion, expiry and deep/strict signatures verified.",
     "review_images": "Current private IAP screenshots show actual unavailable-product state; refresh after validation.",
     "test_app": "/Applications/LidLid.app",
-    "sandbox_account": "Created by owner but its 126 plus-address verification did not complete. Using the normal Apple Account through TestFlight instead; credentials omitted."
+    "sandbox_account": "Created by owner but its 126 plus-address verification did not complete. Using the normal Apple Account through TestFlight instead; credentials omitted.",
+    "commerce_status": "Both agreements Active; bank Available; both tax forms In Use. Trial territories USA and CHN checked. Lifetime prices previously read as US$4.99 and CNY38. No financial values or credentials recorded.",
+    "capability_page": "App ID edit page stalled while loading; enabled capabilities have not been reverified in this pass."
   },
   "development_test_device": "Registered with owner authorization; private device identifier omitted.",
   "testflight": {
@@ -57,7 +62,7 @@
     "deep_strict_signature_validation": "passed"
   },
   "compatibility_validation": {
-    "installed_service": "1.0.0, inactive with no recovery pending before update",
+    "installed_service": "1.0.1 (2), Developer ID signed; running through Service Management with validation-category 6",
     "reproduced_failure": "Actual Apple-re-signed worker rejected by the old certificate-OU-only XPC gate; system error -67050",
     "fix": "Component 1.0.1 verifies Apple provenance, signed team and explicit identifier, then pins the validated CDHash to the original XPC peer before activation.",
     "service_tests": {
@@ -66,7 +71,10 @@
       "live_TestFlight_process_identity": "passed"
     },
     "signed_candidate_packaging": "passed; no root registration or power setting changes",
-    "runtime_update": "Pending owner unlock and Service Management update; not yet installed"
+    "runtime_update": "Passed: actual Apple-distributed TestFlight app reports available=true, active=false, recoveryPending=false; component UI reports ready.",
+    "signature_migration": "Removed a stale development-only launch registration with the owned Service Management API after the old service had restored sleep and removed its journal. Replaced the bundle atomically, removed only duplicate registrations for this component, and registered the Developer ID bundle. No global Login Items reset or security bypass.",
+    "installed_uploaded_candidate_executables": "SHA256-identical for both the GUI and daemon; deep/strict verification passed."
   },
-  "current_handoff": "Mac locked; owner must unlock before further native UI, service update and transaction testing. App Review has not been submitted."
+  "current_handoff": "No owner authentication pending. Actual TestFlight XPC connection passes; StoreKit products remain empty and notarization is Processing. Final App Review submission remains unsent.",
+  "verified_at": "2026-11-06T23:55:49.060860+08:00"
 }

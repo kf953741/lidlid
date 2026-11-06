@@ -47,7 +47,7 @@
     }
   ],
   "created_in_app_store_connect": true,
-  "sandbox_purchase_validation": "Actual Apple-distributed TestFlight build installed with account-holder-only access. Products currently unavailable; real purchase, cancellation and restore remain pending. No purchase or receipt is simulated.",
+  "sandbox_purchase_validation": "Actual TestFlight build installed and connected to Developer ID compatibility service 1.0.1. Products remain unavailable; separate valid development-profile requests for each SKU and both SKUs returned zero raw products. Real trial, purchase, cancellation and restore remain unverified. No purchase or receipt is simulated.",
   "free_features": [
     "open-lid keep-awake"
   ],
