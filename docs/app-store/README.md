@@ -1,12 +1,12 @@
 # 盖盖 Mac App Store 上架资料
 
-对应 1.6.1 构建 12。打开 [index.html](index.html) 可切换语言、查看截图并复制商店字段。
+对应 1.6.1 构建 15。打开 [index.html](index.html) 可切换语言、查看截图并复制商店字段。
 
 | 文件 | 用途 |
 | --- | --- |
 | metadata/zh-Hans 和 metadata/en-US | 名称、副标题、推广语、关键词、简介、版本说明及网址，每项一个 TXT |
 | screenshots | 每种语言 5 张 2880 × 1800 RGB PNG，按文件序号上传 |
-| review-screenshots | 完整真实购买界面，仅供内购审核；商品不可用状态如实保留，购买验证后更新 |
+| review-screenshots | 完整真实 TestFlight 购买界面，仅供内购审核，原始状态与价格未修改 |
 | privacy | 与官网相同来源的中英文政策和随应用打包的隐私清单 |
 | PRIVACY-ANSWERS.md | App Privacy 问卷填写依据 |
 | review-notes.en.txt | 可复制的 Apple 审核说明 |

@@ -1,6 +1,6 @@
 {
   "version": "1.6.1",
-  "build": "12",
+  "build": "15",
   "publicSupportEmail": "kf953741@gmail.com",
   "screenshotCaptureVersion": "1.6.1 (build 12), both languages; native main controls and options",
   "screenshotCaptureManifest": "captures/manifest.json",
@@ -81,12 +81,14 @@
     {
       "locale": "zh-Hans",
       "file": "review-screenshots/zh-Hans/review-purchase-ui.png",
-      "status": "draft; actual product-unavailable state, replace after sandbox purchase validation"
+      "captureBuild": "14",
+      "status": "Full native build 14 purchase.png shows the verified trial expiry, real lifetime price from Apple and Restore control. Only surrounding canvas/caption is composed for accepted screenshot dimensions. Live transaction acceptance is tracked separately in submission-status.json."
     },
     {
       "locale": "en-US",
       "file": "review-screenshots/en-US/review-purchase-ui.png",
-      "status": "draft; actual product-unavailable state, replace after sandbox purchase validation"
+      "captureBuild": "14",
+      "status": "Full native build 14 purchase.png shows the verified trial expiry, real lifetime price from Apple and Restore control. Only surrounding canvas/caption is composed for accepted screenshot dimensions. Live transaction acceptance is tracked separately in submission-status.json."
     }
   ],
   "metadata": {

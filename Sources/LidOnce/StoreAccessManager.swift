@@ -11,6 +11,7 @@ final class StoreAccessManager: ObservableObject {
     @Published private(set) var products: [String: Product] = [:]
     @Published private(set) var working = false
     @Published private(set) var message: String?
+    let confirmation = StoreConfirmationPresenter()
     private var records: [String: StorePurchase] = [:]
     private var updates: Task<Void, Never>?
     private var startup: Task<Void, Never>?
@@ -79,9 +80,19 @@ final class StoreAccessManager: ObservableObject {
         working = true; message = nil
         Task { @MainActor [weak self] in
             guard let self else { return }
-            defer { self.working = false }
+            let title = productID == StoreProducts.trial ? "免费试用合盖 7 天" : "合盖永久解锁"
+            let window = await self.confirmation.show(title: title, price: product.displayPrice)
+            defer { self.working = false; self.confirmation.dismiss() }
             do {
-                switch try await product.purchase() {
+                let result: Product.PurchaseResult
+                if #available(macOS 15.2, *) {
+                    result = try await product.purchase(confirmIn: window)
+                } else {
+                    // On macOS 14–15.1 StoreKit uses the application's key
+                    // window, which is now the centered window above.
+                    result = try await product.purchase()
+                }
+                switch result {
                 case .success(let result):
                     guard case .verified(let transaction) = result, self.accept(transaction) else {
                         self.message = "无法验证购买，请恢复购买或稍后重试。"; return
@@ -101,7 +112,8 @@ final class StoreAccessManager: ObservableObject {
         working = true; message = nil
         Task { @MainActor [weak self] in
             guard let self else { return }
-            defer { self.working = false }
+            _ = await self.confirmation.show(title: "恢复购买")
+            defer { self.working = false; self.confirmation.dismiss() }
             do {
                 try await AppStore.sync()
                 await self.refreshEntitlements()

@@ -14,6 +14,8 @@ else
 fi
 swiftc -parse-as-library -swift-version 5 -I "$MODULES" \
     "$ROOT/Sources/LidOnce/App.swift" "$ROOT/Sources/LidOnce/GuardianMenuSymbol.swift" \
+    "$ROOT/Sources/LidOnce/StoreConfirmationPresenter.swift" \
+    "$ROOT/Sources/LidOnce/CompatibilitySetupPresenter.swift" \
     "$ROOT/scripts/fixtures/StoreModelHarness.swift" "${OBJECTS[@]}" \
     -framework AppKit -framework SwiftUI -framework ServiceManagement -framework Security -framework IOKit \
     -o "$WORK/store-model-test"

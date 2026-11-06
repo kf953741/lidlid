@@ -5,15 +5,15 @@
 <p align="center"><strong>合上盖子，带着任务走。</strong></p>
 
 <p align="center">
-  <a href="https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg">下载盖盖 DMG</a> ·
+  <a href="https://lidlid.vercel.app/support/#app-store">获取盖盖</a> ·
   <a href="https://lidlid.vercel.app/">官网</a> ·
-  <a href="docs/USAGE.zh-CN.md">上手教程</a> ·
+  <a href="https://lidlid.vercel.app/support/">上手教程</a> ·
   <a href="README.md">English</a>
 </p>
 
 ![盖盖 · LidLid：MacBook 合盖不休眠，合上盖子，带着任务走。](docs/assets/zh-CN/hero-mobility.png)
 
-**盖盖是一款免费的 MacBook 合盖不休眠工具，让本机 Codex、Claude Code 在合盖后继续运行。** 编译或下载还没结束，你已经要出发。打开开关，合上电脑、从容带走；再次开盖，本次自动结束。
+**盖盖是一款 MacBook 合盖不休眠工具，让本机 Codex、Claude Code 在合盖后继续运行。** 编译或下载还没结束，你已经要出发。打开开关，合上电脑、从容带走；再次开盖，本次自动结束。
 
 ![移动办公场景插画：左侧双手托着开盖的 MacBook，右侧单手携带合盖的 MacBook。](docs/assets/zh-CN/use-case-mobility.png)
 
@@ -31,7 +31,7 @@
 - **一个开关**：菜单栏一键开启，还能设置最长保持时间。
 - **开盖自动结束**：下次需要时，再开启一次。
 - **无需外接屏**：电池供电也能用，低电量或高温时自动结束本次。
-- **简单自在**：中英文界面，免费开源，无需账号。
+- **简单自在**：中英文界面，无需注册账号，开盖不休眠永久免费。
 
 ## Codex、Claude Code 合盖继续运行
 
@@ -53,13 +53,15 @@
 
 适用于 **M 系列 MacBook、macOS 14 或更新版本**，不连接外接屏。目前不支持 Intel Mac。
 
-1. [下载 DMG](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg)，打开后将「盖盖」拖入「应用程序」，再打开它。
-2. 点击菜单栏图标，打开开关，确认显示「**已开启**」。
-3. 合盖带走，开盖自动结束。也可以随时手动关闭开关。
+Mac App Store 版正在准备上架，正式开放后会在[官网](https://lidlid.vercel.app/support/#app-store)提供入口。开盖不休眠永久免费；合盖可试用 7 天，之后 US$4.99／¥38 一次购买永久解锁，没有自动续费。
 
-正在准备支持 Mac App Store 的新版：首次使用需独立安装免费兼容组件，见[设置说明](docs/COMPATIBILITY.zh-CN.md)。当前公开 DMG 仍为 1.2.0。 新版还提供独立的「开盖不休眠」开关：防止开盖时闲置休眠，屏幕仍可自动熄灭；这项功能无需兼容组件。
+1. 安装并打开盖盖。
+2. 首次合盖使用，在盖盖中点「设置免费兼容组件」：直接下载 DMG、拖入「应用程序」、打开组件并完成系统授权，盖盖会自动识别就绪。
+3. 领取试用或永久解锁，启动本机任务，打开合盖开关。确认「**已开启**」后合盖带走，再次开盖自动结束。
 
-首次打开被 macOS 拦截、切换语言等操作，见[两分钟上手教程](docs/USAGE.zh-CN.md)。
+只需要开盖不休眠？直接打开免费开关，无需兼容组件，屏幕仍可自动熄灭。试用到期也不会打断已经开始的合盖会话。
+
+[安装与使用指南](https://lidlid.vercel.app/support/) · [免费兼容组件 DMG](https://github.com/kf953741/lidlid/releases/download/compatibility-v1.0.1/LidLid-Compatibility-1.0.1-macOS-arm64.dmg)（需配合盖盖主应用）。
 
 联网任务仍需网络连接。
 

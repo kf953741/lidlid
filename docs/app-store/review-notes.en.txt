@@ -1,5 +1,3 @@
-DRAFT — The owner has authorized submission. Build 1.6.1 (12) and both non-consumable products are in one three-item review draft; the Paid Apps Agreement is Active. Component notarization/download and real StoreKit sandbox validation remain pending. Refresh the private IAP review image after purchase validation and remove this preparation note before sending to Apple.
-
 LidLid is a sandboxed menu-bar utility for Apple Silicon MacBooks running macOS 14+. No app account or login is required. Open-lid keep-awake is permanently free, independent of purchases or the external component. It prevents idle system sleep while allowing display sleep; it pauses on lid close/manual sleep, resumes on reopening/wake, and stops on quitting.
 
 Closed-lid mode uses two Apple non-consumable products:
@@ -7,14 +5,15 @@ Closed-lid mode uses two Apple non-consumable products:
 • dev.kf.lidonce.lifetime — “Closed-Lid Lifetime”, US$4.99 base price.
 The user explicitly claims the trial only after the free component is ready. Duration, expiry rules, localized lifetime price and component requirement are disclosed before claiming. Only verified Apple transactions unlock access. Restore uses originalPurchaseDate and does not restart an ended trial. There is no subscription or automatic renewal. Expiry blocks new closed-lid sessions; an accepted session continues under its original rules. Open-lid mode remains free even when products are unavailable.
 
-Full closed-lid operation on battery without an external display requires the separately installed, free LidLid Compatibility app. The Store app does not install it, download executable code, request an administrator password or register a root service. The independent Developer ID component uses macOS Service Management with user approval. Its production notarized download must be available before submission; see the product support page: https://lidlid.vercel.app/en/support/
+Full closed-lid operation on battery without an external display requires the separately installed, free LidLid Compatibility app. The Store app does not install it, download executable code, request an administrator password or register a root service. The independent Developer ID component uses macOS Service Management with user approval. The setup window opens the official DMG in the system browser only on a user click; users copy and authorize the component themselves. The component app is Developer ID signed and Apple notarized. Download its DMG: https://github.com/kf953741/lidlid/releases/download/compatibility-v1.0.1/LidLid-Compatibility-1.0.1-macOS-arm64.dmg
+Setup and removal: https://lidlid.vercel.app/en/support/#compatibility
 
 The main app uses a sandbox-inheriting session worker and Team-ID-scoped App Group for authenticated XPC. It requests no temporary sandbox exceptions, network access, Accessibility, camera, microphone or broad file access. Both ends verify the signing team and bundle identity. The external service exposes only status/begin/renew/end/removal; it temporarily manages SleepDisabled using fixed pmset arguments, journals the original setting and restores it on session end or recovery. Its 30-second lease is renewed every 5 seconds; there is no general shell API. This component is not embedded in the Store app.
 
 The app and purchases are available only in the United States and mainland China.
 
-Review steps after the pending checks are complete:
-1. Independently install/open the free component and approve its background service through macOS.
+Review steps:
+1. Open the DMG and drag LidLid Compatibility to Applications. Open it, choose Install service and approve its background service in macOS. Wait for Compatibility component ready, then return to LidLid.
 2. Open LidLid from the menu bar. Options offers English and Simplified Chinese. Test the free open-lid switch with the display asleep.
 3. Disconnect external displays, keep battery above 10%, then claim the trial through Apple. Start an expendable local task, enable closed-lid mode, wait for On and close the lid.
 4. Reopen: the session ends automatically. Another lid close sleeps normally unless re-enabled.

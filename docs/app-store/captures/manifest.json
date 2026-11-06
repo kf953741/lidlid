@@ -12,7 +12,7 @@
     "open_lid_keep_awake": true
   },
   "public_gallery": "Five cards per locale: approved localized mobility illustrations plus unmodified native UI regions; complete options capture. No older UI captures are used.",
-  "purchase_review": "review-screenshots/<locale>/review-purchase-ui.png contains full unmodified main.png, including actual unavailable-product state. Real purchase validation remains pending.",
+  "purchase_review": "Full native build 14 purchase.png shows the verified trial expiry, real lifetime price from Apple and Restore control. Only surrounding canvas/caption is composed for accepted screenshot dimensions. Live transaction acceptance is tracked separately in submission-status.json.",
   "retained_older_files": [
     "on.png",
     "off.png",
@@ -78,5 +78,18 @@
         252
       ]
     }
+  },
+  "unchanged_public_ui_builds": [
+    "13",
+    "14",
+    "15"
+  ],
+  "public_ui_build_note": "Builds 13–15 change separate StoreKit confirmation and component setup windows. Public gallery regions in PanelView, StoreAccessView, GuardianMenuSymbol and the options panel remain unchanged from captured build 12; the compatibility option opens a setup window. Private native purchase captures remain build 14, whose paywall controls are unchanged in build 15.",
+  "review_capture_build": "14",
+  "review_captured_on": "2026-11-07",
+  "review_capture_source": "Actual Apple TestFlight Beta Distribution app; complete native captures, no mocked transactions or repainted UI",
+  "review_capture_sha256": {
+    "zh-Hans": "9b90833d5d094f2c999084a6bddc7b2b8efb3d5def34d02ff5e24de330feb78e",
+    "en-US": "00f9ad918f92a0072e4a997abdfd3eb6a4eaf124c44aba4409c082211dac4006"
   }
 }

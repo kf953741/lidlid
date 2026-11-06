@@ -11,7 +11,7 @@
     {
       "id": "dev.kf.lidonce.trial7days",
       "type": "non-consumable",
-      "reference_name": "LidLid 7-day Trial",
+      "reference_name": "LidLid 7-day Trial for Mac",
       "price": "0.00",
       "duration_seconds": 604800,
       "family_sharing": false,
@@ -30,7 +30,7 @@
     {
       "id": "dev.kf.lidonce.lifetime",
       "type": "non-consumable",
-      "reference_name": "LidLid Closed-Lid Lifetime",
+      "reference_name": "LidLid Closed-Lid Lifetime for Mac",
       "price": "4.99",
       "family_sharing": false,
       "localizations": {
@@ -47,7 +47,7 @@
     }
   ],
   "created_in_app_store_connect": true,
-  "sandbox_purchase_validation": "Actual TestFlight build installed and connected to Developer ID compatibility service 1.0.1. Products remain unavailable; separate valid development-profile requests for each SKU and both SKUs returned zero raw products. Real trial, purchase, cancellation and restore remain unverified. No purchase or receipt is simulated.",
+  "sandbox_purchase_validation": "Actual TestFlight claimed the verified trial. Build 14 preserved the expiry across upgrade and Apple Restore, and cancellation did not grant lifetime access. The owner reported missing Apple confirmation controls for lifetime purchase. Build 15 adjusts activation/window ownership; final lifetime purchase and restore remain pending. No transaction or receipt is fabricated.",
   "free_features": [
     "open-lid keep-awake"
   ],

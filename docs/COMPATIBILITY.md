@@ -2,7 +2,7 @@
 
 The upcoming Mac App Store version remains a sandboxed Store app. Full closed-lid sessions on battery, without an external monitor, require a free component installed independently from the product website. The Store app never collects an administrator password or installs the component itself.
 
-1. Download the Developer ID-signed and Apple-notarized component DMG from the website, then drag LidLid Compatibility to Applications. Development builds are not notarized production releases.
+1. Download the free DMG from the [website](https://lidlid.vercel.app/en/support/#compatibility); its component app is Developer ID signed and Apple notarized, then drag LidLid Compatibility to Applications. Development builds are not notarized production releases.
 2. Open it and choose Install service. Follow macOS approval prompts, including System Settings → General → Login Items & Extensions if requested.
 3. Return to LidLid, enable the session, and wait for On before closing the lid. Reopening ends it automatically.
 
@@ -14,4 +14,4 @@ If the app exits, loses its connection or stops renewing its lease, the componen
 
 Contact [kf953741@gmail.com](mailto:kf953741@gmail.com) if recovery fails. If the component has been damaged and the Mac refuses to sleep, an administrator can use `sudo pmset -a disablesleep 0` to restore the default. This sets a default; it cannot reconstruct a different original value stored in the component's journal.
 
-Production signing, notarization, real closed-lid regression tests and Store submission validation remain required. Existing 1.3 screenshots need checking against the final 1.4 build. See the separate [engineering guide](COMPATIBILITY-ENGINEERING.md) for development checks.
+The production component is version 1.0.1. The Store main app is being prepared for launch; this DMG contains only the free component. See the [engineering guide](COMPATIBILITY-ENGINEERING.md) for implementation and development checks.

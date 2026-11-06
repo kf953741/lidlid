@@ -4,6 +4,8 @@ import AppKit
 // captures. Marketing typography is outside the native UI; no mock purchases.
 let root = URL(fileURLWithPath: CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : FileManager.default.currentDirectoryPath)
 let out = root.appendingPathComponent("docs/app-store")
+let reviewOnly = CommandLine.arguments.contains("--review-only")
+let captureManifest = try JSONSerialization.jsonObject(with: Data(contentsOf: out.appendingPathComponent("captures/manifest.json"))) as! [String: Any]
 let W: CGFloat = 1440, H: CGFloat = 900
 let names = ["01-close-and-go", "02-carry-with-ease", "03-open-lid-free", "04-time-limits", "05-local-and-private"]
 let ink = NSColor(srgbRed: 0.06, green: 0.17, blue: 0.15, alpha: 1)
@@ -91,6 +93,7 @@ func render(_ filename: String, _ locale: String, _ body: (Bool) -> Void) throws
     try NSBitmapImageRep(cgImage: ctx.makeImage()!).representation(using: .png, properties: [:])!.write(to: dir.appendingPathComponent(filename + ".png"))
 }
 for locale in ["zh-Hans", "en-US"] {
+    if !reviewOnly {
     try render(names[0], locale) { cn in
         draw(load("docs/assets/\(cn ? "zh-CN/" : "")hero-mobility.png"), 0, 0, W)
         native(cn, cn ? 174 : 177, 133, 74, 737, 410)
@@ -139,16 +142,19 @@ for locale in ["zh-Hans", "en-US"] {
         shadow { draw(load("docs/app-store/captures/\(locale)/options.png"), 856, 155, 484) }
         footer(cn)
     }
+    }
     // Private IAP review attachment: complete real native capture, including
     // actual StoreKit availability. This is NOT a public product-page card.
     try render("review-purchase-ui", locale) { cn in
         header(cn, 0)
         text(cn ? "实际购买界面" : "Actual purchase interface", 74, 220, 650, 140, 52, ink, .semibold)
-        text(cn ? "1.6.1（构建 12）\nApp Store 模式 · 未模拟收据\n\n完整保留试用与永久版控件。\n当前商品不可用状态也如实保留。\n真实购买流程仍需验证。" : "1.6.1 (build 12)\nApp Store mode · No simulated receipts\n\nTrial and lifetime controls are unmodified.\nThe current unavailable-product state is visible.\nReal purchase validation is still pending.", 78, 401, 660, 270, 23, muted)
-        let image = load("docs/app-store/captures/\(locale)/main.png")
+        guard let build = captureManifest["review_capture_build"] as? String else { fatalError("Missing review capture provenance") }
+        text(cn ? "1.6.1（构建 \(build)）\nTestFlight · Apple StoreKit\n\nApple 返回真实商品与本地价格。\n原始界面完整保留，未修改状态，\n未伪造交易或收据。" : "1.6.1 (build \(build))\nTestFlight · Apple StoreKit\n\nReal products and local prices from Apple.\nThe complete native interface is unmodified.\nNo mocked transactions or receipts.", 78, 401, 660, 270, 23, muted)
+        let image = load("docs/app-store/captures/\(locale)/purchase.png")
         draw(image, 867, 44, 772 * image.size.width / image.size.height)
     }
 }
+if !reviewOnly {
 // Owner contact sheet; never upload this overview to the App Store.
 let overview = CGContext(data: nil, width: 1800, height: 1660, bitsPerComponent: 8, bytesPerRow: 7200,
                          space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)!
@@ -166,3 +172,6 @@ for (row, locale) in ["zh-Hans", "en-US"].enumerated() {
 NSGraphicsContext.restoreGraphicsState()
 try NSBitmapImageRep(cgImage: overview.makeImage()!).representation(using: .png, properties: [:])!.write(to: out.appendingPathComponent("screenshots-overview.png"))
 print("Rendered five 2880 × 1800 opaque RGB screenshots per locale, plus private IAP review attachments.")
+} else {
+    print("Rendered only the two private IAP review attachments; public galleries unchanged.")
+}

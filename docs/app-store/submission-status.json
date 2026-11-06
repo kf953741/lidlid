@@ -1,9 +1,9 @@
 {
-  "verified_on": "2026-11-06",
+  "verified_on": "2026-11-07",
   "app_store_connect_app_id": "6831452648",
   "version": "1.6.1",
-  "build": "12",
-  "review_state": "Ready for Review draft; final submission not sent",
+  "build": "15",
+  "review_state": "Review draft retained; build 15 archived; lifetime purchase acceptance still pending",
   "review_submitted": false,
   "owner_submission_authorized": true,
   "public_release": false,
@@ -12,9 +12,8 @@
   "paid_apps_agreement": "Active; verified in the visible Agreements table",
   "financial_information": "Status-only verification: bank account Available and both tax forms In Use. Private banking and tax values omitted.",
   "review_draft_items": [
-    "macOS 1.6.1 (12)",
-    "dev.kf.lidonce.trial7days",
-    "dev.kf.lidonce.lifetime"
+    "macOS 1.6.1 (12), replace with final accepted build",
+    "dev.kf.lidonce.trial7days; lifetime temporarily removed for private review image update"
   ],
   "gallery_counts": {
     "zh-Hans": 5,
@@ -23,7 +22,7 @@
   "compatibility_notarization": {
     "candidate_version": "1.0.1",
     "candidate_build": "2",
-    "status": "Uploaded through Xcode; Processing at the latest live status refresh",
+    "status": "Ready to distribute in Xcode; three app/executable items notarized",
     "cli_export": "CLI account lookup failed; upload completed through the signed-in Xcode UI. No credentials extracted.",
     "previous_submission": {
       "submission_id": "B1202170-AAD3-4A36-BBA1-AD53D5E6FB86",
@@ -32,20 +31,28 @@
       "eligible_for_release": false,
       "reason": "Superseded: does not authenticate Apple-re-signed TestFlight clients."
     },
-    "production_download": "Pending Accepted notarization, verified export/staple and DMG publication",
+    "production_download": "https://github.com/kf953741/lidlid/releases/download/compatibility-v1.0.1/LidLid-Compatibility-1.0.1-macOS-arm64.dmg",
     "submission_id": "1A2CC6AF-01E3-4B33-BDF1-A632E5748B3A",
     "uploaded_at": "2026-11-06T15:36:56Z",
-    "last_live_refresh": "2026-11-06 23:51 Asia/Shanghai"
+    "last_live_refresh": "2026-11-07 02:03 Asia/Shanghai",
+    "export_validation": "Exported app: deep/strict signature, stapled ticket and Gatekeeper Notarized Developer ID passed. Mounted DMG app passed the same checks.",
+    "dmg_sha256": "139bb8a6b508e6b4eba45efc93f86edbe319f2c3a186d4feab2451fd48cb0b36",
+    "dmg_container_notarization": "The app inside the DMG is notarized and stapled; no claim of a separate notarization ticket for the outer DMG.",
+    "remote_readback": "Single DMG asset; downloaded release bytes exactly match verified local DMG."
   },
   "storekit_validation": {
-    "status": "Pending actual purchase, cancellation and restore; TestFlight app currently receives no products",
-    "preview_product_request": "Actual TestFlight reload still unavailable. A deep/strict-verified development-profile probe separately requested trial, lifetime, and the pair; all three succeeded with zero raw products, before application filtering.",
+    "status": "Trial, trial restore and lifetime cancellation passed on actual TestFlight; lifetime purchase blocked by missing Apple confirmation controls in build 14",
+    "preview_product_request": "After a normal reference-name metadata save and propagation, valid-profile individual/combined requests returned both products. Actual TestFlight reload displayed trial and CNY38 lifetime controls.",
     "development_signing": "Apple Development-signed test copy now embeds an explicit macOS development profile for this device. Team, App ID, device inclusion, expiry and deep/strict signatures verified.",
-    "review_images": "Current private IAP screenshots show actual unavailable-product state; refresh after validation.",
+    "review_images": "Both 2880x1800 RGB private attachments generated from complete native build 14 captures with available products and real China storefront price; lifetime upload processing, trial update pending. Public galleries remain five per locale.",
     "test_app": "/Applications/LidLid.app",
     "sandbox_account": "Created by owner but its 126 plus-address verification did not complete. Using the normal Apple Account through TestFlight instead; credentials omitted.",
     "commerce_status": "Both agreements Active; bank Available; both tax forms In Use. Trial territories USA and CHN checked. Lifetime prices previously read as US$4.99 and CNY38. No financial values or credentials recorded.",
-    "capability_page": "App ID edit page stalled while loading; enabled capabilities have not been reverified in this pass."
+    "capability_page": "Explicit dev.kf.lidonce App ID with In-App Purchase enabled verified in the developer portal.",
+    "live_trial": "Actual TestFlight build 12 displays trial expiry 2026-11-14 02:47 local time after verified Apple transaction; closed-lid switch enabled.",
+    "live_lifetime": "Cancellation passed on build 14 without granting lifetime access. User confirmed the centered Apple sheet still had no confirmation button; lifetime purchase has NOT passed.",
+    "live_trial_restore": "Passed on build 14 after Apple account authentication; original expiry stayed Nov 14, 2026 at 02:47 and free open-lid mode stayed on.",
+    "presentation_candidate": "Build 15 uses temporary regular app activation, a standard NSWindowController and content view controller, a larger centered main/key window and an AppKit event-loop turn before StoreKit. Requires live TestFlight validation."
   },
   "development_test_device": "Registered with owner authorization; private device identifier omitted.",
   "testflight": {
@@ -53,13 +60,14 @@
     "group_id": "99848693-44a8-40bc-85b8-4ce491f2ae7b",
     "testers": 1,
     "scope": "Account holder only; no external testers; automatic distribution disabled",
-    "build": "1.6.1 (12)",
+    "build": "1.6.1 (14)",
     "invitation": "Received at the original email address and redeemed through Apple TestFlight; invitation code not stored",
     "installed_app": "/Applications/LidLid.app",
     "signature_authority": "TestFlight Beta Distribution",
     "beta_reports_active": true,
     "app_store_receipt_present": true,
-    "deep_strict_signature_validation": "passed"
+    "deep_strict_signature_validation": "passed",
+    "candidate_build": "1.6.1 (15), signed and archived with matching dSYMs; upload pending manual Mac unlock"
   },
   "compatibility_validation": {
     "installed_service": "1.0.1 (2), Developer ID signed; running through Service Management with validation-category 6",
@@ -75,6 +83,12 @@
     "signature_migration": "Removed a stale development-only launch registration with the owned Service Management API after the old service had restored sleep and removed its journal. Replaced the bundle atomically, removed only duplicate registrations for this component, and registered the Developer ID bundle. No global Login Items reset or security bypass.",
     "installed_uploaded_candidate_executables": "SHA256-identical for both the GUI and daemon; deep/strict verification passed."
   },
-  "current_handoff": "No owner authentication pending. Actual TestFlight XPC connection passes; StoreKit products remain empty and notarization is Processing. Final App Review submission remains unsent.",
-  "verified_at": "2026-11-06T23:55:49.060860+08:00"
+  "current_handoff": "Mac locked. Owner asked once to unlock. Build 15 upload, lifetime purchase and restore, final private screenshot saves and App Review submission remain pending.",
+  "verified_at": "2026-11-07T03:26:21.306866+08:00",
+  "website": {
+    "url": "https://lidlid.vercel.app",
+    "deployment": "dpl_jifonk1XfKZtDNhjsPu3aKeKFPeF",
+    "status": "Six localized production pages HTTP200; signed/notarized component download and setup/removal guides published; email-only support; main Store link remains unavailable until listing launch."
+  },
+  "compatibility_setup_validation": "Actual TestFlight 14 Chinese and English setup windows show the authenticated component ready; complete three-step instructions, direct browser download and installed-component action implemented. No service reinstallation or new privilege grant was required."
 }

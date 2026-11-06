@@ -5,15 +5,15 @@
 <p align="center"><strong>Close the lid. Carry on.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg">Download LidLid DMG</a> ·
+  <a href="https://lidlid.vercel.app/en/support/#app-store">Get LidLid</a> ·
   <a href="https://lidlid.vercel.app/en/">Website</a> ·
-  <a href="docs/USAGE.md">Getting started</a> ·
+  <a href="https://lidlid.vercel.app/en/support/">Getting started</a> ·
   <a href="README.zh-CN.md">简体中文 · MacBook 合盖不休眠</a>
 </p>
 
 ![LidLid: keep your MacBook awake with the lid closed. Close the lid. Carry on.](docs/assets/hero-mobility.png)
 
-**Keep Codex and Claude Code running with your MacBook lid closed.** LidLid is a free, open-source menu bar app that keeps local tasks, builds and downloads running while you carry your Mac. Switch it on before closing the lid; reopening ends the session automatically.
+**Keep Codex and Claude Code running with your MacBook lid closed.** LidLid is an open-source menu bar app that keeps local tasks, builds and downloads running while you carry your Mac. Switch it on before closing the lid; reopening ends the session automatically.
 
 ![Illustrated on-the-go comparison: carrying an open MacBook with both hands versus a closed MacBook in one hand.](docs/assets/use-case-mobility.png)
 
@@ -31,7 +31,7 @@
 - **One switch:** turn it on from the menu bar, with an optional time limit.
 - **Ends when you reopen:** switch it on again next time you need it.
 - **No external monitor:** works on battery; stops automatically if the battery is low or your Mac gets too hot.
-- **Easy to use:** English and Chinese, free and open source, no account needed.
+- **Easy to use:** English and Chinese, no app account, and always-free open-lid mode.
 
 ## Keep Codex and Claude Code running when you close your MacBook
 
@@ -53,15 +53,17 @@
 
 For **Apple Silicon (M-series) MacBooks on macOS 14 or later**, without an external display connected. Intel Macs are not currently supported.
 
-1. [Download the DMG](https://github.com/kf953741/lidlid/releases/download/v1.2.0/LidLid-1.2.0-macOS-arm64.dmg), drag LidLid into **Applications**, then launch it.
-2. Click the LidLid icon in your menu bar, turn on the switch and wait for **On**.
-3. Close the lid and take your Mac with you. Reopening ends the session; you can also switch it off manually.
+The Mac App Store version is being prepared for launch. Its link will appear on the [website](https://lidlid.vercel.app/en/support/#app-store). Open-lid mode is always free. Try closed-lid mode free for 7 days, then unlock it for life for US$4.99 (¥38 in mainland China). No subscription or automatic renewal.
 
-For first-launch help and language settings, see the [two-minute setup guide](docs/USAGE.md).
+1. Install and open LidLid.
+2. For closed-lid mode, choose **Set up free compatibility component** in LidLid. Download the DMG, drag the component into **Applications**, open it and approve its service in macOS. LidLid detects readiness automatically.
+3. Claim the trial or unlock lifetime access, start your local task and turn on closed-lid mode. Wait for **On**, close the lid and go. Reopening ends the session automatically.
+
+For open-lid keep-awake, just turn on the free switch. No component needed; your display can still sleep. Trial expiry never interrupts a session already in progress.
+
+[Setup guide](https://lidlid.vercel.app/en/support/) · [Free compatibility component DMG](https://github.com/kf953741/lidlid/releases/download/compatibility-v1.0.1/LidLid-Compatibility-1.0.1-macOS-arm64.dmg) (requires the LidLid main app).
 
 Online tasks still need a connection.
-
-The upcoming Mac App Store version uses a separately installed free compatibility component; see the [setup guide](docs/COMPATIBILITY.md). The public DMG is still 1.2.0. The upcoming version also adds an independent open-lid keep-awake switch. The display can still sleep, and this mode works without the compatibility component.
 
 
 ---

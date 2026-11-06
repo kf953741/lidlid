@@ -29,11 +29,11 @@ const copy = {
   zh: {
     lang: 'zh-CN', brand: '盖盖', other: 'EN', otherLabel: 'Read in English',
     title: '盖盖 LidLid — MacBook 合盖不休眠，带着任务走',
-    description: 'Codex、Claude Code 任务还没跑完，你已经要出门？盖盖让 MacBook 合盖不休眠，本机任务继续运行。无需外接屏，开盖自动结束。免费下载，支持 M 系列 MacBook、macOS 14+。',
+    description: "Codex、Claude Code 任务还没跑完，你已经要出门？盖盖让 MacBook 合盖不休眠，本机任务继续运行。不插电、不接外接屏也能使用。开盖不休眠永久免费，合盖可免费试用 7 天。支持 M 系列 MacBook、macOS 14+。",
     nav: ['为什么用盖盖', '三步上手', '支持'], download: '下载盖盖', demo: '看 20 秒演示',
     eyebrow: 'MACBOOK 合盖不休眠', heading: '合上盖子，<br><em>带着任务走。</em>',
     lead: 'Codex、Claude Code 还在工作，你已经要走。打开盖盖，让 Mac 本机的任务在合盖后继续运行。',
-    compat: '免费开源 · M 系列 MacBook · macOS 14+', artAlt: '场景插画：开发者单手携带合盖的 MacBook 出门', artLabel: '场景插画',
+    compat: "M 系列 MacBook · macOS 14+ · 开盖不休眠永久免费", artAlt: '场景插画：开发者单手携带合盖的 MacBook 出门', artLabel: '场景插画',
     uiOn: '盖盖真实中文界面，已开启本次合盖不休眠', uiOff: '盖盖真实中文界面，已关闭本次合盖不休眠',
     workIntro: '你的本机任务，继续进行', work: ['Codex', 'Claude Code', '编译', '下载'],
     storyLabel: '任务没跑完，也能先出发', storyTitle: '从「托着走」，<br>到「拿着走」。',
@@ -47,20 +47,16 @@ const copy = {
     ],
     interfaceLabel: '一个开关，就够了', interfaceTitle: '该继续时继续，<br>该休息时休息。',
     interfaceLead: '点开菜单栏图标，开启这一次。回来开盖，自动回到关闭状态。',
-    checks: ['睁眼开启，闭眼关闭', '中英文界面，跟随系统或自由切换', '免费开源，无需账号'],
+    checks: ["睁眼开启，闭眼关闭", "中英文界面，随时切换", "开盖永久免费，合盖免费试用 7 天"],
     interfaceLink: '看看怎么用', previewLabel: '真实界面预览，点击切换状态', on: '已开启', off: '已关闭',
-    guideLabel: '两分钟上手', guideTitle: '准备出发，只要三步。', guideLead: '先让本机任务跑起来，再打开盖盖。',
-    steps: [
-      ['下载，拖进应用程序', '打开 DMG，将「盖盖」拖入「应用程序」，再启动它。'],
-      ['打开本次合盖开关', '点击菜单栏图标，确认显示「已开启」，就可以合盖。'],
-      ['合盖带走，开盖结束', '带着电脑去下一个地方。再次开盖，本次自动结束。'],
-    ],
+    guideLabel: '两分钟上手', guideTitle: '准备出发，只要三步。', guideLead: "安装盖盖和免费兼容组件，准备好下一次出发。",
+    steps: [["安装盖盖", "从 Mac App Store 安装主应用；商店入口将在上架后开放。"], ["完成首次设置", "在盖盖中点「设置免费兼容组件」，按窗口提示完成一次安装授权，再领取试用或永久解锁。"], ["开启，合盖，出发", "先启动任务，打开合盖开关，确认「已开启」。再次开盖，本次自动结束。"]],
     guideNote: '需要首次打开的帮助？', guideHelp: '查看安装与使用指南',
     faqTitle: '你可能还想知道', faqLead: '更详细的安装说明和使用帮助，都在支持页面。', faqLink: '前往支持页面',
     faq: [
       ['MacBook 合盖后，Codex、Claude 还能继续运行吗？', '盖盖面向运行在 Mac 本机的 Codex、Claude Code、编译和下载任务。开启后，本机会在这次合盖期间保持唤醒；任务仍需要它所需的网络连接和用户授权。已经在云端执行的任务，可以独立运行。'],
       ['需要插电或外接显示器吗？', '不需要外接显示器，电池供电也能使用。当前版本面向不连接外接屏的 M 系列 MacBook；电池供电降至 10% 时会结束本次。'],
-      ['Mac App Store 版本可以下载了吗？', 'Mac App Store 版本正在筹备，目前请使用本站提供的 DMG 下载入口。正式上架后，我们会在这里更新商店链接。'],
+      ['Mac App Store 版本可以下载了吗？', 'Mac App Store 版本正在准备上架，商店入口开放后会更新在这里。本站的 DMG 仅为免费兼容组件，需配合盖盖主应用使用。'],
     ],
     closingTitle: '任务继续，<br>你也继续出发。', closingLead: '让下一次离开工位，少一点等待。',
     storePending: 'Mac App Store 版本筹备中', storeAvailable: '在 Mac App Store 查看',
@@ -70,36 +66,39 @@ const copy = {
     privacyIntro: privacyCopy.zh.intro,
     privacySections: privacyCopy.zh.sections,
     updated: '更新日期：2026 年 11 月 2 日',
-    supportTitle: '支持与使用指南', supportMeta: '盖盖 LidLid 支持：DMG 安装、首次打开、MacBook 合盖不休眠和常见问题。',
-    supportIntro: '从下载安装到合盖出发，跟着下面三步就好。遇到问题，也可以直接反馈给我们。',
+    supportTitle: '支持与使用指南', supportMeta: "盖盖 LidLid 安装与使用指南：MacBook 合盖不休眠、免费兼容组件下载、7 天试用和邮件支持。",
+    supportIntro: "安装、开启、合盖出发。需要帮助，直接发邮件给我们。",
     feedback: '发送邮件', emailLabel: '邮件支持', emailHint: '欢迎发送使用问题、建议或隐私相关咨询。', installHeading: '安装与使用',
-    supportSteps: [
-      ['安装盖盖', '下载 DMG，打开后将「盖盖」拖入「应用程序」，再从「应用程序」启动。适用于 M 系列 MacBook、macOS 14 或更新版本，目前不支持 Intel Mac。'],
-      ['开启本次合盖不休眠', '先启动你需要继续运行的本机任务。点击菜单栏图标，打开开关，确认显示「已开启」后再合盖。请先断开外接显示器，并避免同时运行其他合盖控制工具。'],
-      ['重新开盖，自动结束', '再次开盖时，盖盖自动回到「已关闭」；你也可以手动关闭开关。最长保持时间可在开启前设为「直到开盖」或 30 分钟、1／2／4／8 小时。'],
-    ],
-    firstLaunch: '首次打开被 macOS 拦截', firstLaunchText: '当前 DMG 尚未经过 Apple 公证。如果首次打开被拦截，请在「系统设置 → 隐私与安全性」中检查并按系统提示允许打开。请使用本站提供的 GitHub Release 下载入口。',
+    supportSteps: [["安装盖盖", "从 Mac App Store 安装主应用；商店入口将在上架后开放。"], ["完成首次设置", "在盖盖中点「设置免费兼容组件」，按窗口提示完成一次安装授权，再领取试用或永久解锁。"], ["开启，合盖，出发", "先启动任务，打开合盖开关，确认「已开启」。再次开盖，本次自动结束。"]],
+    firstLaunch: "首次安装的系统确认", firstLaunchText: "免费兼容组件已使用 Developer ID 签名并通过 Apple 公证。安装服务时，只在 macOS 系统窗口中使用 Touch ID 或管理员密码确认；盖盖不会收集你的密码。",
     supportFaq: [
-      ['开着盖子也想防止休眠？', '1.5 新版提供独立的「开盖不休眠」开关。屏幕仍可自动熄灭；合盖或主动睡眠时暂停，开盖唤醒后恢复，退出盖盖后关闭。这项功能无需兼容组件。当前公开 DMG 仍为 1.2.0。'],
+      ['开着盖子也想防止休眠？', '开启独立的「开盖不休眠」开关即可，永久免费，也无需兼容组件。屏幕仍可自动熄灭；合盖或主动睡眠时暂停，开盖唤醒后恢复，退出盖盖后关闭。'],
       ['怎样切换中文和英文？', '点开盖盖右上角「选项」，在「语言」中选择简体中文、English 或跟随系统，立即生效。'],
       ['任务完成后会自动关闭吗？', '盖盖不读取 AI 对话，也不自动检测任务是否完成。开盖、手动关闭、达到所设时长或触发保护条件时，本次会话会结束。'],
       ['为什么任务还是没有继续？', '先检查是否显示「已开启」、是否连接了外接屏、是否触发低电量或高温保护。任务本身仍可能需要网络连接或用户确认；切换 Wi-Fi、VPN 时也可能断开连接。'],
       ['反馈问题时，需要提供什么？', '提供 MacBook 型号、macOS 版本、盖盖版本，以及出现问题时的操作步骤即可。请先遮住截图中的私人信息，不要上传代码、AI 对话、密钥或其他敏感内容。'],
     ],
-    compatibilityTitle: '下一版商店版：免费兼容组件',
-    compatibilityBody: '新版盖盖通过独立的免费兼容组件提供不插电、无外接屏的合盖运行。首次使用时，将组件放入「应用程序」，打开并按 macOS 提示允许后台服务，再回到盖盖开启会话。主应用保持沙盒运行，不会索取管理员密码或自动安装组件；独立的开盖不休眠功能无需此组件。组件正在开发验证，正式签名与公证下载包尚未发布。',
-    compatibilityRemove: '移除前，先关闭盖盖，再在兼容组件中点「恢复睡眠并移除服务」。需要主动睡眠时，也请先关闭盖盖。',
+    compatibilityTitle: "下载免费兼容组件",
+    compatibilityBody: "想让 MacBook 不插电、不接外接屏也能合盖继续运行，首次使用时需要安装一次免费兼容组件。盖盖内的设置窗口可直接打开官方下载，并自动检测就绪；也可从下方下载。开盖不休眠无需安装。",
+    compatibilityRemove: "需要移除时，先关闭盖盖的合盖开关，再打开兼容组件，点「恢复睡眠并移除服务」，完成后即可删除组件。需要主动睡眠时，请先关闭合盖开关。",
     supportNote: '联网任务仍需网络连接。',
     privacyLink: '阅读隐私政策', back: '返回首页', notFound: '这一页走丢了。',
+    getApp: "获取盖盖",
+    storeSetupTitle: "盖盖主应用",
+    storeSetupBody: "Mac App Store 版本正在准备上架，正式开放后会在此提供商店链接。下方 DMG 是免费兼容组件，不能替代盖盖主应用。",
+    pricing: "开盖不休眠永久免费。合盖功能可免费试用 7 天，之后 ¥38 一次购买永久解锁；没有订阅或自动续费。试用到期不会打断已经开始的会话。",
+    componentDownload: "下载免费兼容组件",
+    componentMeta: "v1.0.1 · M 系列 MacBook · macOS 14+ · Developer ID 签名，Apple 公证",
+    componentSteps: [["放入应用程序", "打开 DMG，将 LidLid Compatibility 拖入「应用程序」。"], ["安装兼容服务", "打开组件，点「安装兼容服务」，按 macOS 提示确认，并允许其后台活动。"], ["回到盖盖", "看到「兼容组件已就绪」后，回到盖盖领取试用或永久解锁，再开启合盖开关。"]],
   },
   en: {
     lang: 'en', brand: 'LidLid', other: '中文', otherLabel: '阅读中文版',
     title: 'LidLid — Keep your MacBook awake with the lid closed',
-    description: 'Keep local Codex and Claude Code tasks, builds and downloads running with your MacBook lid closed. A simple menu bar app for Apple Silicon. Download free.',
+    description: "Keep local Codex and Claude Code tasks, builds and downloads running with your MacBook lid closed, on battery without an external monitor. Open-lid mode is always free. Try closed-lid mode free for 7 days. For Apple Silicon MacBooks, macOS 14+.",
     nav: ['Why LidLid', 'Get started', 'Support'], download: 'Download for Mac', demo: 'Watch the 20s demo',
     eyebrow: 'MACBOOK CLOSED-LID KEEP-AWAKE', heading: 'Close the lid.<br><em>Carry on.</em>',
     lead: 'Codex or Claude Code is still working, but you need to go. Keep local work running while you close your MacBook and take it with you.',
-    compat: 'Free & open source · Apple Silicon · macOS 14+', artAlt: 'Illustration of a developer leaving with a closed MacBook in one hand', artLabel: 'Illustrated scene',
+    compat: "Apple Silicon · macOS 14+ · Open-lid mode is always free", artAlt: 'Illustration of a developer leaving with a closed MacBook in one hand', artLabel: 'Illustrated scene',
     uiOn: 'Actual English LidLid interface with closed-lid keep-awake on', uiOff: 'Actual English LidLid interface with closed-lid keep-awake off',
     workIntro: 'For the work running on your Mac', work: ['Codex', 'Claude Code', 'Builds', 'Downloads'],
     storyLabel: 'YOUR TASK IS RUNNING. YOU NEED TO GO.', storyTitle: 'Less balancing.<br>More moving.',
@@ -113,20 +112,16 @@ const copy = {
     ],
     interfaceLabel: 'JUST ONE SWITCH', interfaceTitle: 'Keep going.<br>Then let it rest.',
     interfaceLead: 'Open the LidLid icon in your menu bar and switch on. When you return and reopen the lid, LidLid goes back to Off.',
-    checks: ['Eyes open for On. Eyes closed for Off.', 'English and Chinese, ready when you are.', 'Free and open source. No account needed.'],
+    checks: ["Eyes open for On. Eyes closed for Off.", "English and Chinese, ready when you are.", "Open-lid mode is free. Try closed-lid mode for 7 days."],
     interfaceLink: 'See how it works', previewLabel: 'Actual interface preview. Select a state to view it.', on: 'On', off: 'Off',
-    guideLabel: 'TWO MINUTES TO GET STARTED', guideTitle: 'Ready to go in three steps.', guideLead: 'Start your local task, then turn on LidLid.',
-    steps: [
-      ['Download. Drag. Open.', 'Open the DMG, drag LidLid to Applications, then launch it.'],
-      ['Switch on for this lid close.', 'Click the LidLid icon in your menu bar. Wait until LidLid shows On, then close the lid.'],
-      ['Close and go. Reopen to finish.', 'Take your Mac to the next place. Reopening the lid ends the session automatically.'],
-    ],
+    guideLabel: 'TWO MINUTES TO GET STARTED', guideTitle: 'Ready to go in three steps.', guideLead: "Install LidLid and its free compatibility component. Then get ready to go.",
+    steps: [["Install LidLid.", "Get the main app from the Mac App Store. The store link will be available after launch."], ["Set up once.", "Choose Set up free compatibility component in LidLid, follow its one-time setup, then claim your trial or unlock it for life."], ["Switch on. Close. Go.", "Start your task and turn on closed-lid mode. Wait for On. Reopening ends the session automatically."]],
     guideNote: 'Need help with the first launch?', guideHelp: 'Read the setup guide',
     faqTitle: 'A few good questions.', faqLead: 'More installation help and answers live on the support page.', faqLink: 'Visit support',
     faq: [
       ['Will Codex and Claude Code keep running with the lid closed?', 'LidLid is for Codex, Claude Code, builds and downloads running locally on your Mac. It keeps your Mac awake for this session. Tasks still need their required internet connection and user approvals. Jobs already running in the cloud can run independently.'],
       ['Do I need power or an external monitor?', 'No external monitor is needed, and LidLid can run on battery. The current version is for Apple Silicon MacBooks without an external display connected. A session ends at 10% on battery power.'],
-      ['Is LidLid available on the Mac App Store?', 'A Mac App Store version is planned. For now, use the DMG download on this site. We will add the store link when a listing is available.'],
+      ['Is LidLid available on the Mac App Store?', 'The Mac App Store version is being prepared for launch. We will add its link here when available. The DMG on this site contains only the free compatibility component and requires the LidLid main app.'],
     ],
     closingTitle: 'Your task carries on.<br>So can you.', closingLead: 'Make your next move with a little less waiting.',
     storePending: 'Mac App Store version in preparation', storeAvailable: 'View on the Mac App Store',
@@ -136,33 +131,41 @@ const copy = {
     privacyIntro: privacyCopy.en.intro,
     privacySections: privacyCopy.en.sections,
     updated: 'Updated November 2, 2026',
-    supportTitle: 'Support & getting started', supportMeta: 'LidLid support: DMG installation, first launch, MacBook closed-lid keep-awake and common questions.',
-    supportIntro: 'From download to your next move, follow these three steps. If something gets in the way, send us feedback.',
+    supportTitle: 'Support & getting started', supportMeta: "LidLid setup and support: keep your MacBook awake with the lid closed, download the free compatibility component and start a 7-day trial.",
+    supportIntro: "Install, switch on, and take your work with you. Need a hand? Email us.",
     feedback: 'Email support', emailLabel: 'Email support', emailHint: 'For help, feedback or privacy questions.', installHeading: 'Install and use',
-    supportSteps: [
-      ['Install LidLid', 'Download the DMG, drag LidLid into Applications, then launch it from Applications. Requires an Apple Silicon MacBook and macOS 14 or later. Intel Macs are not currently supported.'],
-      ['Turn on this session', 'Start the local task you want to keep running. Click the LidLid icon in your menu bar, turn on the switch and wait for On before closing the lid. Disconnect external displays and use one lid-sleep controller at a time.'],
-      ['Reopen to finish', 'Reopening returns LidLid to Off. You can also switch it off manually. Before enabling, choose Until reopened or a limit of 30 minutes, 1, 2, 4 or 8 hours.'],
-    ],
-    firstLaunch: 'If macOS blocks the first launch', firstLaunchText: 'The current DMG is not notarized. If the first launch is blocked, review it in System Settings → Privacy & Security and follow the system prompts to allow it. Use the GitHub Release download linked from this site.',
+    supportSteps: [["Install LidLid.", "Get the main app from the Mac App Store. The store link will be available after launch."], ["Set up once.", "Choose Set up free compatibility component in LidLid, follow its one-time setup, then claim your trial or unlock it for life."], ["Switch on. Close. Go.", "Start your task and turn on closed-lid mode. Wait for On. Reopening ends the session automatically."]],
+    firstLaunch: "Your first system confirmation", firstLaunchText: "The free compatibility app is Developer ID signed and notarized by Apple. When installing its service, confirm with Touch ID or an administrator password only in the macOS system dialog. LidLid never collects your password.",
     supportFaq: [
-      ['Can I keep my Mac awake with the lid open?', 'Version 1.5 adds an independent open-lid switch. Your display can still sleep. It pauses on lid close or manual sleep, resumes after reopening and wake, and turns off when you quit. No compatibility component is required for this mode. The public DMG is still 1.2.0.'],
+      ['Can I keep my Mac awake with the lid open?', 'Turn on the independent open-lid switch. It is always free and needs no compatibility component. Your display can still sleep. The mode pauses on lid close or manual sleep, resumes after reopening and wake, and turns off when you quit.'],
       ['How do I change the language?', 'Open Options → Language and select English, 简体中文 or System default. The interface changes immediately.'],
       ['Does it detect when my task finishes?', 'LidLid does not read AI conversations or automatically detect task completion. Reopening, manual off, the selected time limit or a protection condition ends the session.'],
       ['Why did my task stop anyway?', 'Check that LidLid showed On, no external display was connected, and no battery or thermal condition ended the session. Tasks may still need an internet connection or your approval. Changing Wi-Fi networks or VPNs can also interrupt connections.'],
       ['What should I include in a report?', 'Share your MacBook model, macOS version, LidLid version and the steps that caused the issue. Redact personal information in screenshots. Do not upload code, AI conversations, keys or other sensitive content.'],
     ],
-    compatibilityTitle: 'Next Store version: free compatibility component',
-    compatibilityBody: 'The next LidLid version connects to a separately installed free component for closed-lid sessions on battery without an external display. Place the component in Applications, launch it and approve its background service in macOS, then return to LidLid. The main app stays sandboxed and never requests an administrator password or installs the component. Its independent open-lid mode works without this component. Development validation is ongoing; the signed and notarized production download is not available yet.',
-    compatibilityRemove: 'Before deletion, turn LidLid off and choose Restore sleep & remove service in the component. Turn LidLid off before choosing Sleep as well.',
+    compatibilityTitle: "Download the free compatibility component",
+    compatibilityBody: "For closed-lid work on battery without an external monitor, install the free component once. LidLid’s setup window opens the official download directly and detects readiness automatically. You can also download it below. Open-lid mode works without it.",
+    compatibilityRemove: "To remove it, turn off closed-lid mode in LidLid, open the component and choose Restore sleep & remove service. You can then delete the component. Turn closed-lid mode off before choosing Sleep as well.",
     supportNote: 'Online tasks still need a connection.',
     privacyLink: 'Read the privacy policy', back: 'Back to home', notFound: 'This page took a different path.',
+    getApp: "Get LidLid",
+    storeSetupTitle: "The LidLid main app",
+    storeSetupBody: "The Mac App Store version is being prepared for launch. Its store link will appear here when available. The DMG below is the free compatibility component and does not replace the LidLid main app.",
+    pricing: "Open-lid mode is always free. Try closed-lid mode free for 7 days, then unlock it for life for US$4.99. No subscription or automatic renewal. Trial expiry never interrupts a session already in progress.",
+    componentDownload: "Download the free component",
+    componentMeta: "v1.0.1 · Apple Silicon MacBooks · macOS 14+ · Developer ID signed, Apple notarized",
+    componentSteps: [["Move to Applications.", "Open the DMG and drag LidLid Compatibility into Applications."], ["Install its service.", "Open the component, choose Install service and follow the macOS prompts to approve its background activity."], ["Return to LidLid.", "When you see Compatibility component ready, return to LidLid, claim the trial or unlock it for life, then turn on closed-lid mode."]],
   },
 };
 
+function appAction(locale, className = 'button') {
+  const t = copy[locale];
+  const href = site.appStoreUrl || `${routes[locale].support}#app-store`;
+  return `<a class="${className}" href="${e(href)}">${downloadIcon}${site.appStoreUrl ? t.download : t.getApp}</a>`;
+}
 function header(locale, page) {
   const t = copy[locale], route = routes[locale], other = locale === 'zh' ? 'en' : 'zh';
-  return `<a class="skip" href="#main">${t.skip}</a><header class="site-header"><div class="wrap nav"><a class="brand" href="${route.home}" aria-label="${t.brand} ${locale === 'zh' ? '首页' : 'home'}"><img src="/assets/icon.png?v=${brandRevision}" width="37" height="37" alt="">${t.brand}${locale === 'zh' ? '<small>LidLid</small>' : ''}</a><nav class="nav-links" aria-label="${locale === 'zh' ? '主要导航' : 'Main navigation'}"><a href="${route.home}#why">${t.nav[0]}</a><a href="${route.home}#get-started">${t.nav[1]}</a><a href="${route.support}"${page === 'support' ? ' aria-current="page"' : ''}>${t.nav[2]}</a></nav><div class="nav-actions"><a class="language" href="${routes[other][page]}" lang="${copy[other].lang}" aria-label="${t.otherLabel}">${t.other}</a><a class="button small" href="${e(site.download)}">${t.download}${downloadIcon}</a></div></div></header>`;
+  return `<a class="skip" href="#main">${t.skip}</a><header class="site-header"><div class="wrap nav"><a class="brand" href="${route.home}" aria-label="${t.brand} ${locale === 'zh' ? '首页' : 'home'}"><img src="/assets/icon.png?v=${brandRevision}" width="37" height="37" alt="">${t.brand}${locale === 'zh' ? '<small>LidLid</small>' : ''}</a><nav class="nav-links" aria-label="${locale === 'zh' ? '主要导航' : 'Main navigation'}"><a href="${route.home}#why">${t.nav[0]}</a><a href="${route.home}#get-started">${t.nav[1]}</a><a href="${route.support}"${page === 'support' ? ' aria-current="page"' : ''}>${t.nav[2]}</a></nav><div class="nav-actions"><a class="language" href="${routes[other][page]}" lang="${copy[other].lang}" aria-label="${t.otherLabel}">${t.other}</a>${appAction(locale, 'button small')}</div></div></header>`;
 }
 function storeEntry(t) {
   return site.appStoreUrl ? `<a class="store-pending" href="${e(site.appStoreUrl)}">${t.storeAvailable} ${arrow}</a>` : `<p class="store-pending">${t.storePending}</p>`;
@@ -176,7 +179,7 @@ function faq(items) {
 }
 function home(locale) {
   const t = copy[locale], route = routes[locale], asset = locale;
-  return `<main id="main"><section class="wrap hero"><div class="hero-copy"><div class="eyebrow">${t.eyebrow}</div><h1>${t.heading}</h1><p>${t.lead}</p><div class="hero-actions"><a class="button" href="${e(site.download)}">${downloadIcon}${t.download}</a><button class="button secondary" type="button" data-play-demo>${play}${t.demo}</button></div><p class="compat">${t.compat}</p></div><div class="hero-visual"><div class="hero-art"><img src="/assets/hero-${asset}.jpg" width="1400" height="700" alt="${t.artAlt}" fetchpriority="high"></div><span class="art-caption">${t.artLabel}</span><div class="hero-app"><img src="/assets/interface-on-${asset}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" alt="${t.uiOn}"></div></div></section><div class="wrap work-types"><span>${t.workIntro}</span><ul>${t.work.map(word => `<li>${word}</li>`).join('')}</ul></div><section class="wrap section" id="why"><div class="section-heading"><div><span class="overline">${t.storyLabel}</span><h2>${t.storyTitle}</h2></div><p>${t.storyLead}</p></div><div class="story-picture"><img src="/assets/story-${asset}.jpg" width="1400" height="700" loading="lazy" alt="${t.storyAlt}"></div><p class="image-note">${t.imageNote}</p><div class="feature-strip">${t.features.map(([kind, title, body]) => `<div class="feature">${roundIcon(kind)}<h3>${title}</h3><p>${body}</p></div>`).join('')}</div></section><section class="section interface-section"><div class="wrap interface-grid"><div class="interface-stage"><div class="interface-image-wrap" id="interface-panel" role="tabpanel" aria-labelledby="preview-on"><img data-interface-preview data-on-width="${uiSizes[locale].on[0]}" data-on-height="${uiSizes[locale].on[1]}" data-off-width="${uiSizes[locale].off[0]}" data-off-height="${uiSizes[locale].off[1]}" src="/assets/interface-on-${asset}.jpg" data-on="/assets/interface-on-${asset}.jpg" data-off="/assets/interface-off-${asset}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" loading="lazy" alt="${t.uiOn}"></div><div class="state-tabs" role="tablist" aria-label="${t.previewLabel}"><button id="preview-on" role="tab" type="button" aria-selected="true" aria-controls="interface-panel" data-preview-state="on" data-image-alt="${t.uiOn}">${guardian(true)}${t.on}</button><button id="preview-off" role="tab" type="button" aria-selected="false" aria-controls="interface-panel" tabindex="-1" data-preview-state="off" data-image-alt="${t.uiOff}">${guardian(false)}${t.off}</button></div><p class="preview-caption">${t.previewLabel}</p></div><div class="interface-copy"><span class="overline">${t.interfaceLabel}</span><h2>${t.interfaceTitle}</h2><p>${t.interfaceLead}</p><ul class="check-list">${t.checks.map(item => `<li>${item}</li>`).join('')}</ul><a class="text-link" href="#get-started">${t.interfaceLink}${arrow}</a></div></div></section><section class="wrap section" id="get-started"><div class="section-heading"><div><span class="overline">${t.guideLabel}</span><h2>${t.guideTitle}</h2></div><p>${t.guideLead}</p></div><ol class="steps" style="list-style:none;padding-left:0">${t.steps.map(([title, body], index) => `<li><span class="step-number">0${index + 1}</span><h3>${title}</h3><p>${body}</p></li>`).join('')}</ol><p class="guide-note">${t.guideNote} <a class="text-link" href="${route.support}#install">${t.guideHelp} ${arrow}</a></p></section><section class="wrap section faq-layout"><div class="faq-heading"><span class="overline">FAQ</span><h2>${t.faqTitle}</h2><p>${t.faqLead}</p><a class="text-link" href="${route.support}">${t.faqLink}${arrow}</a></div>${faq(t.faq)}</section><section class="wrap closing" id="app-store"><div><h2>${t.closingTitle}</h2><p>${t.closingLead}</p></div><div class="closing-actions"><a class="button light" href="${e(site.download)}">${downloadIcon}${t.download}</a>${storeEntry(t)}</div></section></main><dialog id="demo-dialog" aria-labelledby="demo-heading"><div class="dialog-head"><h2 id="demo-heading">${t.demoTitle}</h2><button type="button" class="dialog-close" data-close-dialog aria-label="${t.close}">×</button></div><video class="demo-video" controls playsinline preload="none" poster="/assets/hero-${asset}.jpg"><source src="/assets/demo-${asset}.mp4" type="video/mp4"></video></dialog>`;
+  return `<main id="main"><section class="wrap hero"><div class="hero-copy"><div class="eyebrow">${t.eyebrow}</div><h1>${t.heading}</h1><p>${t.lead}</p><div class="hero-actions">${appAction(locale)}<button class="button secondary" type="button" data-play-demo>${play}${t.demo}</button></div><p class="compat">${t.compat}</p></div><div class="hero-visual"><div class="hero-art"><img src="/assets/hero-${asset}.jpg" width="1400" height="700" alt="${t.artAlt}" fetchpriority="high"></div><span class="art-caption">${t.artLabel}</span><div class="hero-app"><img src="/assets/interface-on-${asset}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" alt="${t.uiOn}"></div></div></section><div class="wrap work-types"><span>${t.workIntro}</span><ul>${t.work.map(word => `<li>${word}</li>`).join('')}</ul></div><section class="wrap section" id="why"><div class="section-heading"><div><span class="overline">${t.storyLabel}</span><h2>${t.storyTitle}</h2></div><p>${t.storyLead}</p></div><div class="story-picture"><img src="/assets/story-${asset}.jpg" width="1400" height="700" loading="lazy" alt="${t.storyAlt}"></div><p class="image-note">${t.imageNote}</p><div class="feature-strip">${t.features.map(([kind, title, body]) => `<div class="feature">${roundIcon(kind)}<h3>${title}</h3><p>${body}</p></div>`).join('')}</div></section><section class="section interface-section"><div class="wrap interface-grid"><div class="interface-stage"><div class="interface-image-wrap" id="interface-panel" role="tabpanel" aria-labelledby="preview-on"><img data-interface-preview data-on-width="${uiSizes[locale].on[0]}" data-on-height="${uiSizes[locale].on[1]}" data-off-width="${uiSizes[locale].off[0]}" data-off-height="${uiSizes[locale].off[1]}" src="/assets/interface-on-${asset}.jpg" data-on="/assets/interface-on-${asset}.jpg" data-off="/assets/interface-off-${asset}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" loading="lazy" alt="${t.uiOn}"></div><div class="state-tabs" role="tablist" aria-label="${t.previewLabel}"><button id="preview-on" role="tab" type="button" aria-selected="true" aria-controls="interface-panel" data-preview-state="on" data-image-alt="${t.uiOn}">${guardian(true)}${t.on}</button><button id="preview-off" role="tab" type="button" aria-selected="false" aria-controls="interface-panel" tabindex="-1" data-preview-state="off" data-image-alt="${t.uiOff}">${guardian(false)}${t.off}</button></div><p class="preview-caption">${t.previewLabel}</p></div><div class="interface-copy"><span class="overline">${t.interfaceLabel}</span><h2>${t.interfaceTitle}</h2><p>${t.interfaceLead}</p><ul class="check-list">${t.checks.map(item => `<li>${item}</li>`).join('')}</ul><a class="text-link" href="#get-started">${t.interfaceLink}${arrow}</a></div></div></section><section class="wrap section" id="get-started"><div class="section-heading"><div><span class="overline">${t.guideLabel}</span><h2>${t.guideTitle}</h2></div><p>${t.guideLead}</p></div><ol class="steps" style="list-style:none;padding-left:0">${t.steps.map(([title, body], index) => `<li><span class="step-number">0${index + 1}</span><h3>${title}</h3><p>${body}</p></li>`).join('')}</ol><p class="guide-note">${t.guideNote} <a class="text-link" href="${route.support}#install">${t.guideHelp} ${arrow}</a></p></section><section class="wrap section faq-layout"><div class="faq-heading"><span class="overline">FAQ</span><h2>${t.faqTitle}</h2><p>${t.faqLead}</p><a class="text-link" href="${route.support}">${t.faqLink}${arrow}</a></div>${faq(t.faq)}</section><section class="wrap closing" id="app-store"><div><h2>${t.closingTitle}</h2><p>${t.closingLead}</p></div><div class="closing-actions">${appAction(locale, 'button light')}${storeEntry(t)}</div></section></main><dialog id="demo-dialog" aria-labelledby="demo-heading"><div class="dialog-head"><h2 id="demo-heading">${t.demoTitle}</h2><button type="button" class="dialog-close" data-close-dialog aria-label="${t.close}">×</button></div><video class="demo-video" controls playsinline preload="none" poster="/assets/hero-${asset}.jpg"><source src="/assets/demo-${asset}.mp4" type="video/mp4"></video></dialog>`;
 }
 function privacy(locale) {
   const t = copy[locale];
@@ -184,12 +187,12 @@ function privacy(locale) {
 }
 function support(locale) {
   const t = copy[locale], route = routes[locale];
-  return `<main id="main" class="wrap"><article class="document"><span class="overline">${t.brand} · SUPPORT</span><h1>${t.supportTitle}</h1><p class="intro">${t.supportIntro}</p><div class="support-actions"><a class="button" href="${e(site.download)}">${downloadIcon}${t.download}</a><a class="button secondary" href="mailto:${e(site.supportEmail)}">${t.feedback} ${arrow}</a></div><div class="support-contact"><p><strong>${t.emailLabel}</strong> <a href="mailto:${e(site.supportEmail)}">${e(site.supportEmail)}</a></p><p>${t.emailHint}</p></div><h2 id="install">${t.installHeading}</h2><ol class="support-steps">${t.supportSteps.map(([title, body]) => `<li><strong>${title}</strong>${body}</li>`).join('')}</ol><div class="support-media"><img src="/assets/interface-on-${locale}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" alt="${t.uiOn}"></div><section id="compatibility"><h2>${t.compatibilityTitle}</h2><p>${t.compatibilityBody}</p><p>${t.compatibilityRemove}</p></section><section><h2>${t.firstLaunch}</h2><p>${t.firstLaunchText}</p></section><section><h2>${t.faqTitle}</h2>${faq(t.supportFaq)}</section><p class="notice">${t.supportNote}</p><a class="text-link" href="${route.privacy}">${t.privacyLink}${arrow}</a></article></main>`;
+  return `<main id="main" class="wrap"><article class="document"><span class="overline">${t.brand} · SUPPORT</span><h1>${t.supportTitle}</h1><p class="intro">${t.supportIntro}</p><div class="support-actions">${appAction(locale)}<a class="button secondary" href="mailto:${e(site.supportEmail)}">${t.feedback} ${arrow}</a></div><div class="support-contact"><p><strong>${t.emailLabel}</strong> <a href="mailto:${e(site.supportEmail)}">${e(site.supportEmail)}</a></p><p>${t.emailHint}</p></div><section id="app-store"><h2>${t.storeSetupTitle}</h2><p>${t.storeSetupBody}</p><p>${t.pricing}</p></section><h2 id="install">${t.installHeading}</h2><ol class="support-steps">${t.supportSteps.map(([title, body]) => `<li><strong>${title}</strong>${body}</li>`).join('')}</ol><div class="support-media"><img src="/assets/interface-on-${locale}.jpg" width="${uiSizes[locale].on[0]}" height="${uiSizes[locale].on[1]}" alt="${t.uiOn}"></div><section id="compatibility"><h2>${t.compatibilityTitle}</h2><p>${t.compatibilityBody}</p><div class="support-actions"><a class="button" href="${e(site.compatibilityDownload)}">${downloadIcon}${t.componentDownload}</a></div><p class="updated">${t.componentMeta}</p><ol class="support-steps">${t.componentSteps.map(([title, body]) => `<li><strong>${title}</strong>${body}</li>`).join('')}</ol><p>${t.compatibilityRemove}</p></section><section><h2>${t.firstLaunch}</h2><p>${t.firstLaunchText}</p></section><section><h2>${t.faqTitle}</h2>${faq(t.supportFaq)}</section><p class="notice">${t.supportNote}</p><a class="text-link" href="${route.privacy}">${t.privacyLink}${arrow}</a></article></main>`;
 }
 function schema(locale, page) {
   const t = copy[locale], url = base + routes[locale][page];
   const graph = [{ '@type': 'WebSite', '@id': base + '/#website', name: 'LidLid', alternateName: '盖盖', url: base + '/' }, { '@type': 'WebPage', '@id': url + '#webpage', url, name: page === 'home' ? t.title : page === 'privacy' ? t.privacyTitle : t.supportTitle, inLanguage: t.lang, isPartOf: { '@id': base + '/#website' } }];
-  if (page === 'home') graph.push({ '@type': 'SoftwareApplication', name: 'LidLid', alternateName: '盖盖', applicationCategory: 'UtilitiesApplication', operatingSystem: 'macOS 14 or later; Apple Silicon MacBook', softwareVersion: site.version, url, description: t.description, image: `${base}/assets/hero-${locale}.jpg`, screenshot: `${base}/assets/interface-on-${locale}.jpg`, downloadUrl: site.download, author: { '@type': 'Person', name: site.developer }, offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', url: site.download } }, { '@type': 'FAQPage', mainEntity: t.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: plain(a) } })) });
+  if (page === 'home') graph.push({ '@type': 'SoftwareApplication', name: 'LidLid', alternateName: '盖盖', applicationCategory: 'UtilitiesApplication', operatingSystem: 'macOS 14 or later; Apple Silicon MacBook', softwareVersion: site.version, url, description: t.description, image: `${base}/assets/hero-${locale}.jpg`, screenshot: `${base}/assets/interface-on-${locale}.jpg`, ...(site.appStoreUrl ? { downloadUrl: site.appStoreUrl } : {}), author: { '@type': 'Person', name: site.developer }, ...(site.appStoreUrl ? { offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', url: site.appStoreUrl } } : {}) }, { '@type': 'FAQPage', mainEntity: t.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: plain(a) } })) });
   return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
 }
 function layout(locale, page, body) {

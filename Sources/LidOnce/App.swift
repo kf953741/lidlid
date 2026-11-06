@@ -25,6 +25,7 @@ final class AppModel: ObservableObject {
     @Published var loginMessage: String?
     var changed: (() -> Void)?
     var readyToQuit: (() -> Void)?
+    var showCompatibilitySetup: (() -> Void)?
     private var process: Process?
     private var input: Pipe?
     private var output: Pipe?
@@ -179,15 +180,7 @@ final class AppModel: ObservableObject {
         }
     }
     func openCompatibility() {
-        if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "dev.kf.lidonce.compatibility") {
-            NSWorkspace.shared.openApplication(at: url, configuration: NSWorkspace.OpenConfiguration())
-        } else {
-            // User installs the free component independently; the sandboxed
-            // Store app never downloads, installs, or elevates another program.
-            NSWorkspace.shared.open(URL(string: language.resolved() == .simplifiedChinese
-                ? "https://lidlid.vercel.app/support/#compatibility"
-                : "https://lidlid.vercel.app/en/support/#compatibility")!)
-        }
+        showCompatibilitySetup?()
     }
     func exitReference() {
         for app in NSRunningApplication.runningApplications(withBundleIdentifier: "com.rathonyi.clamshell") { app.terminate() }
@@ -206,6 +199,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let model = AppModel()
     private var status: NSStatusItem!
     private let popover = NSPopover()
+    private let compatibilitySetup = CompatibilitySetupPresenter()
     private var allowsTermination = false
     func applicationDidFinishLaunching(_ notification: Notification) {
         if let id = Bundle.main.bundleIdentifier,
@@ -221,6 +215,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         popover.behavior = .transient
         popover.contentViewController = NSHostingController(rootView: PanelView(model: model))
+        model.store.confirmation.willPresent = { [weak self] in self?.popover.performClose(nil) }
+        model.store.confirmation.didDismiss = { [weak self] in self?.show() }
+        compatibilitySetup.willPresent = { [weak self] in self?.popover.performClose(nil) }
+        compatibilitySetup.didDismiss = { [weak self] in self?.show() }
+        model.showCompatibilitySetup = { [weak self] in
+            guard let self else { return }
+            self.compatibilitySetup.show(model: self.model)
+        }
         model.changed = { [weak self] in self?.updateIcon() }
         model.readyToQuit = { [weak self] in
             self?.allowsTermination = true
@@ -243,6 +245,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if popover.isShown { popover.performClose(nil) } else { show() }
     }
     private func show() {
+        if model.store.confirmation.activateIfPresented() || compatibilitySetup.activateIfPresented() { return }
         guard let button = status?.button else { return }
         NSApp.activate(ignoringOtherApps: true)
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)

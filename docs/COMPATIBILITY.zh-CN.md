@@ -4,7 +4,7 @@
 
 ## 首次设置
 
-1. 从官网获取经过 Developer ID 签名与 Apple 公证的「LidLid Compatibility」DMG，将组件拖到 `/Applications`。开发测试构建不等于正式公证下载包。
+1. 从[官网下载页](https://lidlid.vercel.app/support/#compatibility)获取免费 DMG（包内组件已使用 Developer ID 签名并通过 Apple 公证），将组件拖到 `/Applications`。开发测试构建不等于正式公证下载包。
 2. 打开组件，点击「安装兼容服务」，按 macOS 提示授权。若显示等待批准，打开「系统设置 → 通用 → 登录项与扩展」允许组件。
 3. 回到盖盖，确认组件已就绪，打开本次开关；看到「已开启」后再合盖。
 
@@ -20,8 +20,4 @@
 
 若组件已损坏且 Mac 无法正常睡眠，先保持开盖、停止盖盖并联系 [kf953741@gmail.com](mailto:kf953741@gmail.com)。管理员可用 `sudo pmset -a disablesleep 0` 应急恢复默认值；这会设为默认值，不能代替组件保存的精确原值。
 
-## 当前开发构建状态
-
-代码和自动测试不代表实际合盖或审核通过。正式分发前仍需完成 Developer ID 签名、公证、商店发行签名，以及电池供电无外接屏、合盖期间屏幕唤醒、电源切换、开盖恢复和下一次正常休眠的实机验证。商店截图也需用最终构建重新核对。
-
-实现与开发测试说明见 [COMPATIBILITY-ENGINEERING.md](COMPATIBILITY-ENGINEERING.md)。
+正式组件版本为 1.0.1。商店主应用准备上架中；DMG 仅包含免费组件。实现与开发测试见 [COMPATIBILITY-ENGINEERING.md](COMPATIBILITY-ENGINEERING.md)。

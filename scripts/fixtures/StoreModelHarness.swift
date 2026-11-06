@@ -6,6 +6,7 @@ import LidOnceCore
 // Compile the real AppModel against a controllable entitlement source and a
 // pipe-only worker. Neither StoreKit purchases nor system sleep are exercised.
 final class StoreAccessManager: ObservableObject {
+    let confirmation = StoreConfirmationPresenter()
     @Published var access: StoreAccess = .loading
     var now = Date(timeIntervalSince1970: 1_800_000_000)
     let isStoreEdition = true
