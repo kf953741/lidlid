@@ -4,7 +4,7 @@
   "build": "12",
   "verified_on": "2026-11-06",
   "destination": "App Store Connect draft version",
-  "verification": "Local gallery now has exactly five validated 2880x1800 RGB PNGs per locale. App Store Connect synchronization is pending because browser control repeatedly timed out; the previous verified remote galleries each contained six images.",
+  "verification": "After a full browser page reload, each localized gallery independently showed the five ordered filenames and 5/10 count, with its own removable assets rather than inherited images. Both use the updated five-page artwork; the pricing poster is absent from both placements. This is UI placement verification, not a remote asset hash comparison.",
   "assets": [
     {
       "locale": "zh-Hans",
@@ -64,13 +64,9 @@
   "iap_review_state": "Draft screenshot includes real unavailable-product state; refresh after actual purchase validation.",
   "review_note_state": "English text is under 4000 characters; web Save requires owner review-contact name and phone before completion.",
   "release_state": "Prepare for Submission; manual release retained; owner approval required before App Review submission or public release.",
-  "last_verified_gallery_counts": {
-    "zh-Hans": 6,
-    "en-US": 6
-  },
-  "target_gallery_counts": {
+  "status": "uploaded-draft",
+  "gallery_counts": {
     "zh-Hans": 5,
     "en-US": 5
-  },
-  "status": "update-pending-browser-connection"
+  }
 }
