@@ -3,7 +3,7 @@
   "app_store_connect_app_id": "6831452648",
   "version": "1.6.1",
   "build": "15",
-  "review_state": "Review draft retained; build 15 archived; lifetime purchase acceptance still pending",
+  "review_state": "Prepare for Submission; build 15 archived but not uploaded; lifetime purchase acceptance still pending",
   "review_submitted": false,
   "owner_submission_authorized": true,
   "public_release": false,
@@ -11,10 +11,8 @@
   "review_contact": "Owner completed; field validation passed. Private values omitted.",
   "paid_apps_agreement": "Active; verified in the visible Agreements table",
   "financial_information": "Status-only verification: bank account Available and both tax forms In Use. Private banking and tax values omitted.",
-  "review_draft_items": [
-    "macOS 1.6.1 (12), replace with final accepted build",
-    "dev.kf.lidonce.trial7days; lifetime temporarily removed for private review image update"
-  ],
+  "review_draft_items": [],
+  "review_draft_note": "Main version and both IAPs were removed only from the review draft to permit build replacement and private image updates. Products and version remain intact. The version page still selects build 12; replace it with accepted build 15 before adding all three items for review.",
   "gallery_counts": {
     "zh-Hans": 5,
     "en-US": 5
@@ -44,7 +42,7 @@
     "status": "Trial, trial restore and lifetime cancellation passed on actual TestFlight; lifetime purchase blocked by missing Apple confirmation controls in build 14",
     "preview_product_request": "After a normal reference-name metadata save and propagation, valid-profile individual/combined requests returned both products. Actual TestFlight reload displayed trial and CNY38 lifetime controls.",
     "development_signing": "Apple Development-signed test copy now embeds an explicit macOS development profile for this device. Team, App ID, device inclusion, expiry and deep/strict signatures verified.",
-    "review_images": "Both 2880x1800 RGB private attachments generated from complete native build 14 captures with available products and real China storefront price; lifetime upload processing, trial update pending. Public galleries remain five per locale.",
+    "review_images": "Both IAP private screenshots and notes saved successfully. Reloaded Apple-hosted images are complete at 2880x1800. Each uses the complete actual TestFlight build 14 paywall with verified trial and real China storefront price. Public galleries remain five per locale.",
     "test_app": "/Applications/LidLid.app",
     "sandbox_account": "Created by owner but its 126 plus-address verification did not complete. Using the normal Apple Account through TestFlight instead; credentials omitted.",
     "commerce_status": "Both agreements Active; bank Available; both tax forms In Use. Trial territories USA and CHN checked. Lifetime prices previously read as US$4.99 and CNY38. No financial values or credentials recorded.",
@@ -83,12 +81,13 @@
     "signature_migration": "Removed a stale development-only launch registration with the owned Service Management API after the old service had restored sleep and removed its journal. Replaced the bundle atomically, removed only duplicate registrations for this component, and registered the Developer ID bundle. No global Login Items reset or security bypass.",
     "installed_uploaded_candidate_executables": "SHA256-identical for both the GUI and daemon; deep/strict verification passed."
   },
-  "current_handoff": "Mac locked. Owner asked once to unlock. Build 15 upload, lifetime purchase and restore, final private screenshot saves and App Review submission remain pending.",
-  "verified_at": "2026-11-07T03:26:21.306866+08:00",
+  "current_handoff": "Mac remains locked; owner already asked once to unlock. Build 15 upload, actual lifetime purchase and lifetime restore, original language restoration and App Review submission remain pending. Trial restore and both private IAP screenshot saves are complete. CLI upload cannot use the signed-in Xcode account; use the already-working native Organizer after unlock, without requesting another account login.",
+  "verified_at": "2026-11-07T03:44:29.124578+08:00",
   "website": {
     "url": "https://lidlid.vercel.app",
-    "deployment": "dpl_jifonk1XfKZtDNhjsPu3aKeKFPeF",
-    "status": "Six localized production pages HTTP200; signed/notarized component download and setup/removal guides published; email-only support; main Store link remains unavailable until listing launch."
+    "deployment": "dpl_Ab2AeEBSxoSEvxGjqxmniqfFndBu",
+    "status": "Latest deployment READY. All six localized production pages verified HTTP200; setup wording includes direct official browser download and automatic readiness detection. Published component contains the signed/notarized app; setup/removal guides and email-only support are live. Main Store link remains unavailable until listing launch."
   },
+  "source_validation": "Code commit 62a08e15b1b8c4a8f1f8f30cae91a58971e43b9e pushed to main; exact remote SHA verified. GitHub Actions run 42279802223 completed successfully. This does not establish live lifetime purchase acceptance.",
   "compatibility_setup_validation": "Actual TestFlight 14 Chinese and English setup windows show the authenticated component ready; complete three-step instructions, direct browser download and installed-component action implemented. No service reinstallation or new privilege grant was required."
 }

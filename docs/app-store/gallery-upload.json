@@ -61,9 +61,9 @@
     "6831456053": "review-screenshots/en-US/review-purchase-ui.png",
     "6831457017": "review-screenshots/en-US/review-purchase-ui.png"
   },
-  "iap_review_state": "Draft screenshot includes real unavailable-product state; refresh after actual purchase validation.",
-  "review_note_state": "English text is under 4000 characters; web Save requires owner review-contact name and phone before completion.",
-  "release_state": "Prepare for Submission; manual release retained; owner approval required before App Review submission or public release.",
+  "iap_review_state": "Both private IAP screenshots and review notes saved and verified after reload on 2026-11-07. Apple-hosted images load completely at 2880x1800 and show the full actual TestFlight build 14 paywall with verified trial and real CNY38 price. This is separate from the five public images per locale. Lifetime purchase itself has NOT passed: build 14's Apple confirmation sheet lacks its confirmation control; candidate build 15 awaits live validation.",
+  "review_note_state": "English reviewer notes saved successfully, under 4000 characters. Owner contact fields already completed and validated. Direct public component DMG and bilingual setup/removal URLs included.",
+  "release_state": "Prepare for Submission; manual release retained. Owner authorized App Review submission after real purchase/restore tests pass. Public release remains manual. Candidate build 15 is archived but not uploaded while the Mac is locked.",
   "status": "uploaded-draft",
   "gallery_counts": {
     "zh-Hans": 5,
