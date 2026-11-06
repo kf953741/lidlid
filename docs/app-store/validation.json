@@ -2,7 +2,8 @@
   "version": "1.6.1",
   "build": "12",
   "publicSupportEmail": "kf953741@gmail.com",
-  "screenshotCaptureVersion": "Options: 1.5.1 (both languages); other captures: 1.3.0 (need recapture for 1.6.1)",
+  "screenshotCaptureVersion": "1.6.1 (build 12), both languages; native main controls and options",
+  "screenshotCaptureManifest": "captures/manifest.json",
   "submissionReady": false,
   "screenshots": [
     {
@@ -14,21 +15,35 @@
     },
     {
       "locale": "zh-Hans",
-      "file": "02-one-session.png",
+      "file": "02-carry-with-ease.png",
       "width": 2880,
       "height": 1800,
       "colorType": "RGB, opaque"
     },
     {
       "locale": "zh-Hans",
-      "file": "03-time-limits.png",
+      "file": "03-open-lid-free.png",
       "width": 2880,
       "height": 1800,
       "colorType": "RGB, opaque"
     },
     {
       "locale": "zh-Hans",
-      "file": "04-local-and-private.png",
+      "file": "04-time-limits.png",
+      "width": 2880,
+      "height": 1800,
+      "colorType": "RGB, opaque"
+    },
+    {
+      "locale": "zh-Hans",
+      "file": "05-local-and-private.png",
+      "width": 2880,
+      "height": 1800,
+      "colorType": "RGB, opaque"
+    },
+    {
+      "locale": "zh-Hans",
+      "file": "06-try-and-unlock.png",
       "width": 2880,
       "height": 1800,
       "colorType": "RGB, opaque"
@@ -42,24 +57,50 @@
     },
     {
       "locale": "en-US",
-      "file": "02-one-session.png",
+      "file": "02-carry-with-ease.png",
       "width": 2880,
       "height": 1800,
       "colorType": "RGB, opaque"
     },
     {
       "locale": "en-US",
-      "file": "03-time-limits.png",
+      "file": "03-open-lid-free.png",
       "width": 2880,
       "height": 1800,
       "colorType": "RGB, opaque"
     },
     {
       "locale": "en-US",
-      "file": "04-local-and-private.png",
+      "file": "04-time-limits.png",
       "width": 2880,
       "height": 1800,
       "colorType": "RGB, opaque"
+    },
+    {
+      "locale": "en-US",
+      "file": "05-local-and-private.png",
+      "width": 2880,
+      "height": 1800,
+      "colorType": "RGB, opaque"
+    },
+    {
+      "locale": "en-US",
+      "file": "06-try-and-unlock.png",
+      "width": 2880,
+      "height": 1800,
+      "colorType": "RGB, opaque"
+    }
+  ],
+  "reviewScreenshots": [
+    {
+      "locale": "zh-Hans",
+      "file": "review-screenshots/zh-Hans/review-purchase-ui.png",
+      "status": "draft; actual product-unavailable state, replace after sandbox purchase validation"
+    },
+    {
+      "locale": "en-US",
+      "file": "review-screenshots/en-US/review-purchase-ui.png",
+      "status": "draft; actual product-unavailable state, replace after sandbox purchase validation"
     }
   ],
   "metadata": {

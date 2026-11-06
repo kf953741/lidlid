@@ -1,0 +1,82 @@
+{
+  "version": "1.6.1",
+  "build": "12",
+  "captured_on": "2026-11-06",
+  "source": "Actual development-signed App Store-mode app; no simulated receipts or repainted UI",
+  "locales": [
+    "zh-Hans",
+    "en-US"
+  ],
+  "main_state": {
+    "closed_lid": "off; trial not claimed",
+    "open_lid_keep_awake": true
+  },
+  "public_gallery": "Six cards per locale: approved localized mobility illustrations plus unmodified native UI regions; complete options capture. No older UI captures are used.",
+  "purchase_review": "review-screenshots/<locale>/review-purchase-ui.png contains full unmodified main.png, including actual unavailable-product state. Real purchase validation remains pending.",
+  "retained_older_files": [
+    "on.png",
+    "off.png",
+    "timed.png"
+  ],
+  "retained_older_files_used_in_current_gallery": false,
+  "campaign_artwork": [
+    "docs/assets/zh-CN/hero-mobility.png",
+    "docs/assets/hero-mobility.png",
+    "docs/assets/zh-CN/use-case-mobility.png",
+    "docs/assets/use-case-mobility.png"
+  ],
+  "native_regions_top_origin": {
+    "zh-Hans": {
+      "closed_lid_state": [
+        50,
+        174,
+        604,
+        133
+      ],
+      "time_limit": [
+        50,
+        397,
+        604,
+        135
+      ],
+      "open_lid": [
+        50,
+        568,
+        604,
+        127
+      ],
+      "trial_disclosure": [
+        50,
+        728,
+        604,
+        198
+      ]
+    },
+    "en-US": {
+      "closed_lid_state": [
+        50,
+        177,
+        604,
+        133
+      ],
+      "time_limit": [
+        50,
+        433,
+        604,
+        146
+      ],
+      "open_lid": [
+        50,
+        600,
+        604,
+        151
+      ],
+      "trial_disclosure": [
+        50,
+        785,
+        604,
+        252
+      ]
+    }
+  }
+}

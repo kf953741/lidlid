@@ -23,6 +23,6 @@ zsh scripts/package-app-store.sh
 
 正式商店记录、两个内购商品和发行包需由具备有效会员权限的开发者账户创建。价格地区、付费应用协议、税务/银行和审核联系人需在正式后台按实际情况完成。内部账户状态和个人资料只保存在本机，不提交公开仓库。
 
-本地测试覆盖七天边界、原始日期恢复、撤销、永久权限、时钟回退和试用前的组件就绪条件。`zsh scripts/test-store-model.sh` 还会运行真实 AppModel 与模拟权益、管道工作进程，验证开盖始终免费、到期不发送停止或关闭开盖模式指令、心跳继续、用户手动结束后拒绝再次开启合盖；不调用系统电源 API。这些测试不替代 StoreKit 沙盒中的购买、取消、恢复、待批准、退款/撤销测试。两项商品已于 2026-11-06 在 App Store Connect 创建，实际购买测试仍待账户商务资料和商品同步就绪。现有商店截图未包含本次购买界面，送审前需更新。
+本地测试覆盖七天边界、原始日期恢复、撤销、永久权限、时钟回退和试用前的组件就绪条件。`zsh scripts/test-store-model.sh` 还会运行真实 AppModel 与模拟权益、管道工作进程，验证开盖始终免费、到期不发送停止或关闭开盖模式指令、心跳继续、用户手动结束后拒绝再次开启合盖；不调用系统电源 API。这些测试不替代 StoreKit 沙盒中的购买、取消、恢复、待批准、退款/撤销测试。两项商品已于 2026-11-06 在 App Store Connect 创建，实际购买测试仍待账户商务资料和商品同步就绪。商店展示截图已更新为 1.6.1 构建 12 的真实控制区与选项页；完整购买界面另作内购审核截图，实际购买流程仍需验证。
 
 依据：[App Review 3.1.1](https://developer.apple.com/app-store/review/guidelines/#in-app-purchase)；[StoreKit Transaction](https://developer.apple.com/documentation/storekit/transaction)。

@@ -1,0 +1,81 @@
+{
+  "app_id": "6831452648",
+  "version": "1.6.1",
+  "build": "12",
+  "verified_on": "2026-11-06",
+  "destination": "App Store Connect draft version",
+  "verification": "Browser UI reloaded and each localized gallery independently showed the six ordered filenames and 6/10 count; this is not a remote asset hash comparison.",
+  "gallery_counts": {
+    "zh-Hans": 6,
+    "en-US": 6
+  },
+  "assets": [
+    {
+      "locale": "zh-Hans",
+      "file": "screenshots/zh-Hans/01-close-and-go.png",
+      "sha256": "51cbb15d82cd0567a7ca1c42a177e0c9b4f3a9cf76ef25227c8df0dbfe090d2b"
+    },
+    {
+      "locale": "zh-Hans",
+      "file": "screenshots/zh-Hans/02-carry-with-ease.png",
+      "sha256": "c3cb10fe42b6388e1a4023ff31e1a9e6c403e1bdd99582f7392105df0fd76245"
+    },
+    {
+      "locale": "zh-Hans",
+      "file": "screenshots/zh-Hans/03-open-lid-free.png",
+      "sha256": "5b0a0f3087927f2cb57471fd9ce36c7a7238d4fbf1e5e31774c4a6c965296922"
+    },
+    {
+      "locale": "zh-Hans",
+      "file": "screenshots/zh-Hans/04-time-limits.png",
+      "sha256": "2ac50caec74828f168a242c6c21058967d385728e3b392c72225ab3bb8ccc875"
+    },
+    {
+      "locale": "zh-Hans",
+      "file": "screenshots/zh-Hans/05-local-and-private.png",
+      "sha256": "9e00ed813fd71d4c4449513390ab0c8675de8c9af6d35a7c7274cd4464cc0169"
+    },
+    {
+      "locale": "zh-Hans",
+      "file": "screenshots/zh-Hans/06-try-and-unlock.png",
+      "sha256": "d3df5cdea0140daee47dc3dbd4c19f28ce86de06cad487c8c44cfc085231f87f"
+    },
+    {
+      "locale": "en-US",
+      "file": "screenshots/en-US/01-close-and-go.png",
+      "sha256": "b2bfecea22a56c7c9a8b7fb2ad1459aa6c51d63077262a58d49137edbc4979c1"
+    },
+    {
+      "locale": "en-US",
+      "file": "screenshots/en-US/02-carry-with-ease.png",
+      "sha256": "a007248e9788ecdfa71c36b1c6d7bb314033e1fbe5a9eefe83a012ac07e57d34"
+    },
+    {
+      "locale": "en-US",
+      "file": "screenshots/en-US/03-open-lid-free.png",
+      "sha256": "4facf055d6d2304754c9e291d44210566abc521fd8ebe1c8592401a73723e04f"
+    },
+    {
+      "locale": "en-US",
+      "file": "screenshots/en-US/04-time-limits.png",
+      "sha256": "26a3e4fc72eccfa518c185bfc1b18921be1820fed95d55f5cbeed494e8fda95a"
+    },
+    {
+      "locale": "en-US",
+      "file": "screenshots/en-US/05-local-and-private.png",
+      "sha256": "586cc77ce4fa560fbab91a6d77ffbe32c52747ab6e3db72b4d3c641e91784c44"
+    },
+    {
+      "locale": "en-US",
+      "file": "screenshots/en-US/06-try-and-unlock.png",
+      "sha256": "55b4277944859f296a8e84ddbc7df853ab5b1e0782e0d1937905aa6309d3d07f"
+    }
+  ],
+  "iap_review_images": {
+    "6831456053": "review-screenshots/en-US/review-purchase-ui.png",
+    "6831457017": "review-screenshots/en-US/review-purchase-ui.png"
+  },
+  "iap_review_state": "Draft screenshot includes real unavailable-product state; refresh after actual purchase validation.",
+  "review_note_state": "English text is under 4000 characters; web Save requires owner review-contact name and phone before completion.",
+  "release_state": "Prepare for Submission; manual release retained; owner approval required before App Review submission or public release."
+}
