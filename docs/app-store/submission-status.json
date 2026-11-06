@@ -23,13 +23,15 @@
   "compatibility_notarization": {
     "submission_id": "B1202170-AAD3-4A36-BBA1-AD53D5E6FB86",
     "status": "In Progress",
-    "last_verified_local_time": "18:13 Asia/Shanghai",
+    "last_verified_local_time": "18:26 Asia/Shanghai",
     "production_download": "Pending accepted notarization and verified export"
   },
   "storekit_validation": {
     "status": "Pending live sandbox purchase and restore validation",
-    "preview_product_request": "Products unavailable after Paid Apps Agreement became Active",
-    "development_signing": "Existing preview has Apple Development signature but no embedded development profile; configure before drawing a product-availability conclusion.",
-    "review_images": "Current private IAP screenshots show actual unavailable-product state; refresh after validation."
-  }
+    "preview_product_request": "System StoreKit log confirms Sandbox context and correct product identifiers; Apple returned an empty product response. No Sandbox Apple Account exists yet; owner creation pending.",
+    "development_signing": "Apple Development-signed test copy now embeds an explicit macOS development profile for this device. Team, App ID, device inclusion, expiry and deep/strict signatures verified.",
+    "review_images": "Current private IAP screenshots show actual unavailable-product state; refresh after validation.",
+    "test_app": "dist/sandbox-test/LidLid.app"
+  },
+  "development_test_device": "Registered with owner authorization; private device identifier omitted."
 }
