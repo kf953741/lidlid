@@ -33,7 +33,7 @@ assert child == {'com.apple.security.app-sandbox': True,'com.apple.security.inhe
 with tempfile.TemporaryDirectory() as tmp:
     # Match the actual leaf certificate to one authorized by the profile.
     prefix = str(Path(tmp)/'cert')
-    subprocess.run(['codesign','-d','--extract-certificates',prefix,str(app)], check=True, capture_output=True)
+    subprocess.run(['codesign','-d','--extract-certificates='+prefix,str(app)], check=True, capture_output=True)
     leaf = Path(prefix+'0').read_bytes()
     assert any(hashlib.sha256(leaf).digest() == hashlib.sha256(c).digest() for c in profile['DeveloperCertificates'])
     description = subprocess.check_output(['codesign','-dvv',str(app)], stderr=subprocess.STDOUT, text=True)

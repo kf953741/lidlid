@@ -3,7 +3,10 @@
   "base_storefront": "USA",
   "currency": "USD",
   "release_mode": "manual",
-  "availability_regions": null,
+  "availability_regions": [
+    "USA",
+    "CHN"
+  ],
   "products": [
     {
       "id": "dev.kf.lidonce.trial7days",
@@ -21,7 +24,8 @@
           "name": "7 天试用",
           "description": "免费试用合盖不休眠功能 7 天，开盖功能永久免费。"
         }
-      }
+      },
+      "app_store_connect_id": "6831456053"
     },
     {
       "id": "dev.kf.lidonce.lifetime",
@@ -38,11 +42,12 @@
           "name": "合盖永久解锁",
           "description": "一次购买，永久使用合盖不休眠功能。"
         }
-      }
+      },
+      "app_store_connect_id": "6831457017"
     }
   ],
-  "created_in_app_store_connect": false,
-  "sandbox_purchase_validation": "pending developer membership activation and product configuration",
+  "created_in_app_store_connect": true,
+  "sandbox_purchase_validation": "Pending real StoreKit sandbox purchase, cancellation, restore and revocation checks; products and pricing created in App Store Connect on 2026-11-06.",
   "free_features": [
     "open-lid keep-awake"
   ],
@@ -50,5 +55,6 @@
     "closed-lid keep-awake sessions"
   ],
   "trial_activation": "User explicitly claims the trial after the compatibility component is ready.",
-  "trial_expiry": "Block new closed-lid sessions; accepted sessions finish under their original settings. Open-lid mode stays free."
+  "trial_expiry": "Block new closed-lid sessions; accepted sessions finish under their original settings. Open-lid mode stays free.",
+  "app_store_connect_app_id": "6831452648"
 }

@@ -23,7 +23,10 @@ assert team in p['TeamIdentifier'], 'Team differs from the authenticated compati
 app_key = next((k for k in ('com.apple.application-identifier','application-identifier') if k in e), None)
 assert app_key and e[app_key] == team + '.dev.kf.lidonce', 'Bundle ID does not match this app'
 desired = plistlib.loads((root/'Entitlements/LidLid.entitlements').read_bytes())
-assert all(g in e.get('com.apple.security.application-groups',[]) for g in desired['com.apple.security.application-groups']), 'Register and authorize the app group first'
+# macOS Team-ID-prefixed groups are authorized by the signing team, not by
+# provisioning. Only the cross-platform group.* form needs profile approval.
+assert all(g.startswith(team + '.') or g in e.get('com.apple.security.application-groups',[])
+           for g in desired['com.apple.security.application-groups']), 'App group is not authorized for this team'
 desired[app_key] = e[app_key]
 desired['com.apple.developer.team-identifier'] = team
 (root/'.build/app-store-signing/entitlements.plist').write_bytes(plistlib.dumps(desired))
