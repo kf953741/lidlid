@@ -1,4 +1,4 @@
-DRAFT — Do not submit yet. Build 1.6.1 (12) and both non-consumable products are configured in App Store Connect. Component notarization/download, real StoreKit sandbox validation and owner approval remain pending. The current private IAP review image preserves the actual unavailable-product state and must be refreshed after purchase validation.
+DRAFT — The owner has authorized submission. Build 1.6.1 (12) and both non-consumable products are in one three-item review draft; the Paid Apps Agreement is Active. Component notarization/download and real StoreKit sandbox validation remain pending. Refresh the private IAP review image after purchase validation and remove this preparation note before sending to Apple.
 
 LidLid is a sandboxed menu-bar utility for Apple Silicon MacBooks running macOS 14+. No app account or login is required. Open-lid keep-awake is permanently free, independent of purchases or the external component. It prevents idle system sleep while allowing display sleep; it pauses on lid close/manual sleep, resumes on reopening/wake, and stops on quitting.
 
@@ -10,6 +10,8 @@ The user explicitly claims the trial only after the free component is ready. Dur
 Full closed-lid operation on battery without an external display requires the separately installed, free LidLid Compatibility app. The Store app does not install it, download executable code, request an administrator password or register a root service. The independent Developer ID component uses macOS Service Management with user approval. Its production notarized download must be available before submission; see the product support page: https://lidlid.vercel.app/en/support/
 
 The main app uses a sandbox-inheriting session worker and Team-ID-scoped App Group for authenticated XPC. It requests no temporary sandbox exceptions, network access, Accessibility, camera, microphone or broad file access. Both ends verify the signing team and bundle identity. The external service exposes only status/begin/renew/end/removal; it temporarily manages SleepDisabled using fixed pmset arguments, journals the original setting and restores it on session end or recovery. Its 30-second lease is renewed every 5 seconds; there is no general shell API. This component is not embedded in the Store app.
+
+The app and purchases are available only in the United States and mainland China.
 
 Review steps after the pending checks are complete:
 1. Independently install/open the free component and approve its background service through macOS.

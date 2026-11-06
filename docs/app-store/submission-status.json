@@ -1,0 +1,35 @@
+{
+  "verified_on": "2026-11-06",
+  "app_store_connect_app_id": "6831452648",
+  "version": "1.6.1",
+  "build": "12",
+  "review_state": "Ready for Review draft; final submission not sent",
+  "review_submitted": false,
+  "owner_submission_authorized": true,
+  "public_release": false,
+  "release_mode": "manual",
+  "review_contact": "Owner completed; field validation passed. Private values omitted.",
+  "paid_apps_agreement": "Active; verified in the visible Agreements table",
+  "financial_information": "Owner completed separately; no banking or tax details stored here.",
+  "review_draft_items": [
+    "macOS 1.6.1 (12)",
+    "dev.kf.lidonce.trial7days",
+    "dev.kf.lidonce.lifetime"
+  ],
+  "gallery_counts": {
+    "zh-Hans": 5,
+    "en-US": 5
+  },
+  "compatibility_notarization": {
+    "submission_id": "B1202170-AAD3-4A36-BBA1-AD53D5E6FB86",
+    "status": "In Progress",
+    "last_verified_local_time": "18:13 Asia/Shanghai",
+    "production_download": "Pending accepted notarization and verified export"
+  },
+  "storekit_validation": {
+    "status": "Pending live sandbox purchase and restore validation",
+    "preview_product_request": "Products unavailable after Paid Apps Agreement became Active",
+    "development_signing": "Existing preview has Apple Development signature but no embedded development profile; configure before drawing a product-availability conclusion.",
+    "review_images": "Current private IAP screenshots show actual unavailable-product state; refresh after validation."
+  }
+}
