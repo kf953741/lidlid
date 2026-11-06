@@ -1,41 +1,19 @@
-Your work is still running. You need to go.
+Close the lid. Carry on.
 
-LidLid is a small menu bar app for MacBooks. Switch it on before closing your laptop to keep local work running as you move to another spot. No more balancing an open laptop while you walk.
+Codex or Claude Code is still working. Your build or download isn't finished. But you need to go.
 
-Keep awake while open, too
-An independent switch prevents idle system sleep while the lid is open. Your display can still sleep normally. It pauses on lid close or manual sleep, resumes after reopening and wake, and turns off when you quit LidLid. This mode does not require the compatibility component.
+LidLid keeps your MacBook awake with the lid closed so local tasks can keep running as you move. No charger or external display needed. Reopen your MacBook to restore normal sleep behavior. Switch it on again for your next closed-lid session.
 
-One session for this lid close
-Turn it on when you need it. Reopening the lid ends the session automatically. Turn it on again for the next time you need it.
+Small controls for work in progress
+• For coding tasks, builds, renders and downloads.
+• Set 30 minutes to 8 hours, or keep going until you reopen. Ends on reopening or at your limit, whichever comes first.
+• Open-lid keep-awake is always free. Your display can still sleep.
+• Closed-lid mode ends at 10% battery while on battery, or when macOS reports serious thermal pressure.
+• Optional launch at login. English and Simplified Chinese.
+• No account, ads or tracking. No reading your code or chats. Preferences and diagnostics stay on your Mac.
 
-No charger. No external display.
-Keep working on battery power as you move between desks or find a new place to sit. An external monitor is not required.
+Try closed-lid mode for 7 days
+Set up the free component, then claim your trial when ready. Choose a one-time in-app purchase for lifetime access afterward. No automatic renewal. Expiry blocks new sessions; your current session finishes under its original settings. Restore Purchases is supported.
 
-Keep the work moving
-Useful for coding tasks, builds, tests, renders and downloads, including work running in Codex or Claude Code. LidLid manages your Mac's sleep state; it does not read your code, control AI tools or operate your tasks. Online work still needs a network connection.
-
-Set a boundary for this session
-Choose 30 minutes, 1, 2, 4 or 8 hours, or keep the session until you reopen the lid. With a time limit, the session ends when you reopen the lid or reach the limit, whichever comes first.
-
-Small controls. Clear state.
-• A menu bar guardian: closed eyes when off, monochrome for this lid close, blue for open-lid keep-awake
-• Ends at 10% battery while running on battery power
-• Ends when macOS reports serious or critical thermal pressure
-• Optional launch at login
-• English and Simplified Chinese
-• No account, advertising or tracking; preferences and diagnostic records stay on your Mac
-
-Full closed-lid operation requires the separately installed, free LidLid Compatibility component and macOS background-service approval. The Store app stays sandboxed; it never asks for an administrator password or installs the component automatically. The component manages system sleep only during a session. Turn LidLid off before choosing Sleep.
-
-Getting started
-1. Open the LidLid icon in your menu bar.
-2. Switch on and wait for On.
-3. Close the lid. Reopening ends the session.
-
-Compatibility and use
-Requires an Apple Silicon MacBook and macOS 14 or later. Intel Macs and desktop Macs are not supported. Disconnect external displays before enabling a session.
-
-LidLid does not make online tasks work offline, or save and manage work in other apps.
-
-Try it before you decide
-Open-lid keep-awake is always free. Set up the free compatibility component, then start a 7-day closed-lid trial when you are ready. Trial expiry blocks new closed-lid sessions; your current session finishes under its original settings. Unlock closed-lid mode permanently with a one-time Apple in-app purchase, with no automatic renewal. Restore purchases at any time; restoring an ended trial does not restart it.
+Before you start
+Requires an Apple Silicon MacBook and macOS 14+. Intel Macs are not supported. Full closed-lid mode needs the separately installed, free LidLid Compatibility component and approval through macOS. Open-lid mode needs no component. Disconnect external displays before using closed-lid mode. Online tasks still need connectivity. Turn off closed-lid mode before choosing Sleep.

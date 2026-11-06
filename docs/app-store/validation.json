@@ -93,18 +93,18 @@
     "zh-Hans": {
       "name": 16,
       "subtitle": 15,
-      "promotional_text": 59,
-      "description": 1052,
+      "promotional_text": 58,
+      "description": 564,
       "release_notes": 62,
-      "keywordBytes": 87
+      "keywordBytes": 94
     },
     "en-US": {
       "name": 29,
       "subtitle": 24,
-      "promotional_text": 160,
-      "description": 2959,
+      "promotional_text": 133,
+      "description": 1607,
       "release_notes": 197,
-      "keywordBytes": 82
+      "keywordBytes": 90
     }
   }
 }

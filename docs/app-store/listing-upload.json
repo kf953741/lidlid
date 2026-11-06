@@ -1,0 +1,49 @@
+{
+  "app_id": "6831452648",
+  "version": "1.6.1",
+  "build": "12",
+  "verified_on": "2026-11-06",
+  "status": "saved-draft",
+  "verification": "Full browser page reload followed by reading the visible form values for both locales; description, promotional text and keywords each matched listing.json exactly. No App Review submission or public release.",
+  "listing_sha256": "aa6d182575c63b6f5739ce610f4b936b051832237a00f2dccac652dd9d1a7932",
+  "locales": {
+    "zh-Hans": {
+      "description_characters_before": 1052,
+      "description_characters_after": 564,
+      "promotional_text_characters": 58,
+      "keyword_bytes": 94,
+      "name_unchanged": true,
+      "subtitle_unchanged": true,
+      "added_keywords": [
+        "熄屏"
+      ],
+      "fields_sha256": {
+        "description": "a7ac73fef87b6c6c2b93da674b51fcd481922cdf5d6263ef84ffd0409c4a6fd8",
+        "promotional_text": "ae71de868100f76862fd787d248d62b3083919f121a778000686fd2cffe0c994",
+        "keywords": "eb4834c09a6220beda896f093e4d5e58afd686382908114c7bfccd0842267244"
+      },
+      "readback_matches": true
+    },
+    "en-US": {
+      "description_characters_before": 2959,
+      "description_characters_after": 1607,
+      "promotional_text_characters": 133,
+      "keyword_bytes": 90,
+      "name_unchanged": true,
+      "subtitle_unchanged": true,
+      "added_keywords": [
+        "macbook"
+      ],
+      "fields_sha256": {
+        "description": "490085eccdb051144ab15e504caf5a8df086448a4fcba8b17cdcc9e5de8de32b",
+        "promotional_text": "98f4211bf4a2ca4ae372cb5c890267c78e8b2d36d5d10b269c18594a33eee753",
+        "keywords": "aa5471f5cfbf54d04d5fd2d45998dbcfad79f1d7051dc0514ea02f9368fd4bd7"
+      },
+      "readback_matches": true
+    }
+  },
+  "seo_policy": "Keep names and subtitles, retain every existing keyword, add relevant terms within limits. Codex and Claude Code remain contextual examples in descriptions, not keywords. No ranking guarantee.",
+  "references": [
+    "https://developer.apple.com/app-store/product-page/"
+  ]
+}
