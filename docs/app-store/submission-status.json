@@ -3,7 +3,7 @@
   "app_store_connect_app_id": "6831452648",
   "version": "1.6.1",
   "build": "16",
-  "review_state": "Prepare for Submission; build 16 archived but not uploaded; lifetime purchase acceptance still pending",
+  "review_state": "Prepare for Submission; build 16 uploaded and installed through TestFlight; lifetime purchase acceptance still pending",
   "review_submitted": false,
   "owner_submission_authorized": true,
   "public_release": false,
@@ -12,7 +12,7 @@
   "paid_apps_agreement": "Active; verified in the visible Agreements table",
   "financial_information": "Status-only verification: bank account Available and both tax forms In Use. Private banking and tax values omitted.",
   "review_draft_items": [],
-  "review_draft_note": "Main version and both IAPs were removed only from the review draft to permit build replacement and private image updates. Products and version remain intact. The version page still selects build 12; replace it with accepted build 16 before adding all three items for review.",
+  "review_draft_note": "Canonical draft modal verified empty (0 items). Old build 12 association was removed from the version and saved. Select an accepted final build, then add the macOS version and both IAPs before submitting.",
   "gallery_counts": {
     "zh-Hans": 5,
     "en-US": 5
@@ -39,7 +39,7 @@
     "remote_readback": "Single DMG asset; downloaded release bytes exactly match verified local DMG."
   },
   "storekit_validation": {
-    "status": "Trial, trial restore and lifetime cancellation passed on actual TestFlight; lifetime purchase blocked by missing Apple confirmation controls in build 14",
+    "status": "Actual TestFlight 16 preserved the verified trial and its original expiry, loaded both products, and canceled lifetime purchase without unlocking. Lifetime confirmation controls remain absent under automated window control; owner-side foreground test without window sharing is pending.",
     "preview_product_request": "After a normal reference-name metadata save and propagation, valid-profile individual/combined requests returned both products. Actual TestFlight reload displayed trial and CNY38 lifetime controls.",
     "development_signing": "Apple Development-signed test copy now embeds an explicit macOS development profile for this device. Team, App ID, device inclusion, expiry and deep/strict signatures verified.",
     "review_images": "Both IAP private screenshots and notes saved successfully. Reloaded Apple-hosted images are complete at 2880x1800. Each uses the complete actual TestFlight build 14 paywall with verified trial and real China storefront price. Public galleries remain five per locale.",
@@ -47,11 +47,12 @@
     "sandbox_account": "Created by owner but its 126 plus-address verification did not complete. Using the normal Apple Account through TestFlight instead; credentials omitted.",
     "commerce_status": "Both agreements Active; bank Available; both tax forms In Use. Trial territories USA and CHN checked. Lifetime prices previously read as US$4.99 and CNY38. No financial values or credentials recorded.",
     "capability_page": "Explicit dev.kf.lidonce App ID with In-App Purchase enabled verified in the developer portal.",
-    "live_trial": "Actual TestFlight build 12 displays trial expiry 2026-11-14 02:47 local time after verified Apple transaction; closed-lid switch enabled.",
-    "live_lifetime": "Cancellation passed on build 14 without granting lifetime access. User confirmed the centered Apple sheet still had no confirmation button; lifetime purchase has NOT passed.",
+    "live_trial": "Actual TestFlight 16 retains original trial expiry 2026-11-14 02:47 local time, matching builds 12 and 14.",
+    "live_lifetime": "Actual TestFlight 16 still shows only Cancel in the Apple lifetime test sheet. Cancellation returned to the same trial expiry, with free open-lid mode on. Lifetime purchase has NOT passed.",
     "live_trial_restore": "Passed on build 14 after Apple account authentication; original expiry stayed Nov 14, 2026 at 02:47 and free open-lid mode stayed on.",
-    "presentation_candidate": "Build 16 retains build 15’s temporary regular app activation, standard NSWindowController and content view controller, larger centered main/key window and AppKit event-loop turn before StoreKit. Requires live TestFlight validation; lifetime purchase is not yet accepted.",
-    "review_note_follow_up": "Private screenshots are saved and the paywall is unchanged in build 16. Update the saved IAP notes’ candidate-build reference from 15 to 16 before final submission."
+    "presentation_candidate": "Build 16 uses the full main/key NSWindow and temporary regular application activation, but this alone did not restore the missing confirmation controls in the actual TestFlight test.",
+    "review_note_follow_up": "Both IAP notes now reference unchanged build 16 paywall; saved notes and Apple-hosted 2880x1800 review image were read back after the authenticated page reload.",
+    "system_diagnostic": "The transaction-specific Apple PassKit extension log reported Payment UI is occluded: true, then changed Authenticate to Inactive. This suggests a presentation/occlusion issue; it does not prove a window-sharing cause. Owner asked to test locally without window sharing before further code changes."
   },
   "development_test_device": "Registered with owner authorization; private device identifier omitted.",
   "testflight": {
@@ -59,14 +60,15 @@
     "group_id": "99848693-44a8-40bc-85b8-4ce491f2ae7b",
     "testers": 1,
     "scope": "Account holder only; no external testers; automatic distribution disabled",
-    "build": "1.6.1 (14)",
+    "build": "1.6.1 (16)",
     "invitation": "Received at the original email address and redeemed through Apple TestFlight; invitation code not stored",
     "installed_app": "/Applications/LidLid.app",
     "signature_authority": "TestFlight Beta Distribution",
     "beta_reports_active": true,
     "app_store_receipt_present": true,
     "deep_strict_signature_validation": "passed",
-    "candidate_build": "1.6.1 (16), signed and archived with matching dSYMs; upload pending manual Mac unlock. Supersedes archived build 15 with clearer bilingual compatibility setup."
+    "candidate_build": "1.6.1 (16), uploaded via native Xcode Organizer without warnings, export compliance saved, added only to Owner validation (one internal tester), installed from TestFlight. Receipt and deep/strict Beta Distribution signature verified.",
+    "build_id": "8298f60c-6c23-4259-9881-242f95872602"
   },
   "compatibility_validation": {
     "installed_service": "1.0.1 (2), Developer ID signed; running through Service Management with validation-category 6",
@@ -82,13 +84,13 @@
     "signature_migration": "Removed a stale development-only launch registration with the owned Service Management API after the old service had restored sleep and removed its journal. Replaced the bundle atomically, removed only duplicate registrations for this component, and registered the Developer ID bundle. No global Login Items reset or security bypass.",
     "installed_uploaded_candidate_executables": "SHA256-identical for both the GUI and daemon; deep/strict verification passed."
   },
-  "current_handoff": "Mac remains locked; owner already asked once to unlock. Build 16 upload, actual lifetime purchase and lifetime restore, original language restoration and App Review submission remain pending. Trial restore and both private IAP screenshot saves are complete. CLI upload cannot use the signed-in Xcode account; use the already-working native Organizer after unlock, without requesting another account login.",
-  "verified_at": "2026-11-07T03:48:58.258853+08:00",
+  "current_handoff": "Owner-side test pending: stop any purple window sharing, foreground LidLid and confirm only the explicitly non-billing TestFlight lifetime purchase. No native UI control while owner authenticates. Language restored to system default (Chinese); open-lid keep-awake on, closed-lid off. Lifetime purchase, lifetime restore and App Review submission are not complete.",
+  "verified_at": "2026-11-07T11:15:02.863383+08:00",
   "website": {
     "url": "https://lidlid.vercel.app",
     "deployment": "dpl_Ab2AeEBSxoSEvxGjqxmniqfFndBu",
     "status": "Latest deployment READY. All six localized production pages verified HTTP200; setup wording includes direct official browser download and automatic readiness detection. Published component contains the signed/notarized app; setup/removal guides and email-only support are live. Main Store link remains unavailable until listing launch."
   },
-  "source_validation": "Previous code commit 62a08e15b1b8c4a8f1f8f30cae91a58971e43b9e passed GitHub Actions run 42279802223. Current build 16 passed release compilation, four existing localization tests, App Store signature/profile/sandbox/privacy/package verification and archive dSYM matching. This does not establish native layout or live lifetime purchase acceptance.",
-  "compatibility_setup_validation": "Build 14 Chinese/English setup was verified live with the authenticated component ready. Build 16 now explains the component purpose and macOS approval, hides installation instructions when ready, distinguishes readiness from an enabled session, provides entitlement-aware next steps, and renames the ready-state secondary action to Manage component. Build 16 compiles and packages successfully; native visual verification and state-transition checks remain pending while the Mac is locked."
+  "source_validation": "Code commit 0df9cfcef95e1f6688b343ce9416f4c84826e6e1 is on main and GitHub Actions run 42283101565 completed successfully. Actual TestFlight build 16 installation, verified trial preservation, lifetime cancellation and bilingual ready-state setup UI passed. These do not establish successful lifetime purchase or restore.",
+  "compatibility_setup_validation": "Actual TestFlight 16 English and Chinese ready-state windows verified with the real authenticated component: no installation steps when ready, neutral Manage component action, next-step guidance matches the active trial, and readiness is explicitly separate from an enabled session. Both languages fit the window and links use the correct locale. This does not validate a fresh installation or an unavailable-to-ready state transition."
 }

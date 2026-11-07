@@ -2,7 +2,7 @@
   "app_id": "6831452648",
   "version": "1.6.1",
   "build": "12",
-  "verified_on": "2026-11-06",
+  "verified_on": "2026-11-07",
   "destination": "App Store Connect draft version",
   "verification": "After a full browser page reload, each localized gallery independently showed the five ordered filenames and 5/10 count, with its own removable assets rather than inherited images. Both use the updated five-page artwork; the pricing poster is absent from both placements. This is UI placement verification, not a remote asset hash comparison.",
   "assets": [
@@ -61,9 +61,9 @@
     "6831456053": "review-screenshots/en-US/review-purchase-ui.png",
     "6831457017": "review-screenshots/en-US/review-purchase-ui.png"
   },
-  "iap_review_state": "Both private IAP screenshots and review notes saved and verified after reload on 2026-11-07. Apple-hosted images load completely at 2880x1800 and show the full actual TestFlight build 14 paywall with verified trial and real CNY38 price. This is separate from the five public images per locale. Lifetime purchase itself has NOT passed: build 14's Apple confirmation sheet lacks its confirmation control; candidate build 16 awaits live validation.",
+  "iap_review_state": "Both private IAP screenshots and review notes saved and verified after authenticated reload on 2026-11-07. Apple-hosted images load completely at 2880x1800 and show the full actual TestFlight build 14 paywall with verified trial and real CNY38 price, unchanged in build 16. Lifetime purchase itself has NOT passed: actual build 16 still has missing confirmation controls under automated window control; owner-side foreground validation is pending.",
   "review_note_state": "English reviewer notes saved successfully, under 4000 characters. Owner contact fields already completed and validated. Direct public component DMG and bilingual setup/removal URLs included.",
-  "release_state": "Prepare for Submission; manual release retained. Owner authorized App Review submission after real purchase/restore tests pass. Public release remains manual. Candidate build 16 is archived but not uploaded while the Mac is locked.",
+  "release_state": "Prepare for Submission; manual release retained. Owner authorized review submission after real purchase/restore tests pass. Build 16 is uploaded and installed through the owner-only TestFlight group, but lifetime acceptance is pending; old build 12 was unlinked and no replacement has yet been selected in the version.",
   "status": "uploaded-draft",
   "gallery_counts": {
     "zh-Hans": 5,
