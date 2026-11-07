@@ -61,9 +61,9 @@
     "6831456053": "review-screenshots/en-US/review-purchase-ui.png",
     "6831457017": "review-screenshots/en-US/review-purchase-ui.png"
   },
-  "iap_review_state": "Existing saved 2880x1800 private images remain genuine build 14 captures of the unchanged main paywall. Actual native build 17 ProductView was additionally captured for diagnosis. Lifetime purchase is NOT passed on build 17; final accepted-build provenance and any replacement review materials must be completed before submission.",
+  "iap_review_state": "Saved 2880x1800 private images remain genuine build 14 captures of the unchanged main paywall. Lifetime purchase is now owner-completed and app-verified on actual TestFlight 17. Build 18 improves purchase CTA clarity; its native window screenshot and final accepted-build notes remain pending.",
   "review_note_state": "English reviewer notes saved successfully, under 4000 characters. Owner contact fields already completed and validated. Direct public component DMG and bilingual setup/removal URLs included.",
-  "release_state": "Prepare for Submission; manual release retained. Build 17 is uploaded and installed in the owner-only internal TestFlight group. Lifetime confirmation is still blocked in the controlled window, so no version or IAP has been submitted for review. Old build 12 remains unlinked.",
+  "release_state": "Prepare for Submission; manual release retained. Installed TestFlight 17 has verified lifetime access. Build 18 is signed and archived locally; restore, final TestFlight validation and review submission remain pending. Old build 12 remains unlinked.",
   "status": "uploaded-draft",
   "gallery_counts": {
     "zh-Hans": 5,

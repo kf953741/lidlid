@@ -173,7 +173,7 @@ private struct StoreProductConfirmationView: View {
                         Image(nsImage: NSApp.applicationIconImage)
                             .resizable().frame(width: 80, height: 80)
                     }
-                    .productViewStyle(.large)
+                    .productViewStyle(StorePurchaseProductStyle(text: text, purchasing: purchasing))
                     Text(text(product.id == StoreProducts.trial
                         ? "合盖试用 7 天。到期仅限制新会话，已开启的本次会话按原设置结束。永久版一次购买，不自动续费。合盖功能需免费兼容组件。"
                         : "一次购买，永久解锁合盖功能，不自动续费。开盖不休眠永久免费；合盖功能需免费兼容组件。"))
@@ -194,5 +194,72 @@ private struct StoreProductConfirmationView: View {
             await MainActor.run { purchasing = true; started() }
         }
         .onInAppPurchaseCompletion { _, result in completed(result) }
+    }
+}
+
+/// Keep StoreKit's purchase action and presentation context, while making the
+/// call to action readable as a purchase rather than a standalone price link.
+private struct StorePurchaseProductStyle: ProductViewStyle {
+    let text: AppText
+    let purchasing: Bool
+
+    func makeBody(configuration: Configuration) -> some View {
+        if let product = configuration.product {
+            let trial = product.id == StoreProducts.trial
+            StorePurchaseOffer(
+                title: text(trial ? "免费试用合盖 7 天" : "合盖永久解锁"),
+                detail: text(trial ? "免费试用，不会自动扣费。" : "一次购买，不自动续费。"),
+                buttonTitle: trial ? text("开始 7 天免费试用")
+                    : text("购买并永久解锁 · ") + product.displayPrice,
+                purchasedTitle: text("已购买"),
+                purchased: configuration.hasCurrentEntitlement,
+                purchasing: purchasing,
+                icon: configuration.icon,
+                purchase: { configuration.purchase() }
+            )
+        } else {
+            ProductView(configuration).productViewStyle(.large)
+        }
+    }
+}
+
+struct StorePurchaseOffer<Icon: View>: View {
+    let title: String
+    let detail: String
+    let buttonTitle: String
+    let purchasedTitle: String
+    let purchased: Bool
+    let purchasing: Bool
+    let icon: Icon
+    let purchase: () -> Void
+
+    var body: some View {
+        VStack(spacing: 18) {
+            icon
+            Text(title)
+                .font(.title2.weight(.semibold))
+                .multilineTextAlignment(.center)
+            Text(detail)
+                .font(.callout).foregroundStyle(.secondary)
+            Button(action: purchase) {
+                HStack(spacing: 8) {
+                    if purchasing {
+                        ProgressView().controlSize(.small)
+                    } else if purchased {
+                        Image(systemName: "checkmark.circle.fill")
+                    }
+                    Text(purchased ? purchasedTitle : buttonTitle)
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity, minHeight: 40)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .disabled(purchasing || purchased)
+            .accessibilityIdentifier("confirm-store-purchase")
+        }
+        .frame(maxWidth: .infinity)
     }
 }
