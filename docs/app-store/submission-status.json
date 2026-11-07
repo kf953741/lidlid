@@ -3,7 +3,7 @@
   "app_store_connect_app_id": "6831452648",
   "version": "1.6.1",
   "build": "17",
-  "review_state": "Prepare for Submission; build 17 signed and archived with native StoreKit product UI; lifetime purchase acceptance still pending",
+  "review_state": "Prepare for Submission; actual TestFlight 17 native product flow tested; Apple final confirmation control still absent under window control",
   "review_submitted": false,
   "owner_submission_authorized": true,
   "public_release": false,
@@ -39,7 +39,7 @@
     "remote_readback": "Single DMG asset; downloaded release bytes exactly match verified local DMG."
   },
   "storekit_validation": {
-    "status": "Build 16 retains the verified trial and cancels lifetime purchase correctly, but both automated and owner-side foreground attempts still lack Apple confirmation controls. Build 17 changes the purchase entry to native ProductView; actual TestFlight acceptance is pending.",
+    "status": "Actual TestFlight 17 retains the original trial. Apple ProductView shows the real CNY38 purchase button. Not now, Close Window and cancellation of the Apple sheet all return normally to the unchanged trial. The final Apple confirmation button remains missing under window control; lifetime purchase is NOT passed.",
     "preview_product_request": "After a normal reference-name metadata save and propagation, valid-profile individual/combined requests returned both products. Actual TestFlight reload displayed trial and CNY38 lifetime controls.",
     "development_signing": "Apple Development-signed test copy now embeds an explicit macOS development profile for this device. Team, App ID, device inclusion, expiry and deep/strict signatures verified.",
     "review_images": "Both IAP private screenshots and notes saved successfully. Reloaded Apple-hosted images are complete at 2880x1800. Each uses the complete actual TestFlight build 14 paywall with verified trial and real China storefront price. Public galleries remain five per locale.",
@@ -47,12 +47,17 @@
     "sandbox_account": "Created by owner but its 126 plus-address verification did not complete. Using the normal Apple Account through TestFlight instead; credentials omitted.",
     "commerce_status": "Both agreements Active; bank Available; both tax forms In Use. Trial territories USA and CHN checked. Lifetime prices previously read as US$4.99 and CNY38. No financial values or credentials recorded.",
     "capability_page": "Explicit dev.kf.lidonce App ID with In-App Purchase enabled verified in the developer portal.",
-    "live_trial": "Actual TestFlight 16 retains original trial expiry 2026-11-14 02:47 local time, matching builds 12 and 14.",
-    "live_lifetime": "Not passed. Owner reports no confirmation button after the manual foreground/window-sharing test. Restarting only the LidLid-specific StoreKit UI service and its child also reproduced the same missing control. No lifetime entitlement was granted.",
+    "live_trial": "Actual TestFlight 17 retains the original 2026-11-14 02:47 Asia/Shanghai expiry. Free open-lid mode restored on after the update; closed-lid off.",
+    "live_lifetime": "Not passed. Actual native ProductView purchase on build 17 reaches the same Apple test sheet with only Cancel, without granting lifetime access. Cancel returns to a usable paywall and preserves the original trial and free mode.",
     "live_trial_restore": "Passed on build 14 after Apple account authentication; original expiry stayed Nov 14, 2026 at 02:47 and free open-lid mode stayed on.",
-    "presentation_candidate": "Build 17 opens an ordinary window containing Apple ProductView and waits for a separate user purchase action in that view. StoreKit manages the presentation context. Completion returns through the existing verified-transaction checks; closing the storefront before purchasing resolves cancellation, and closing is disabled during Apple confirmation. Restore keeps its existing window flow. No additional sandbox entitlement or payment-account setting was changed.",
+    "presentation_candidate": "Build 17 uses Apple ProductView in a regular window. Real native price-button rendering and all three cancellation paths passed. This presentation change did not restore the final Apple authorization control during the controlled test.",
     "review_note_follow_up": "Before final submission, update IAP review notes from build 16 to the accepted build, and capture the actual new ProductView window. Current private images remain genuine build 14 main paywall captures.",
-    "system_diagnostic": "The transaction-specific PassKit extension reported an occluded UI and authentication suspension. The owner-side test and a clean StoreKit UI-process restart did not restore confirmation controls; window sharing is not established as the cause. No payment-security setting was changed."
+    "system_diagnostic": "PassKit reported an occluded payment UI and paused authentication. Recreating the LidLid-specific StoreKit UI process did not restore confirmation. The earlier title-bar purple control was inspected and provides window-management commands, not Stop Sharing, so that earlier stopping-sharing instruction was inaccurate and does not establish a controlled comparison. A purchase with the Codex application fully exited is the next owner-side isolation test. No system payment or authentication setting was changed.",
+    "native_storefront_cancel_paths": {
+      "not_now": "passed",
+      "close_window_menu": "passed",
+      "apple_payment_cancel": "passed"
+    }
   },
   "development_test_device": "Registered with owner authorization; private device identifier omitted.",
   "testflight": {
@@ -60,15 +65,15 @@
     "group_id": "99848693-44a8-40bc-85b8-4ce491f2ae7b",
     "testers": 1,
     "scope": "Account holder only; no external testers; automatic distribution disabled",
-    "build": "1.6.1 (16)",
+    "build": "1.6.1 (17)",
     "invitation": "Received at the original email address and redeemed through Apple TestFlight; invitation code not stored",
     "installed_app": "/Applications/LidLid.app",
     "signature_authority": "TestFlight Beta Distribution",
     "beta_reports_active": true,
     "app_store_receipt_present": true,
     "deep_strict_signature_validation": "passed",
-    "candidate_build": "1.6.1 (17), signed and archived with matching dSYMs. Uses Apple ProductView in a regular window, with payment started only by its purchase button. Upload and live validation pending.",
-    "build_id": "8298f60c-6c23-4259-9881-242f95872602"
+    "candidate_build": "1.6.1 (17), uploaded without warnings, export-compliance answer saved, owner-only internal group assigned and installed through TestFlight. Beta Distribution signature, receipt and deep/strict validation passed.",
+    "build_id": "6471ac91-9259-4509-932f-4ee3691eb3e6"
   },
   "compatibility_validation": {
     "installed_service": "1.0.1 (2), Developer ID signed; running through Service Management with validation-category 6",
@@ -84,13 +89,13 @@
     "signature_migration": "Removed a stale development-only launch registration with the owned Service Management API after the old service had restored sleep and removed its journal. Replaced the bundle atomically, removed only duplicate registrations for this component, and registered the Developer ID bundle. No global Login Items reset or security bypass.",
     "installed_uploaded_candidate_executables": "SHA256-identical for both the GUI and daemon; deep/strict verification passed."
   },
-  "current_handoff": "No owner authentication request is pending. Build 17 is ready to upload for actual TestFlight testing. Original language is system default (Chinese), free open-lid mode on and closed-lid off. Lifetime purchase/restore and App Review submission remain incomplete.",
-  "verified_at": "2026-11-07T14:13:46.818846+08:00",
+  "current_handoff": "Owner-side purchase and restore test required with Codex fully exited, then reopen this chat. Native TestFlight 17 is installed; only accept an Apple sheet explicitly marked test/no charge. Original language is system default (Chinese), free open-lid mode on, closed-lid off. Lifetime access and App Review submission remain incomplete.",
+  "verified_at": "2026-11-07T14:33:08.287377+08:00",
   "website": {
     "url": "https://lidlid.vercel.app",
     "deployment": "dpl_Ab2AeEBSxoSEvxGjqxmniqfFndBu",
     "status": "Latest deployment READY. All six localized production pages verified HTTP200; setup wording includes direct official browser download and automatic readiness detection. Published component contains the signed/notarized app; setup/removal guides and email-only support are live. Main Store link remains unavailable until listing launch."
   },
-  "source_validation": "Build 17 passed release compilation, 14 existing StoreAccess/Localization tests, App Store signature/profile/sandbox/privacy/package checks and archive dSYM matching. Previous source commit 0df9cfcef95e1f6688b343ce9416f4c84826e6e1 passed CI run 42283101565. Live lifetime purchase acceptance is still pending.",
+  "source_validation": "Code commit 7115a81770d349dfcc2468e1af2ea7c977cd40db is on remote main. GitHub Actions run 42346078283 completed successfully. Actual TestFlight 17 signature/receipt, original trial preservation, native ProductView price and three cancellation paths passed; this does not establish successful lifetime purchase or restore.",
   "compatibility_setup_validation": "Actual TestFlight 16 English and Chinese ready-state windows verified with the real authenticated component: no installation steps when ready, neutral Manage component action, next-step guidance matches the active trial, and readiness is explicitly separate from an enabled session. Both languages fit the window and links use the correct locale. This does not validate a fresh installation or an unavailable-to-ready state transition."
 }
