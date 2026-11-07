@@ -255,11 +255,22 @@ struct StorePurchaseOffer<Icon: View>: View {
                 .frame(maxWidth: .infinity, minHeight: 40)
                 .contentShape(Rectangle())
             }
-            .buttonStyle(.borderedProminent)
-            .controlSize(.large)
+            .buttonStyle(StorePurchaseButtonStyle())
             .disabled(purchasing || purchased)
             .accessibilityIdentifier("confirm-store-purchase")
         }
         .frame(maxWidth: .infinity)
+    }
+}
+
+private struct StorePurchaseButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var enabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(.horizontal, 18).padding(.vertical, 8)
+            .foregroundStyle(.white)
+            .background(Color.blue.opacity(enabled ? (configuration.isPressed ? 0.8 : 1) : 0.4),
+                        in: RoundedRectangle(cornerRadius: 12))
     }
 }
