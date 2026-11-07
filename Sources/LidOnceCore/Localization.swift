@@ -91,6 +91,8 @@ public struct AppText {
         "恢复购买": "Restore purchases",
         "合盖永久解锁": "Closed-lid lifetime access",
         "请在 App Store 窗口中完成确认。": "Confirm in the App Store window.",
+        "一次购买，永久解锁合盖功能，不自动续费。开盖不休眠永久免费；合盖功能需免费兼容组件。": "A one-time purchase unlocks closed-lid mode permanently, with no renewal. Open-lid mode is always free. Closed-lid mode requires the free compatibility component.",
+        "暂不购买": "Not now",
         "重新加载商品": "Reload products",
         "无法验证购买，请恢复购买或稍后重试。": "Couldn't verify the purchase. Restore purchases or try again later.",
         "购买正在等待批准，完成后将自动解锁。": "Purchase pending approval. Access will unlock when it completes.",

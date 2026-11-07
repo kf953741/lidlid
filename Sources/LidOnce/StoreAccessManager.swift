@@ -81,17 +81,9 @@ final class StoreAccessManager: ObservableObject {
         Task { @MainActor [weak self] in
             guard let self else { return }
             let title = productID == StoreProducts.trial ? "免费试用合盖 7 天" : "合盖永久解锁"
-            let window = await self.confirmation.show(title: title, price: product.displayPrice)
             defer { self.working = false; self.confirmation.dismiss() }
             do {
-                let result: Product.PurchaseResult
-                if #available(macOS 15.2, *) {
-                    result = try await product.purchase(confirmIn: window)
-                } else {
-                    // On macOS 14–15.1 StoreKit uses the application's key
-                    // window, which is now the centered window above.
-                    result = try await product.purchase()
-                }
+                let result = try await self.confirmation.purchase(product, title: title)
                 switch result {
                 case .success(let result):
                     guard case .verified(let transaction) = result, self.accept(transaction) else {

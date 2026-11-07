@@ -1,15 +1,19 @@
 import AppKit
+import SwiftUI
+import StoreKit
 import LidOnceCore
 
 /// A menu-bar popover is not a suitable anchor for Apple's payment sheet:
 /// its top edge can place confirmation controls outside the visible screen.
 /// Keep a normal, centered window alive for the entire StoreKit operation.
-final class StoreConfirmationPresenter {
+final class StoreConfirmationPresenter: NSObject, NSWindowDelegate {
     var willPresent: (() -> Void)?
     var didDismiss: (() -> Void)?
     private var window: NSWindow?
     private var controller: NSWindowController?
     private var previousActivationPolicy: NSApplication.ActivationPolicy?
+    private var pendingPurchase: CheckedContinuation<Product.PurchaseResult, Error>?
+    private var purchaseInFlight = false
 
     @MainActor func show(title: String, price: String? = nil) async -> NSWindow {
         let screen = NSApp.keyWindow?.screen ?? NSScreen.main
@@ -91,6 +95,47 @@ final class StoreConfirmationPresenter {
         return window
     }
 
+    /// Start from an actual user action in Apple's StoreKit view. The menu
+    /// popover only opens this window; it does not immediately launch payment
+    /// while AppKit is still activating the new window.
+    @MainActor func purchase(_ product: Product, title: String) async throws -> Product.PurchaseResult {
+        let window = await show(title: title, price: product.displayPrice)
+        let text = AppText(language: AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system)
+        return try await withCheckedThrowingContinuation { continuation in
+            pendingPurchase = continuation
+            purchaseInFlight = false
+            window.delegate = self
+            window.standardWindowButton(.closeButton)?.isEnabled = true
+            window.contentViewController = NSHostingController(rootView: StoreProductConfirmationView(
+                product: product, text: text,
+                started: { [weak self] in
+                    self?.purchaseInFlight = true
+                    self?.window?.standardWindowButton(.closeButton)?.isEnabled = false
+                },
+                completed: { [weak self] result in self?.finishPurchase(result) },
+                cancel: { [weak self] in self?.finishPurchase(.success(.userCancelled)) }
+            ))
+        }
+    }
+
+    @MainActor private func finishPurchase(_ result: Result<Product.PurchaseResult, Error>) {
+        guard let continuation = pendingPurchase else { return }
+        pendingPurchase = nil
+        purchaseInFlight = false
+        continuation.resume(with: result)
+    }
+
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        guard !purchaseInFlight else { return false }
+        finishPurchase(.success(.userCancelled))
+        // The waiting task closes the window and restores the menu-bar policy.
+        return false
+    }
+
+    func windowWillClose(_ notification: Notification) {
+        finishPurchase(.success(.userCancelled))
+    }
+
     // Called synchronously by the AppKit delegate's menu/reopen callbacks.
     func activateIfPresented() -> Bool {
         precondition(Thread.isMainThread)
@@ -101,11 +146,53 @@ final class StoreConfirmationPresenter {
     }
 
     @MainActor func dismiss() {
+        finishPurchase(.success(.userCancelled))
+        window?.delegate = nil
         controller?.close()
         window = nil
         controller = nil
         if let policy = previousActivationPolicy { NSApp.setActivationPolicy(policy) }
         previousActivationPolicy = nil
         didDismiss?()
+    }
+}
+
+private struct StoreProductConfirmationView: View {
+    let product: Product
+    let text: AppText
+    let started: @MainActor () -> Void
+    let completed: @MainActor (Result<Product.PurchaseResult, Error>) -> Void
+    let cancel: @MainActor () -> Void
+    @State private var purchasing = false
+
+    var body: some View {
+        VStack(spacing: 24) {
+            ScrollView {
+                VStack(spacing: 24) {
+                    ProductView(product) {
+                        Image(nsImage: NSApp.applicationIconImage)
+                            .resizable().frame(width: 80, height: 80)
+                    }
+                    .productViewStyle(.large)
+                    Text(text(product.id == StoreProducts.trial
+                        ? "合盖试用 7 天。到期仅限制新会话，已开启的本次会话按原设置结束。永久版一次购买，不自动续费。合盖功能需免费兼容组件。"
+                        : "一次购买，永久解锁合盖功能，不自动续费。开盖不休眠永久免费；合盖功能需免费兼容组件。"))
+                        .font(.callout).foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            Button(text("暂不购买"), action: cancel)
+                .disabled(purchasing)
+                .accessibilityIdentifier("cancel-store-confirmation")
+        }
+        .padding(40).frame(width: 640, height: 560)
+        .environment(\.locale, text.language.locale)
+        .onInAppPurchaseStart { _ in
+            await MainActor.run { purchasing = true; started() }
+        }
+        .onInAppPurchaseCompletion { _, result in completed(result) }
     }
 }

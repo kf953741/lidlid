@@ -83,9 +83,10 @@
     "13",
     "14",
     "15",
-    "16"
+    "16",
+    "17"
   ],
-  "public_ui_build_note": "Builds 13–16 change separate StoreKit confirmation and component setup windows. Public gallery regions in PanelView, StoreAccessView, GuardianMenuSymbol and the options panel remain unchanged from captured build 12; the compatibility option opens a setup window. Private native purchase captures remain build 14, whose paywall controls are unchanged in builds 15 and 16. Build 16 clarifies bilingual setup, separates installed/ready states and explains that readiness does not enable a closed-lid session.",
+  "public_ui_build_note": "Builds 13–17 change separate StoreKit confirmation and component setup windows. Public gallery regions in PanelView, StoreAccessView, GuardianMenuSymbol and the options panel remain unchanged from captured build 12. Private native purchase captures remain build 14 for the unchanged main paywall. Build 16 clarifies bilingual component setup. Build 17 opens a separate Apple ProductView window before a user-initiated system purchase; capture that new window after actual TestFlight validation before final submission.",
   "review_capture_build": "14",
   "review_captured_on": "2026-11-07",
   "review_capture_source": "Actual Apple TestFlight Beta Distribution app; complete native captures, no mocked transactions or repainted UI",
