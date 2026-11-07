@@ -4,7 +4,7 @@
   "publicSupportEmail": "kf953741@gmail.com",
   "screenshotCaptureVersion": "1.6.1 (build 12), both languages; native main controls and options",
   "screenshotCaptureManifest": "captures/manifest.json",
-  "submissionReady": false,
+  "submissionReady": true,
   "screenshots": [
     {
       "locale": "zh-Hans",

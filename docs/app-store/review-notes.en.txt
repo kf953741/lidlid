@@ -8,16 +8,16 @@ The user explicitly claims the trial only after the free component is ready. Dur
 Full closed-lid operation on battery without an external display requires the separately installed, free LidLid Compatibility app. The Store app does not install it, download executable code, request an administrator password or register a root service. The independent Developer ID component uses macOS Service Management with user approval. The setup window opens the official DMG in the system browser only on a user click; users copy and authorize the component themselves. The component app is Developer ID signed and Apple notarized. Download its DMG: https://github.com/kf953741/lidlid/releases/download/compatibility-v1.0.1/LidLid-Compatibility-1.0.1-macOS-arm64.dmg
 Setup and removal: https://lidlid.vercel.app/en/support/#compatibility
 
-The main app uses a sandbox-inheriting session worker and Team-ID-scoped App Group for authenticated XPC. It requests no temporary sandbox exceptions, network access, Accessibility, camera, microphone or broad file access. Both ends verify the signing team and bundle identity. The external service exposes only status/begin/renew/end/removal; it temporarily manages SleepDisabled using fixed pmset arguments, journals the original setting and restores it on session end or recovery. Its 30-second lease is renewed every 5 seconds; there is no general shell API. This component is not embedded in the Store app.
+The main app uses a sandbox-inheriting session worker and Team-ID-scoped App Group for authenticated XPC. It requests no temporary sandbox exceptions, network, Accessibility or broad file access. Both ends verify the signing team and bundle identity. The external service exposes only status/begin/renew/end/removal; it temporarily manages SleepDisabled using fixed pmset arguments, journals the original setting and restores it on session end or recovery. Its 30-second lease is renewed every 5 seconds; there is no general shell API. This component is not embedded in the Store app.
 
-The app and purchases are available only in the United States and mainland China.
+Availability: United States and mainland China.
 
 Review steps:
 1. Open the DMG and drag LidLid Compatibility to Applications. Open it, choose Install service and approve its background service in macOS. Wait for Compatibility component ready, then return to LidLid.
 2. Open LidLid from the menu bar. Options offers English and Simplified Chinese. Test the free open-lid switch with the display asleep.
-3. Disconnect external displays, keep battery above 10%, then claim the trial through Apple. Start an expendable local task, enable closed-lid mode, wait for On and close the lid.
+3. Disconnect external displays, keep battery above 10%, then claim the trial through Apple. Start a local test task, enable closed-lid mode, wait for On and close the lid.
 4. Reopen: the session ends automatically. Another lid close sleeps normally unless re-enabled.
-5. Test lifetime purchase and Restore Purchases.
+5. For lifetime access, click Unlock closed-lid access, then the blue Buy lifetime access + local price button in the separate window. Complete Apple confirmation. Test Restore Purchases.
 6. To remove the component, disable LidLid, choose Restore sleep & remove service in the component, then delete it.
 
 Sessions end on reopening, the selected limit, user stop, low battery (10% while on battery), serious/critical thermal pressure, sensor failure or external display attachment. Limits: 30 min, 1/2/4/8 h or until reopened. Disable closed-lid mode before manual Sleep, since its active override also prevents manual sleep.

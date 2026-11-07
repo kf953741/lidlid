@@ -87,7 +87,7 @@
     "17",
     "18"
   ],
-  "public_ui_build_note": "Builds 13–18 change separate StoreKit confirmation and component setup windows. Public gallery regions in PanelView, StoreAccessView, GuardianMenuSymbol and the options panel remain unchanged from captured build 12. Private native purchase captures remain build 14 for the unchanged main paywall. Build 17 uses an Apple ProductView window; build 18 gives its StoreKit configuration purchase action an explicit prominent, localized purchase button. Final native purchase-window capture and acceptance are tracked in submission-status.json.",
+  "public_ui_build_note": "Builds 13–18 change separate StoreKit confirmation and component setup windows. Public gallery regions in PanelView, StoreAccessView, GuardianMenuSymbol and the options panel remain unchanged from captured build 12. Private native purchase captures remain build 14 for the unchanged main paywall. Build 18 adds a prominent localized blue button calling the Apple ProductView configuration purchase action. Labelled example-price layout previews are excluded from App Review attachments. Actual lifetime purchase passed in TestFlight 17; verified lifetime access and restoration passed in TestFlight 18. Detailed evidence boundaries are recorded in submission-status.json.",
   "review_capture_build": "14",
   "review_captured_on": "2026-11-07",
   "review_capture_source": "Actual Apple TestFlight Beta Distribution app; complete native captures, no mocked transactions or repainted UI",

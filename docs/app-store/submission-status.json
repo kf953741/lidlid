@@ -3,8 +3,8 @@
   "app_store_connect_app_id": "6831452648",
   "version": "1.6.1",
   "build": "18",
-  "review_state": "Prepare for Submission; owner completed the TestFlight 17 lifetime purchase and app displays verified lifetime access. Build 18 improves purchase button clarity; lifetime restore and final candidate validation remain pending.",
-  "review_submitted": false,
+  "review_state": "Waiting for Review; macOS 1.6.1 (18), lifetime access and 7-day trial submitted together. All three item statuses verified after page reload.",
+  "review_submitted": true,
   "owner_submission_authorized": true,
   "public_release": false,
   "release_mode": "manual",
@@ -12,7 +12,7 @@
   "paid_apps_agreement": "Active; verified in the visible Agreements table",
   "financial_information": "Status-only verification: bank account Available and both tax forms In Use. Private banking and tax values omitted.",
   "review_draft_items": [],
-  "review_draft_note": "Canonical draft modal verified empty (0 items). Old build 12 association was removed from the version and saved. Select an accepted final build, then add the macOS version and both IAPs before submitting.",
+  "review_draft_note": "Submission completed. The review list showed 3 submitted items and 0 drafts; no unfinished draft remains.",
   "gallery_counts": {
     "zh-Hans": 5,
     "en-US": 5
@@ -39,10 +39,10 @@
     "remote_readback": "Single DMG asset; downloaded release bytes exactly match verified local DMG."
   },
   "storekit_validation": {
-    "status": "Lifetime purchase passed on actual TestFlight 17: owner reported success and app displayed Closed-lid lifetime access unlocked. Restore was retried after a displayed error and is awaiting completion. Build 18 adds a prominent localized Buy lifetime access + actual Apple price button via ProductViewStyleConfiguration.purchase().",
+    "status": "Actual lifetime purchase passed in TestFlight 17. Build 18 installed from TestFlight with the final archive UUIDs and verified lifetime entitlement. Explicit Restore Purchases completed after owner authentication, with no error and lifetime access retained. The shared offer layout/click behavior was checked in both languages using clearly labelled sample-price previews; those previews are not transaction evidence or review attachments.",
     "preview_product_request": "After a normal reference-name metadata save and propagation, valid-profile individual/combined requests returned both products. Actual TestFlight reload displayed trial and CNY38 lifetime controls.",
     "development_signing": "Apple Development-signed test copy now embeds an explicit macOS development profile for this device. Team, App ID, device inclusion, expiry and deep/strict signatures verified.",
-    "review_images": "Both IAP private screenshots and notes saved successfully. Reloaded Apple-hosted images are complete at 2880x1800. Each uses the complete actual TestFlight build 14 paywall with verified trial and real China storefront price. Public galleries remain five per locale.",
+    "review_images": "Both private IAP images remain complete actual TestFlight 14 main-paywall screenshots at 2880x1800; their UI is unchanged in 18. Saved notes explicitly state original capture provenance. Actual 18 unlocked UI is retained privately as runtime evidence. Public galleries remain five per locale.",
     "test_app": "/Applications/LidLid.app",
     "sandbox_account": "Created by owner but its 126 plus-address verification did not complete. Using the normal Apple Account through TestFlight instead; credentials omitted.",
     "commerce_status": "Both agreements Active; bank Available; both tax forms In Use. Trial territories USA and CHN checked. Lifetime prices previously read as US$4.99 and CNY38. No financial values or credentials recorded.",
@@ -50,15 +50,16 @@
     "live_trial": "Original trial expiry was retained through TestFlight 17 before the successful lifetime purchase. Lifetime now takes priority, without an expiry.",
     "live_lifetime": "Passed on actual TestFlight 17. Owner completed the purchase; the native app displayed verified lifetime access. No local entitlement override or fabricated receipt.",
     "live_trial_restore": "Passed on build 14 after Apple account authentication; original expiry stayed Nov 14, 2026 at 02:47 and free open-lid mode stayed on.",
-    "presentation_candidate": "Build 18 keeps Apple ProductView and its configuration.purchase() action in the normal window; changes only the offer layout and visible button to a prominent localized purchase CTA with Apple displayPrice. Release compilation, 14 existing entitlement/localization tests, distribution signature/profile/sandbox/privacy checks and signed installer validation passed. Archive includes matching dSYMs. Not yet uploaded or installed.",
-    "review_note_follow_up": "Before final submission, update IAP review notes to accepted build and include accurate native purchase-window provenance. Current backend private images remain genuine build 14 main-paywall captures.",
+    "presentation_candidate": "Accepted build 18: ProductViewStyleConfiguration.purchase() remains the Apple purchase action, now presented as a prominent blue localized button with Apple displayPrice. Shared offer layout and click wiring were visually checked in Chinese/English previews. Actual lifetime purchase evidence is from build 17; build 18 verifies entitlement preservation and AppStore.sync restoration, not a second purchase of an already-owned non-consumable.",
+    "review_note_follow_up": "Completed: main reviewer instructions describe the blue purchase action. Both IAP notes now identify build 18 and the exact older build 14 main-paywall capture, whose layout is unchanged. Example-price layout previews are excluded from all App Review attachments.",
     "system_diagnostic": "Earlier controlled tests showed an Apple sheet without confirmation and PassKit occlusion/suspended authentication. The owner subsequently completed a purchase from the native product price control. This confirms successful purchase, not a universal diagnosis of the earlier system UI issue. No system payment/authentication setting changed.",
     "native_storefront_cancel_paths": {
       "not_now": "passed",
       "close_window_menu": "passed",
       "apple_payment_cancel": "passed"
     },
-    "live_lifetime_restore": "Pending. The app showed a restore connection error after owner testing. A fresh explicit restore was started and awaits owner authentication/result."
+    "live_lifetime_restore": "Passed on actual TestFlight 17 and again on 18 after owner authentication. Native operation completed and returned to the unlocked main panel without a restore error.",
+    "preview_icon_fix": "The standalone button-layout preview initially assigned the opaque square master to NSApp.applicationIconImage. It now uses the exact rounded ICNS from installed TestFlight 18 for both its window and Dock. The production app already ships that rounded ICNS; no production icon redesign or build change was needed."
   },
   "development_test_device": "Registered with owner authorization; private device identifier omitted.",
   "testflight": {
@@ -66,15 +67,15 @@
     "group_id": "99848693-44a8-40bc-85b8-4ce491f2ae7b",
     "testers": 1,
     "scope": "Account holder only; no external testers; automatic distribution disabled",
-    "build": "1.6.1 (17)",
+    "build": "1.6.1 (18)",
     "invitation": "Received at the original email address and redeemed through Apple TestFlight; invitation code not stored",
     "installed_app": "/Applications/LidLid.app",
     "signature_authority": "TestFlight Beta Distribution",
     "beta_reports_active": true,
     "app_store_receipt_present": true,
     "deep_strict_signature_validation": "passed",
-    "candidate_build": "1.6.1 (18), locally signed and archived; not yet uploaded. Installed accepted lifetime-purchase build remains 17.",
-    "build_id": "6471ac91-9259-4509-932f-4ee3691eb3e6"
+    "candidate_build": "Uploaded via Xcode, export compliance saved, assigned to owner-only internal group and installed through native TestFlight. Beta signature, receipt and both binary UUIDs match the final signed archive. Lifetime entitlement and restore passed.",
+    "build_id": "f4a9aecc-f93c-4eac-9286-f658d77d78ff"
   },
   "compatibility_validation": {
     "installed_service": "1.0.1 (2), Developer ID signed; running through Service Management with validation-category 6",
@@ -90,13 +91,44 @@
     "signature_migration": "Removed a stale development-only launch registration with the owned Service Management API after the old service had restored sleep and removed its journal. Replaced the bundle atomically, removed only duplicate registrations for this component, and registered the Developer ID bundle. No global Login Items reset or security bypass.",
     "installed_uploaded_candidate_executables": "SHA256-identical for both the GUI and daemon; deep/strict verification passed."
   },
-  "current_handoff": "Lifetime purchase verified on installed TestFlight 17. Fresh Restore Purchases awaits owner authentication/result. Build 18 improves purchase CTA clarity and is signed/archived locally; upload, TestFlight UI checks and final review submission remain pending.",
-  "verified_at": "2026-11-07T15:19:59.386054+08:00",
+  "current_handoff": "Submitted and waiting for Apple review. Public release remains manual; wait for the owner to review the approved version before releasing. No authentication or testing action is currently pending. Installed TestFlight 18 retains lifetime access, both keep-awake switches off, system language setting preserved.",
+  "verified_at": "2026-11-07T15:40:24.312879+08:00",
   "website": {
     "url": "https://lidlid.vercel.app",
     "deployment": "dpl_Ab2AeEBSxoSEvxGjqxmniqfFndBu",
     "status": "Latest deployment READY. All six localized production pages verified HTTP200; setup wording includes direct official browser download and automatic readiness detection. Published component contains the signed/notarized app; setup/removal guides and email-only support are live. Main Store link remains unavailable until listing launch."
   },
-  "source_validation": "Build 18 local release compilation and 14 existing StoreAccess/Localization tests passed; store signature, profile, sandbox, privacy, signed installer and matching archive dSYMs passed. Real lifetime purchase acceptance is from installed TestFlight 17. Build 18 actual StoreKit action and restore still need runtime verification.",
-  "compatibility_setup_validation": "Actual TestFlight 16 English and Chinese ready-state windows verified with the real authenticated component: no installation steps when ready, neutral Manage component action, next-step guidance matches the active trial, and readiness is explicitly separate from an enabled session. Both languages fit the window and links use the correct locale. This does not validate a fresh installation or an unavailable-to-ready state transition."
+  "source_validation": "Code commit c57edce2e8e468bfe9aaaa46cf5a826cbf34898f is pushed to main. GitHub Actions 42351315968 passed. Release signing/profile/sandbox/privacy and matching dSYMs passed; installed Apple TestFlight 18 binary UUIDs match the final archive. No production icon code was changed for the preview-only square-image issue.",
+  "compatibility_setup_validation": "Actual TestFlight 16 English and Chinese ready-state windows verified with the real authenticated component: no installation steps when ready, neutral Manage component action, next-step guidance matches the active trial, and readiness is explicitly separate from an enabled session. Both languages fit the window and links use the correct locale. This does not validate a fresh installation or an unavailable-to-ready state transition.",
+  "review_submission": {
+    "id": "fbd3c532-4dc6-49cc-b1c8-2afdae6e0399",
+    "url": "https://appstoreconnect.apple.com/apps/6831452648/distribution/reviewsubmissions/details/fbd3c532-4dc6-49cc-b1c8-2afdae6e0399",
+    "submitted_at_local": "2026-11-07 15:39 Asia/Shanghai",
+    "status": "Waiting for Review",
+    "items": [
+      {
+        "type": "macOS App version",
+        "version": "1.6.1",
+        "build": "18",
+        "build_id": "f4a9aecc-f93c-4eac-9286-f658d77d78ff",
+        "status": "Waiting for Review"
+      },
+      {
+        "type": "non-consumable IAP",
+        "id": "6831457017",
+        "product_id": "dev.kf.lidonce.lifetime",
+        "status": "Waiting for Review"
+      },
+      {
+        "type": "non-consumable IAP",
+        "id": "6831456053",
+        "product_id": "dev.kf.lidonce.trial7days",
+        "status": "Waiting for Review"
+      }
+    ],
+    "verification": "Visible App Store Connect submission details reloaded and all three rows read back. No approval or public availability claimed.",
+    "code_commit": "c57edce2e8e468bfe9aaaa46cf5a826cbf34898f",
+    "review_notes_file": "review-notes.en.txt",
+    "iap_review_notes_file": "iap-review-notes.json"
+  }
 }
