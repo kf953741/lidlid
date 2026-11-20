@@ -71,7 +71,7 @@ private struct CompatibilitySetupView: View {
     private let refresh = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     // A user click hands this fixed, official download to the system browser.
     // The sandboxed app does not fetch, mount, copy, install or execute it.
-    private let download = URL(string: "https://github.com/kf953741/lidlid/releases/download/compatibility-v1.0.1/LidLid-Compatibility-1.0.1-macOS-arm64.dmg")!
+    private let download = URL(string: "https://lidlid.vercel.app/downloads/LidLid-Compatibility-1.0.1-macOS-arm64.dmg")!
 
     private var ready: Bool { model.state.compatibilityReady }
 

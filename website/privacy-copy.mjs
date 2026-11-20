@@ -28,7 +28,7 @@ export const privacyCopy = {
       ],
       [
         "下载与主动反馈",
-        "<p>当前 DMG 下载由 GitHub 提供，适用 <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub 隐私声明</a>。如通过 App Store 下载或购买，相关处理由 Apple 按其适用条款完成。</p><p>如果你主动通过邮件发送联系邮箱、问题描述、机型、系统版本、日志或截图，我们会使用你提供的内容协助处理请求。邮件服务商也会按其规则处理邮件的传输与存储。请只发送处理问题所需的信息，不要包含密码、密钥或无关的私人内容。你可以通过同一邮箱请求更正或删除我们能够控制的反馈内容；第三方服务的数据处理和保留由其自身政策约束。</p>"
+        "<p>免费兼容组件的 DMG 由盖盖官网提供，适用上述 Vercel 隐私说明。如通过 App Store 下载或购买，相关处理由 Apple 按其适用条款完成。</p><p>如果你主动通过邮件发送联系邮箱、问题描述、机型、系统版本、日志或截图，我们会使用你提供的内容协助处理请求。邮件服务商也会按其规则处理邮件的传输与存储。请只发送处理问题所需的信息，不要包含密码、密钥或无关的私人内容。你可以通过同一邮箱请求更正或删除我们能够控制的反馈内容；第三方服务的数据处理和保留由其自身政策约束。</p>"
       ],
       [
         "联系与更新",
@@ -62,7 +62,7 @@ export const privacyCopy = {
       ],
       [
         "Downloads and voluntary support requests",
-        "<p>Current DMG downloads are provided through GitHub and are subject to the <a href=\"https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement\">GitHub Privacy Statement</a>. If you download or purchase through the App Store, Apple handles that transaction under its applicable terms.</p><p>If you choose to email us, we use the contact address, message, Mac model, macOS version, log or screenshot you provide to help address your request. Email service providers also process transmission and storage under their own policies. Send only information relevant to your request, without passwords, keys or unrelated private content. You can use the same email address to request correction or deletion of support content within our control. Third-party processing and retention are governed by those services’ own policies.</p>"
+        "<p>The free compatibility component DMG is served from this website under the Vercel Privacy Notice above. If you download or purchase through the App Store, Apple handles that transaction under its applicable terms.</p><p>If you choose to email us, we use the contact address, message, Mac model, macOS version, log or screenshot you provide to help address your request. Email service providers also process transmission and storage under their own policies. Send only information relevant to your request, without passwords, keys or unrelated private content. You can use the same email address to request correction or deletion of support content within our control. Third-party processing and retention are governed by those services’ own policies.</p>"
       ],
       [
         "Contact and updates",

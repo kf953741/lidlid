@@ -41,4 +41,4 @@ Public pages:
 | Support | `/support/` | `/en/support/` |
 | Privacy | `/privacy/` | `/en/privacy/` |
 
-The website has no sign-in, forms, analytics SDK or marketing cookies. The privacy pages distinguish local app behavior from Vercel hosting, GitHub downloads and voluntary email support.
+The website has no sign-in, forms, analytics SDK or marketing cookies. The privacy pages distinguish local app behavior from Vercel hosting and downloads, and voluntary email support.

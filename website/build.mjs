@@ -60,7 +60,7 @@ const copy = {
     ],
     closingTitle: '任务继续，<br>你也继续出发。', closingLead: '让下一次离开工位，少一点等待。',
     storePending: 'Mac App Store 版本筹备中', storeAvailable: '在 Mac App Store 查看',
-    footer: ['隐私政策', '支持与帮助', '源代码'], footerLine: '为需要出发的你而做。',
+    footer: ['隐私政策', '支持与帮助'], footerLine: '为需要出发的你而做。',
     skip: '跳到主要内容', close: '关闭演示', demoTitle: '盖盖 · 20 秒使用演示',
     privacyTitle: '隐私政策', privacyMeta: '盖盖 LidLid 的隐私政策：本机偏好、诊断记录、官网托管与问题反馈。',
     privacyIntro: privacyCopy.zh.intro,
@@ -79,7 +79,7 @@ const copy = {
       ['反馈问题时，需要提供什么？', '提供 MacBook 型号、macOS 版本、盖盖版本，以及出现问题时的操作步骤即可。请先遮住截图中的私人信息，不要上传代码、AI 对话、密钥或其他敏感内容。'],
     ],
     compatibilityTitle: "下载免费兼容组件",
-    compatibilityBody: "想让 MacBook 不插电、不接外接屏也能合盖继续运行，首次使用时需要安装一次免费兼容组件。盖盖内的设置窗口可直接打开官方下载，并自动检测就绪；也可从下方下载。开盖不休眠无需安装。",
+    compatibilityBody: "想让 MacBook 不插电、不接外接屏也能合盖继续运行，首次使用时需要安装一次免费兼容组件。从下方下载并安装，盖盖会自动检测组件是否就绪。开盖不休眠无需安装。",
     compatibilityRemove: "需要移除时，先关闭盖盖的合盖开关，再打开兼容组件，点「恢复睡眠并移除服务」，完成后即可删除组件。需要主动睡眠时，请先关闭合盖开关。",
     supportNote: '联网任务仍需网络连接。',
     privacyLink: '阅读隐私政策', back: '返回首页', notFound: '这一页走丢了。',
@@ -125,7 +125,7 @@ const copy = {
     ],
     closingTitle: 'Your task carries on.<br>So can you.', closingLead: 'Make your next move with a little less waiting.',
     storePending: 'Mac App Store version in preparation', storeAvailable: 'View on the Mac App Store',
-    footer: ['Privacy', 'Support', 'Source code'], footerLine: 'Made for the moments you need to go.',
+    footer: ['Privacy', 'Support'], footerLine: 'Made for the moments you need to go.',
     skip: 'Skip to content', close: 'Close demo', demoTitle: 'LidLid · 20-second demo',
     privacyTitle: 'Privacy policy', privacyMeta: 'LidLid privacy: local preferences and diagnostics, website hosting and support requests.',
     privacyIntro: privacyCopy.en.intro,
@@ -144,7 +144,7 @@ const copy = {
       ['What should I include in a report?', 'Share your MacBook model, macOS version, LidLid version and the steps that caused the issue. Redact personal information in screenshots. Do not upload code, AI conversations, keys or other sensitive content.'],
     ],
     compatibilityTitle: "Download the free compatibility component",
-    compatibilityBody: "For closed-lid work on battery without an external monitor, install the free component once. LidLid’s setup window opens the official download directly and detects readiness automatically. You can also download it below. Open-lid mode works without it.",
+    compatibilityBody: "For closed-lid work on battery without an external monitor, install the free component once. Download and install it below. LidLid detects when the component is ready. Open-lid mode works without it.",
     compatibilityRemove: "To remove it, turn off closed-lid mode in LidLid, open the component and choose Restore sleep & remove service. You can then delete the component. Turn closed-lid mode off before choosing Sleep as well.",
     supportNote: 'Online tasks still need a connection.',
     privacyLink: 'Read the privacy policy', back: 'Back to home', notFound: 'This page took a different path.',
@@ -172,7 +172,7 @@ function storeEntry(t) {
 }
 function footer(locale) {
   const t = copy[locale], route = routes[locale];
-  return `<footer class="site-footer"><div class="wrap"><div class="footer-top"><a class="brand" href="${route.home}"><img src="/assets/icon.png?v=${brandRevision}" width="31" height="31" alt="">${t.brand}</a><nav class="footer-links" aria-label="${locale === 'zh' ? '页脚导航' : 'Footer navigation'}"><a href="${route.privacy}">${t.footer[0]}</a><a href="${route.support}">${t.footer[1]}</a><a class="external" href="${site.github}" target="_blank" rel="noopener noreferrer">${t.footer[2]} ↗</a></nav></div><div class="footer-bottom"><p>© 2026 ${site.developer} · ${t.brand}</p><p>${t.footerLine}</p></div></div></footer>`;
+  return `<footer class="site-footer"><div class="wrap"><div class="footer-top"><a class="brand" href="${route.home}"><img src="/assets/icon.png?v=${brandRevision}" width="31" height="31" alt="">${t.brand}</a><nav class="footer-links" aria-label="${locale === 'zh' ? '页脚导航' : 'Footer navigation'}"><a href="${route.privacy}">${t.footer[0]}</a><a href="${route.support}">${t.footer[1]}</a></nav></div><div class="footer-bottom"><p>© 2026 ${site.developer} · ${t.brand}</p><p>${t.footerLine}</p></div></div></footer>`;
 }
 function faq(items) {
   return `<div class="faq-list">${items.map(([q, a]) => `<details><summary>${q}</summary><p>${a}</p></details>`).join('')}</div>`;

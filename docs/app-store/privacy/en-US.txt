@@ -26,7 +26,7 @@ Website and external links
 Choosing a privacy or support link in the app opens the relevant page in your browser. This website has no visitor analytics SDK, marketing cookies or sign-in. Vercel hosts the website and processes IP addresses, browser details and requests for delivery, operation and security. See the Vercel Privacy Notice (https://vercel.com/legal/privacy-notice). Website request processing is separate from the information the app stores locally.
 
 Downloads and voluntary support requests
-Current DMG downloads are provided through GitHub and are subject to the GitHub Privacy Statement (https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement). If you download or purchase through the App Store, Apple handles that transaction under its applicable terms.
+The free compatibility component DMG is served from this website under the Vercel Privacy Notice above. If you download or purchase through the App Store, Apple handles that transaction under its applicable terms.
 
 If you choose to email us, we use the contact address, message, Mac model, macOS version, log or screenshot you provide to help address your request. Email service providers also process transmission and storage under their own policies. Send only information relevant to your request, without passwords, keys or unrelated private content. You can use the same email address to request correction or deletion of support content within our control. Third-party processing and retention are governed by those services’ own policies.
 

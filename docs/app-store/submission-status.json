@@ -29,14 +29,15 @@
       "eligible_for_release": false,
       "reason": "Superseded: does not authenticate Apple-re-signed TestFlight clients."
     },
-    "production_download": "https://github.com/kf953741/lidlid/releases/download/compatibility-v1.0.1/LidLid-Compatibility-1.0.1-macOS-arm64.dmg",
+    "production_download": "https://lidlid.vercel.app/downloads/LidLid-Compatibility-1.0.1-macOS-arm64.dmg",
     "submission_id": "1A2CC6AF-01E3-4B33-BDF1-A632E5748B3A",
     "uploaded_at": "2026-11-06T15:36:56Z",
     "last_live_refresh": "2026-11-07 02:03 Asia/Shanghai",
     "export_validation": "Exported app: deep/strict signature, stapled ticket and Gatekeeper Notarized Developer ID passed. Mounted DMG app passed the same checks.",
     "dmg_sha256": "139bb8a6b508e6b4eba45efc93f86edbe319f2c3a186d4feab2451fd48cb0b36",
     "dmg_container_notarization": "The app inside the DMG is notarized and stapled; no claim of a separate notarization ticket for the outer DMG.",
-    "remote_readback": "Single DMG asset; downloaded release bytes exactly match verified local DMG."
+    "remote_readback": "Single DMG asset; downloaded release bytes exactly match verified local DMG.",
+    "original_github_release_asset": "https://github.com/kf953741/lidlid/releases/download/compatibility-v1.0.1/LidLid-Compatibility-1.0.1-macOS-arm64.dmg"
   },
   "storekit_validation": {
     "status": "Actual lifetime purchase passed in TestFlight 17. Build 18 installed from TestFlight with the final archive UUIDs and verified lifetime entitlement. Explicit Restore Purchases completed after owner authentication, with no error and lifetime access retained. The shared offer layout/click behavior was checked in both languages using clearly labelled sample-price previews; those previews are not transaction evidence or review attachments.",
@@ -95,8 +96,8 @@
   "verified_at": "2026-11-07T15:40:24.312879+08:00",
   "website": {
     "url": "https://lidlid.vercel.app",
-    "deployment": "dpl_Ab2AeEBSxoSEvxGjqxmniqfFndBu",
-    "status": "Latest deployment READY. All six localized production pages verified HTTP200; setup wording includes direct official browser download and automatic readiness detection. Published component contains the signed/notarized app; setup/removal guides and email-only support are live. Main Store link remains unavailable until listing launch."
+    "deployment": "dpl_PpcRRuWQU6SFDNx2dMMMupELZED5",
+    "status": "November 20, 2026: Vercel serves the original compatibility DMG on the official website. Both localized support pages link to it. The unauthenticated download returned HTTP 200 and matched the original SHA256. All six localized pages returned HTTP 200."
   },
   "source_validation": "Code commit c57edce2e8e468bfe9aaaa46cf5a826cbf34898f is pushed to main. GitHub Actions 42351315968 passed. Release signing/profile/sandbox/privacy and matching dSYMs passed; installed Apple TestFlight 18 binary UUIDs match the final archive. No production icon code was changed for the preview-only square-image issue.",
   "compatibility_setup_validation": "Actual TestFlight 16 English and Chinese ready-state windows verified with the real authenticated component: no installation steps when ready, neutral Manage component action, next-step guidance matches the active trial, and readiness is explicitly separate from an enabled session. Both languages fit the window and links use the correct locale. This does not validate a fresh installation or an unavailable-to-ready state transition.",
@@ -130,5 +131,12 @@
     "code_commit": "c57edce2e8e468bfe9aaaa46cf5a826cbf34898f",
     "review_notes_file": "review-notes.en.txt",
     "iap_review_notes_file": "iap-review-notes.json"
+  },
+  "download_followup": {
+    "verified_on": "2026-11-20",
+    "url": "https://lidlid.vercel.app/downloads/LidLid-Compatibility-1.0.1-macOS-arm64.dmg",
+    "reason": "The original GitHub release remains in the private repository and returns 404 to unauthenticated visitors.",
+    "current_review": "Build 18 and both IAPs remain Waiting for Review in the original submission. Reviewer Notes were updated and verified after a page reload. Build 18 can open the current support page through Component help.",
+    "future_builds": "The Swift source now opens the versioned official website URL. The binary already under review was not replaced."
   }
 }

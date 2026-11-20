@@ -26,7 +26,7 @@
 在应用中点击隐私政策或支持链接，会在浏览器中打开相应页面。官网没有访客分析 SDK、营销 Cookie 或登录功能。官网由 Vercel 托管；Vercel 会为页面交付、运行和安全处理 IP 地址、浏览器及请求信息，详见 Vercel 隐私说明 (https://vercel.com/legal/privacy-notice)。这些网站访问处理与应用在本机保存的信息不同。
 
 下载与主动反馈
-当前 DMG 下载由 GitHub 提供，适用 GitHub 隐私声明 (https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)。如通过 App Store 下载或购买，相关处理由 Apple 按其适用条款完成。
+免费兼容组件的 DMG 由盖盖官网提供，适用上述 Vercel 隐私说明。如通过 App Store 下载或购买，相关处理由 Apple 按其适用条款完成。
 
 如果你主动通过邮件发送联系邮箱、问题描述、机型、系统版本、日志或截图，我们会使用你提供的内容协助处理请求。邮件服务商也会按其规则处理邮件的传输与存储。请只发送处理问题所需的信息，不要包含密码、密钥或无关的私人内容。你可以通过同一邮箱请求更正或删除我们能够控制的反馈内容；第三方服务的数据处理和保留由其自身政策约束。
 
