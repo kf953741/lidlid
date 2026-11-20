@@ -5,6 +5,10 @@ import ServiceManagement
 import LidOnceCore
 import LidOnceSystem
 
+enum ClosedLidAction: Equatable {
+    case checking, setup, tryFree, unlock, toggle
+}
+
 final class AppModel: ObservableObject {
     let store = StoreAccessManager()
     private var storeChanges: AnyCancellable?
@@ -72,20 +76,32 @@ final class AppModel: ObservableObject {
     var enabled: Bool { state.phase == .armed || state.phase == .closed || state.phase == .restoring }
     var changing: Bool { state.phase == .starting || state.phase == .restoring }
     var canToggle: Bool { connected && !changing && (enabled || store.allowsStartingClosedLidSession) && (!conflict || enabled) && (enabled || state.compatibilityReady) }
+    var closedLidAction: ClosedLidAction {
+        if busy { return .toggle }
+        if !connected { return .checking }
+        if !state.compatibilityReady { return .setup }
+        guard store.isStoreEdition else { return .toggle }
+        switch store.access {
+        case .loading: return .checking
+        case .locked: return .tryFree
+        case .expired: return .unlock
+        case .trial, .lifetime: return .toggle
+        }
+    }
     var text: AppText { AppText(language: language) }
     var brandName: String { text("盖盖") }
     var detail: String {
         if state.phase == .off && !state.error && state.message != Snapshot().message {
             return text(state.message)
         }
-        return text("开盖自动关闭，下次恢复正常睡眠。")
+        return text(state.phase == .off ? "开启后，合盖时任务继续。" : "再次开盖时结束。")
     }
     var durationLabel: String { text.duration(maximumMinutes) }
     var title: String {
         switch state.phase {
         case .off: return text("已关闭")
         case .starting: return text("正在开启…")
-        case .armed, .closed: return text("已开启")
+        case .armed, .closed: return text("可以合盖")
         case .restoring: return text("正在关闭…")
         }
     }

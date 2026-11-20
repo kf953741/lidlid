@@ -18,13 +18,14 @@ private enum PanelStyle {
 struct PanelView: View {
     @ObservedObject var model: AppModel
     @State private var displayDuration: DisplayAwakeDuration = .halfHour
+    @State private var choosingDisplayDuration = false
 
     var body: some View {
         Group {
             if model.options { settings } else { main }
         }
-        .padding(24)
-        .frame(width: 326)
+        .padding(18)
+        .frame(width: 352)
         .fixedSize(horizontal: false, vertical: true)
         .background(PanelStyle.background)
         .tint(PanelStyle.accent)
@@ -33,19 +34,18 @@ struct PanelView: View {
     }
 
     private var main: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 8) {
                 Image(nsImage: GuardianMenuSymbol.image(for: model.menuState, size: 20))
                     .renderingMode(model.menuState.openLidEnabled ? .original : .template)
                     .foregroundStyle(PanelStyle.accent)
                     .accessibilityHidden(true)
-                Text(model.brandName)
-                    .font(.system(size: 14, weight: .semibold))
+                Text(model.brandName).font(.system(size: 14, weight: .semibold))
                 Spacer()
                 Button { model.options = true } label: {
-                    Image(systemName: "slider.horizontal.3")
-                        .font(.system(size: 12, weight: .medium))
-                        .frame(width: 24, height: 24)
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 14, weight: .medium))
+                        .frame(width: 26, height: 26)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
@@ -55,74 +55,116 @@ struct PanelView: View {
                 .help(model.text("选项"))
             }
 
-            HStack(alignment: .center, spacing: 16) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(model.title)
-                        .font(.system(size: 28, weight: .medium))
-                        .tracking(-0.6)
-                        .accessibilityIdentifier("session-state")
-                    Text(model.text("本次合盖不休眠"))
-                        .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
-                }
+            closedLidCard
+
+            VStack(alignment: .leading, spacing: 6) {
+                openAwakeRow
+                Divider().opacity(0.7)
+                displayAwakeRow
+            }
+            .padding(.horizontal, 4)
+
+            if model.store.isStoreEdition, model.store.access != .lifetime || model.store.message != nil {
+                StoreAccessView(store: model.store, text: model.text, surface: .panel)
+            }
+        }
+    }
+
+    private var closedLidCard: some View {
+        let action = model.closedLidAction
+        let armed = model.state.phase == .armed || model.state.phase == .closed
+        return VStack(alignment: .leading, spacing: 9) {
+            HStack(spacing: 10) {
+                modeLabel("合盖不休眠", icon: "laptopcomputer", active: armed)
                 Spacer(minLength: 0)
-                Toggle(model.text("本次合盖不休眠"), isOn: Binding(
-                    get: { model.enabled },
-                    set: { value in if value != model.enabled { model.toggle() } }
-                ))
-                .toggleStyle(.switch)
-                .labelsHidden()
-                .controlSize(.regular)
-                .disabled(!model.canToggle)
-                .accessibilityIdentifier("session-switch")
-            }
-            .padding(.top, 28)
-
-            Text(model.detail)
-                .font(.system(size: 12))
-                .foregroundStyle(.secondary)
-                .lineSpacing(3)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 18)
-
-            if !model.state.compatibilityReady && !model.enabled {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(model.text(model.state.compatibilityMessage))
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Button(model.text("设置免费兼容组件"), action: model.openCompatibility)
-                        .buttonStyle(.link).font(.system(size: 12))
-                        .accessibilityIdentifier("compatibility-setup")
-                }.padding(.top, 16)
-            }
-            if model.conflict || model.state.error {
-                notice.padding(.top, 16)
-            }
-
-            Divider().opacity(0.6).padding(.top, 22).padding(.bottom, 15)
-            HStack {
-                Text(model.text("最长保持"))
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-                Spacer()
-                durationMenu
-            }
-            Text(model.text("电量降至 10% 或过热时自动结束"))
-                .font(.system(size: 11))
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, 16)
-
-            Divider().opacity(0.6).padding(.vertical, 18)
-            HStack(spacing: 16) {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(model.text("开盖不休眠")).font(.system(size: 12, weight: .medium))
-                    Text(model.text(model.displayAwakeEnabled && !model.state.openAwakeError
-                                    ? "合盖时暂停" : model.state.openAwakeMessage))
-                        .font(.system(size: 11))
-                        .foregroundStyle(model.state.openAwakeError ? Color.orange : Color.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
+                if action == .toggle {
+                    Toggle(model.text("合盖不休眠"), isOn: Binding(
+                        get: { model.enabled }, set: { if $0 != model.enabled { model.toggle() } }
+                    ))
+                    .toggleStyle(.switch).labelsHidden().controlSize(.small)
+                    .disabled(!model.canToggle)
+                    .accessibilityIdentifier("session-switch")
                 }
+            }
+            closedLidContent(armed: armed)
+            if model.conflict || model.state.error { notice }
+        }
+        .padding(12)
+        .background((armed ? PanelStyle.accent : Color.primary).opacity(armed ? 0.08 : 0.045),
+                    in: RoundedRectangle(cornerRadius: 13))
+        .overlay {
+            RoundedRectangle(cornerRadius: 13)
+                .strokeBorder(PanelStyle.accent.opacity(armed ? 0.24 : 0), lineWidth: 1)
+                .allowsHitTesting(false)
+        }
+    }
+
+    @ViewBuilder private func closedLidContent(armed: Bool) -> some View {
+        switch model.closedLidAction {
+        case .checking:
+            if !model.state.error {
+                HStack(spacing: 7) {
+                    ProgressView().controlSize(.mini)
+                    secondary(model.text(model.connected ? "正在检查购买…" : "正在连接盖盖…"))
+                }
+            }
+        case .setup:
+            secondary(model.text("首次使用需安装免费兼容组件。"))
+            Button(action: model.openCompatibility) {
+                Text(model.text("设置合盖功能")).frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .accessibilityIdentifier("compatibility-setup")
+        case .tryFree:
+            secondary(model.text("试用到期不会自动扣费。"))
+            Button {
+                model.store.startTrial(compatibilityReady: model.state.compatibilityReady)
+            } label: {
+                Text(model.text("开始 7 天免费试用")).frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!model.store.canStartTrial(compatibilityReady: model.state.compatibilityReady))
+            .accessibilityIdentifier("start-store-trial")
+            if let price = model.store.lifetimePrice {
+                secondary(String(format: model.text("试用后可选择 %@ 一次买断。"), price))
+            }
+        case .unlock:
+            secondary(model.text("合盖试用已结束"))
+            Button(action: model.store.purchaseLifetime) {
+                Text(model.store.lifetimePrice.map { model.text("永久解锁合盖 · ") + $0 }
+                     ?? model.text("正在加载永久版价格…"))
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(!model.store.canPurchase)
+            .accessibilityIdentifier("buy-store-lifetime")
+        case .toggle:
+            HStack(spacing: 8) {
+                Label(model.title, systemImage: armed ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 12, weight: armed ? .semibold : .regular))
+                    .foregroundStyle(armed ? PanelStyle.accent : Color.secondary)
+                    .accessibilityIdentifier("session-state")
+                Spacer(minLength: 2)
+                if !model.changing {
+                    if model.enabled {
+                        secondary(durationDisplay).accessibilityIdentifier("active-duration")
+                    } else {
+                        durationMenu
+                    }
+                }
+            }
+            if !model.state.error, !model.conflict, !model.changing {
+                secondary(model.detail)
+            } else if model.changing, !model.state.error, model.enabled {
+                secondary(model.text(model.state.message))
+            }
+        }
+    }
+
+    private var openAwakeRow: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            HStack(spacing: 8) {
+                modeLabel("开盖不休眠", icon: "bolt", active: model.openAwakeEnabled)
                 Spacer(minLength: 0)
                 Toggle(model.text("开盖不休眠"), isOn: Binding(
                     get: { model.openAwakeEnabled }, set: model.setOpenAwake
@@ -131,44 +173,54 @@ struct PanelView: View {
                 .disabled(!model.canToggleOpenAwake)
                 .accessibilityIdentifier("open-awake-switch")
             }
-
-            displayAwakeCard.padding(.top, 14)
-
-            if model.store.isStoreEdition {
-                Divider().opacity(0.6).padding(.vertical, 18)
-                StoreAccessView(store: model.store, text: model.text, compatibilityReady: model.state.compatibilityReady)
+            .frame(minHeight: 29)
+            if model.openAwakeEnabled || model.state.openAwakeError {
+                secondary(model.text(model.displayAwakeEnabled && !model.state.openAwakeError
+                                     ? "合盖时暂停" : model.state.openAwakeMessage),
+                          color: model.state.openAwakeError ? .orange : .secondary)
+                    .padding(.leading, 28)
             }
-
         }
+        .help(model.text("屏幕仍可自动熄灭，合盖时暂停"))
     }
 
-    private var displayAwakeCard: some View {
+    private var displayAwakeRow: some View {
         let active = model.displayAwakeEnabled
-        let emphasis = active ? PanelStyle.accent : Color.secondary
-        return VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 9) {
-                Image(systemName: active ? "sun.max.fill" : "sun.max")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(emphasis)
-                    .frame(width: 28, height: 28)
-                    .background(emphasis.opacity(0.10), in: RoundedRectangle(cornerRadius: 8))
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(model.text("屏幕常亮"))
-                        .font(.system(size: 12, weight: .semibold))
-                    Text(model.text(model.state.displayAwake?.error ?? "阻止开盖时自动熄屏"))
-                        .font(.system(size: 11))
-                        .foregroundStyle(model.state.displayAwake?.error == nil ? Color.secondary : .orange)
-                        .fixedSize(horizontal: false, vertical: true)
+        return VStack(alignment: .leading, spacing: 7) {
+            HStack(spacing: 8) {
+                modeLabel("屏幕常亮", icon: active ? "sun.max.fill" : "sun.max", active: active)
+                Spacer(minLength: 2)
+                if !active {
+                    Button { choosingDisplayDuration.toggle() } label: {
+                        HStack(spacing: 4) {
+                            Text(displayDuration == .halfHour ? model.text("30 分钟") : displayDurationLabel(displayDuration))
+                                .fixedSize()
+                            Image(systemName: choosingDisplayDuration ? "chevron.up" : "chevron.down")
+                                .font(.system(size: 8, weight: .semibold))
+                        }
+                        .font(.system(size: 11, weight: .medium))
+                        .padding(.vertical, 4).padding(.horizontal, 6)
+                        .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 5))
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel(model.text("常亮时长") + " · " + displayDurationLabel(displayDuration))
+                    .accessibilityIdentifier("display-duration-button")
                 }
-                Spacer(minLength: 0)
                 Toggle(model.text("屏幕常亮"), isOn: Binding(
                     get: { active },
-                    set: { model.setDisplayAwake($0, duration: displayDuration) }
+                    set: {
+                        choosingDisplayDuration = false
+                        model.setDisplayAwake($0, duration: displayDuration)
+                    }
                 ))
                 .toggleStyle(.switch).labelsHidden().controlSize(.small)
                 .disabled(!model.canToggleDisplayAwake)
                 .accessibilityIdentifier("display-awake-switch")
+            }
+            .frame(minHeight: 29)
+            if let error = model.state.displayAwake?.error {
+                secondary(model.text(error), color: .orange)
             }
             if active, let status = model.state.displayAwake, status.requested {
                 if let deadline = status.deadline {
@@ -183,25 +235,39 @@ struct PanelView: View {
                     displayAwakeBadge("持续常亮", detail: model.text("合盖即结束"), icon: "infinity")
                         .accessibilityIdentifier("display-awake-continuous")
                 }
-            } else {
+            } else if choosingDisplayDuration {
                 Picker(model.text("常亮时长"), selection: $displayDuration) {
                     ForEach(DisplayAwakeDuration.allCases, id: \.self) { duration in
-                        Text(duration == .continuous ? model.text("持续") : model.text.duration(duration.rawValue))
-                            .tag(duration)
+                        Text(displayDurationLabel(duration)).tag(duration)
                     }
                 }
                 .pickerStyle(.segmented).labelsHidden().controlSize(.small)
-                .disabled(!model.canToggleDisplayAwake)
+                .onChange(of: displayDuration) { _, _ in choosingDisplayDuration = false }
                 .accessibilityIdentifier("display-awake-duration")
             }
         }
-        .padding(10)
-        .background(emphasis.opacity(active ? 0.06 : 0.045), in: RoundedRectangle(cornerRadius: 12))
-        .overlay {
-            RoundedRectangle(cornerRadius: 12)
-                .strokeBorder(emphasis.opacity(active ? 0.24 : 0.14), lineWidth: 1)
-                .allowsHitTesting(false)
+        .help(model.text("阻止开盖时自动熄屏"))
+    }
+
+    private func modeLabel(_ title: String, icon: String, active: Bool) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .medium))
+                .frame(width: 20)
+                .foregroundStyle(active ? PanelStyle.accent : Color.secondary)
+                .accessibilityHidden(true)
+            Text(model.text(title)).font(.system(size: 13, weight: .semibold))
+                .fixedSize(horizontal: true, vertical: false)
         }
+    }
+
+    private func secondary(_ detail: String, color: Color = .secondary) -> some View {
+        Text(detail).font(.system(size: 12)).foregroundStyle(color)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func displayDurationLabel(_ duration: DisplayAwakeDuration) -> String {
+        duration == .continuous ? model.text("持续") : model.text.duration(duration.rawValue)
     }
 
     private func displayAwakeBadge(_ title: String, detail: String, icon: String) -> some View {
@@ -279,6 +345,10 @@ struct PanelView: View {
             settingRow(model.text("低电量保护"), "10%")
             settingRow(model.text("高温保护"), model.text("自动")).padding(.top, 16)
             settingRow(model.text("当前电量"), model.state.battery.map { "\($0)%" } ?? model.text("读取中")).padding(.top, 16)
+            if model.store.isStoreEdition {
+                StoreAccessView(store: model.store, text: model.text, surface: .settings)
+                    .padding(.top, 16)
+            }
             Button(model.text("管理兼容组件"), action: model.openCompatibility)
                 .buttonStyle(.link).font(.system(size: 11)).padding(.top, 16)
             HStack(spacing: 16) {
@@ -320,7 +390,7 @@ struct PanelView: View {
                 }
             }
         } label: {
-            Text(durationDisplay).font(.system(size: 12))
+            Text(durationDisplay).font(.system(size: 11, weight: .medium))
         }
         .menuStyle(.borderlessButton)
         .menuIndicator(.visible)

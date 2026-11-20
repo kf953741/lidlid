@@ -14,6 +14,10 @@ final class StoreAccessManager: ObservableObject {
     func permits(_ command: Command) -> Bool {
         access.permits(command, inStoreEdition: true, at: now)
     }
+    func canStartTrial(compatibilityReady: Bool) -> Bool {
+        access.permitsStartingTrial(compatibilityReady: compatibilityReady)
+    }
+    func startTrial(compatibilityReady: Bool) {}
     func start() {}
 }
 
@@ -71,6 +75,17 @@ struct StoreModelHarness {
         model.state = Snapshot()
         model.launchAgent()
         wait("fixture must connect") { model.connected }
+        precondition(model.closedLidAction == .checking)
+        model.state.compatibilityReady = false
+        precondition(model.closedLidAction == .setup)
+        model.state.compatibilityReady = true
+        model.store.access = .locked
+        precondition(model.closedLidAction == .tryFree)
+        model.store.access = .expired
+        precondition(model.closedLidAction == .unlock)
+        model.store.access = .lifetime
+        precondition(model.closedLidAction == .toggle)
+        model.store.access = .loading
 
         // Even an unresolved App Store lookup cannot block the free mode.
         precondition(model.canToggleOpenAwake)
@@ -98,6 +113,7 @@ struct StoreModelHarness {
             commands().filter { $0 == "ping" }.count > previousHeartbeats
         }
         precondition(model.state.phase == phase && model.openAwakeEnabled)
+        precondition(model.closedLidAction == .toggle, "an accepted session must always keep its stop control")
         precondition(!commands().contains("stop") && !commands().contains("open-awake-off"),
                      "expiry must not emit sleep-restoration or open-lid shutdown commands")
 
