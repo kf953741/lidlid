@@ -7,14 +7,18 @@ final class CompatibilitySetupPresenter: NSObject, NSWindowDelegate {
     var willPresent: (() -> Void)?
     var didDismiss: (() -> Void)?
     private var window: NSWindow?
-    private static let size = NSSize(width: 484, height: 264)
+    private var readiness: AnyCancellable?
+
+    fileprivate static func contentSize(ready: Bool) -> NSSize {
+        NSSize(width: 484, height: ready ? 144 : 264)
+    }
 
     func show(model: AppModel) {
         precondition(Thread.isMainThread)
         if activateIfPresented() { return }
         let screen = NSApp.keyWindow?.screen ?? NSScreen.main
         willPresent?()
-        let size = Self.size
+        let size = Self.contentSize(ready: model.state.compatibilityReady)
         let window = NSWindow(contentRect: NSRect(origin: .zero, size: size),
                               styleMask: [.titled, .closable], backing: .buffered, defer: false)
         window.title = model.text("合盖功能设置")
@@ -26,6 +30,15 @@ final class CompatibilitySetupPresenter: NSObject, NSWindowDelegate {
             self?.window?.close()
         })
         self.window = window
+        readiness = model.$state.map(\.compatibilityReady).removeDuplicates().dropFirst()
+            .receive(on: RunLoop.main).sink { [weak window] ready in
+                guard let window else { return }
+                let content = Self.contentSize(ready: ready)
+                var frame = window.frameRect(forContentRect: NSRect(origin: .zero, size: content))
+                let bottom = window.screen?.visibleFrame.minY ?? window.frame.minY
+                frame.origin = NSPoint(x: window.frame.minX, y: max(bottom, window.frame.maxY - frame.height))
+                window.setFrame(frame, display: true)
+            }
         window.center()
         if let screen {
             let visible = screen.visibleFrame, size = window.frame.size
@@ -43,6 +56,7 @@ final class CompatibilitySetupPresenter: NSObject, NSWindowDelegate {
     }
 
     func windowWillClose(_ notification: Notification) {
+        readiness = nil
         window?.contentViewController = nil
         window = nil
         didDismiss?()
@@ -73,7 +87,7 @@ private struct CompatibilitySetupView: View {
         return downloadRequested ? .moveToApplications : .download
     }
 
-    private var stageContent: (heading: String, detail: String, icon: String) {
+    private var stageContent: (heading: String, detail: String?, icon: String) {
         switch stage {
         case .download:
             return ("下载免费组件", "下载完成后，把组件拖入「应用程序」。", "arrow.down.to.line")
@@ -86,57 +100,35 @@ private struct CompatibilitySetupView: View {
                     : "在组件窗口选择「安装兼容服务」，按 macOS 提示操作。",
                     "person.badge.key")
         case .ready:
-            let detail: String
+            let detail: String?
             switch model.closedLidAction {
             case .tryFree: detail = "试用到期不会自动扣费。"
             case .unlock: detail = "返回盖盖，永久解锁后即可开启合盖功能。"
-            case .checking: detail = "返回盖盖，查看试用或购买状态。"
-            default: detail = "返回盖盖，使用「合盖不休眠」。"
+            default: detail = nil
             }
             return ("兼容组件已就绪", detail, "checkmark.circle.fill")
         }
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            HStack(spacing: 12) {
-                Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 46, height: 46)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(model.text(ready ? "合盖准备已完成" : "设置合盖功能"))
-                        .font(.system(size: 20, weight: .semibold))
-                    Text(model.text(ready ? "免费组件已连接。" : "首次使用需安装免费兼容组件。"))
-                        .font(.callout).foregroundStyle(.secondary)
-                }
-            }
-            ScrollView {
-                let content = stageContent
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 8) {
-                        Image(systemName: content.icon).foregroundStyle(ready ? .green : .blue)
-                            .accessibilityHidden(true)
-                        Text(model.text(content.heading))
-                            .font(.system(size: 14, weight: .semibold))
-                            .accessibilityIdentifier("compatibility-setup-state")
-                    }
-                    Text(model.text(content.detail))
-                        .font(.callout).foregroundStyle(.secondary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    if launchFailed {
-                        Text(model.text("无法打开，请使用下方安装帮助。"))
-                            .font(.footnote).foregroundStyle(.orange)
-                    } else if stage == .approve,
-                              model.state.compatibilityMessage != Snapshot().compatibilityMessage {
-                        Text(model.text(model.state.compatibilityMessage))
-                            .font(.footnote).foregroundStyle(.secondary)
+        let size = CompatibilitySetupPresenter.contentSize(ready: ready)
+        return VStack(alignment: .leading, spacing: 15) {
+            if ready {
+                stageCard
+            } else {
+                HStack(spacing: 12) {
+                    Image(nsImage: NSApp.applicationIconImage).resizable().frame(width: 46, height: 46)
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(model.text("设置合盖功能"))
+                            .font(.system(size: 20, weight: .semibold))
+                        Text(model.text("首次使用需安装免费兼容组件。"))
+                            .font(.callout).foregroundStyle(.secondary)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(14)
-                .background(ready ? Color.green.opacity(0.08) : Color.primary.opacity(0.045),
-                            in: RoundedRectangle(cornerRadius: 12))
+                ScrollView { stageCard }
+                    .scrollBounceBehavior(.basedOnSize)
             }
-            .scrollBounceBehavior(.basedOnSize)
             HStack(spacing: 12) {
                 primaryAction
                 if stage == .moveToApplications {
@@ -144,6 +136,7 @@ private struct CompatibilitySetupView: View {
                 }
                 if ready, let installedURL {
                     Button(model.text("管理组件")) { openComponent(at: installedURL) }
+                        .buttonStyle(.link)
                         .accessibilityIdentifier("compatibility-open")
                 }
                 Spacer(minLength: 0)
@@ -151,13 +144,45 @@ private struct CompatibilitySetupView: View {
                     ? "https://lidlid.vercel.app/support/#compatibility" : "https://lidlid.vercel.app/en/support/#compatibility")!)
             }
         }
-        .padding(22).frame(width: 484, height: 264, alignment: .topLeading)
-        .tint(.blue).environment(\.locale, model.language.locale)
+        .padding(22).frame(width: size.width, height: size.height, alignment: .topLeading)
+        .background(PanelStyle.background)
+        .tint(PanelStyle.controlTint)
+        .environment(\.locale, model.language.locale)
         .onAppear(perform: findInstalledComponent)
         .onReceive(refresh) { _ in findInstalledComponent() }
         .onChange(of: ready) { _, isReady in
             if isReady { launchFailed = false; downloadRequested = false; componentOpened = false }
         }
+    }
+
+    private var stageCard: some View {
+        let content = stageContent
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 9) {
+                Image(systemName: content.icon)
+                    .foregroundStyle(PanelStyle.accent)
+                    .accessibilityHidden(true)
+                Text(model.text(content.heading))
+                    .accessibilityIdentifier("compatibility-setup-state")
+            }
+            .font(.system(size: ready ? 20 : 14, weight: .semibold))
+            if let detail = content.detail {
+                Text(model.text(detail))
+                    .font(.callout).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            if launchFailed {
+                Text(model.text("无法打开，请使用下方安装帮助。"))
+                    .font(.footnote).foregroundStyle(.orange)
+            } else if stage == .approve,
+                      model.state.compatibilityMessage != Snapshot().compatibilityMessage {
+                Text(model.text(model.state.compatibilityMessage))
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(ready ? 0 : 14)
+        .background(ready ? Color.clear : Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 12))
     }
 
     @ViewBuilder private var primaryAction: some View {

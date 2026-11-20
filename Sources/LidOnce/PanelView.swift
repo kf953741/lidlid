@@ -2,33 +2,19 @@ import AppKit
 import SwiftUI
 import LidOnceCore
 
-private enum PanelStyle {
-    static let background = Color(nsColor: NSColor(name: "LidLidPanel") { appearance in
-        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-            ? NSColor(calibratedRed: 0.115, green: 0.125, blue: 0.125, alpha: 1)
-            : NSColor(calibratedRed: 0.980, green: 0.980, blue: 0.969, alpha: 1)
-    })
-    static let accent = Color(nsColor: NSColor(name: "LidLidAccent") { appearance in
-        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-            ? NSColor(calibratedRed: 0.40, green: 0.76, blue: 0.65, alpha: 1)
-            : NSColor(calibratedRed: 0.13, green: 0.40, blue: 0.34, alpha: 1)
-    })
-}
-
 struct PanelView: View {
     @ObservedObject var model: AppModel
     @State private var displayDuration: DisplayAwakeDuration = .halfHour
-    @State private var choosingDisplayDuration = false
 
     var body: some View {
         Group {
             if model.options { settings } else { main }
         }
         .padding(18)
-        .frame(width: 352)
+        .frame(width: model.language.resolved() == .english ? 440 : 352)
         .fixedSize(horizontal: false, vertical: true)
         .background(PanelStyle.background)
-        .tint(PanelStyle.accent)
+        .tint(PanelStyle.controlTint)
         .environment(\.locale, model.language.locale)
         .animation(.easeInOut(duration: 0.16), value: model.options)
     }
@@ -62,7 +48,7 @@ struct PanelView: View {
                 Divider().opacity(0.7)
                 displayAwakeRow
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, PanelStyle.modeInset)
 
             if model.store.isStoreEdition, model.store.access != .lifetime || model.store.message != nil {
                 StoreAccessView(store: model.store, text: model.text, surface: .panel)
@@ -74,10 +60,13 @@ struct PanelView: View {
         let action = model.closedLidAction
         let armed = model.state.phase == .armed || model.state.phase == .closed
         return VStack(alignment: .leading, spacing: 9) {
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 modeLabel("合盖不休眠", icon: "laptopcomputer", active: armed)
                 Spacer(minLength: 0)
                 if action == .toggle {
+                    if !model.changing && !model.enabled {
+                        closedLidDurationMenu
+                    }
                     Toggle(model.text("合盖不休眠"), isOn: Binding(
                         get: { model.enabled }, set: { if $0 != model.enabled { model.toggle() } }
                     ))
@@ -89,7 +78,7 @@ struct PanelView: View {
             closedLidContent(armed: armed)
             if model.conflict || model.state.error { notice }
         }
-        .padding(12)
+        .padding(PanelStyle.modeInset)
         .background((armed ? PanelStyle.accent : Color.primary).opacity(armed ? 0.08 : 0.045),
                     in: RoundedRectangle(cornerRadius: 13))
         .overlay {
@@ -145,12 +134,8 @@ struct PanelView: View {
                     .foregroundStyle(armed ? PanelStyle.accent : Color.secondary)
                     .accessibilityIdentifier("session-state")
                 Spacer(minLength: 2)
-                if !model.changing {
-                    if model.enabled {
-                        secondary(durationDisplay).accessibilityIdentifier("active-duration")
-                    } else {
-                        durationMenu
-                    }
+                if !model.changing && model.enabled {
+                    secondary(durationDisplay).accessibilityIdentifier("active-duration")
                 }
             }
             if !model.state.error, !model.conflict, !model.changing {
@@ -191,28 +176,15 @@ struct PanelView: View {
                 modeLabel("屏幕常亮", icon: active ? "sun.max.fill" : "sun.max", active: active)
                 Spacer(minLength: 2)
                 if !active {
-                    Button { choosingDisplayDuration.toggle() } label: {
-                        HStack(spacing: 4) {
-                            Text(displayDuration == .halfHour ? model.text("30 分钟") : displayDurationLabel(displayDuration))
-                                .fixedSize()
-                            Image(systemName: choosingDisplayDuration ? "chevron.up" : "chevron.down")
-                                .font(.system(size: 8, weight: .semibold))
-                        }
-                        .font(.system(size: 11, weight: .medium))
-                        .padding(.vertical, 4).padding(.horizontal, 6)
-                        .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 5))
+                    durationMenu(DisplayAwakeDuration.allCases, selection: displayDuration,
+                                 title: model.text("常亮时长"), label: displayDurationLabel) { duration in
+                        displayDuration = duration
                     }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.secondary)
-                    .accessibilityLabel(model.text("常亮时长") + " · " + displayDurationLabel(displayDuration))
                     .accessibilityIdentifier("display-duration-button")
                 }
                 Toggle(model.text("屏幕常亮"), isOn: Binding(
                     get: { active },
-                    set: {
-                        choosingDisplayDuration = false
-                        model.setDisplayAwake($0, duration: displayDuration)
-                    }
+                    set: { model.setDisplayAwake($0, duration: displayDuration) }
                 ))
                 .toggleStyle(.switch).labelsHidden().controlSize(.small)
                 .disabled(!model.canToggleDisplayAwake)
@@ -235,15 +207,6 @@ struct PanelView: View {
                     displayAwakeBadge("持续常亮", detail: model.text("合盖即结束"), icon: "infinity")
                         .accessibilityIdentifier("display-awake-continuous")
                 }
-            } else if choosingDisplayDuration {
-                Picker(model.text("常亮时长"), selection: $displayDuration) {
-                    ForEach(DisplayAwakeDuration.allCases, id: \.self) { duration in
-                        Text(displayDurationLabel(duration)).tag(duration)
-                    }
-                }
-                .pickerStyle(.segmented).labelsHidden().controlSize(.small)
-                .onChange(of: displayDuration) { _, _ in choosingDisplayDuration = false }
-                .accessibilityIdentifier("display-awake-duration")
             }
         }
         .help(model.text("阻止开盖时自动熄屏"))
@@ -376,29 +339,39 @@ struct PanelView: View {
         }
     }
 
-    private var durationMenu: some View {
+    private var closedLidDurationMenu: some View {
+        durationMenu([0, 30, 60, 120, 240, 480], selection: model.maximumMinutes,
+                     title: model.text("最长保持"), label: model.text.duration) { minutes in
+            model.maximumMinutes = minutes
+        }
+        .disabled(model.busy)
+        .accessibilityIdentifier("duration-menu")
+    }
+
+    private func durationMenu<Value: Hashable>(_ options: [Value], selection: Value,
+                                               title: String, label: @escaping (Value) -> String,
+                                               onSelect: @escaping (Value) -> Void) -> some View {
         Menu {
-            ForEach([0, 30, 60, 120, 240, 480], id: \.self) { minutes in
-                Button {
-                    model.maximumMinutes = minutes
-                } label: {
-                    if model.maximumMinutes == minutes {
-                        Label(model.text.duration(minutes), systemImage: "checkmark")
+            ForEach(options, id: \.self) { option in
+                Button { onSelect(option) } label: {
+                    if selection == option {
+                        Label(label(option), systemImage: "checkmark")
                     } else {
-                        Text(model.text.duration(minutes))
+                        Text(label(option))
                     }
                 }
             }
         } label: {
-            Text(durationDisplay).font(.system(size: 11, weight: .medium))
+            Text(label(selection))
         }
         .menuStyle(.borderlessButton)
         .menuIndicator(.visible)
-        .tint(.primary)
+        .font(.system(size: 11, weight: .medium))
+        .tint(PanelStyle.accent)
         .fixedSize()
-        .disabled(model.busy)
-        .accessibilityLabel("\(model.text("最长保持")): \(durationDisplay)")
-        .accessibilityIdentifier("duration-menu")
+        .padding(.horizontal, 6).padding(.vertical, 2)
+        .background(PanelStyle.accent.opacity(0.09), in: RoundedRectangle(cornerRadius: 5))
+        .accessibilityLabel("\(title): \(label(selection))")
     }
 
     private var notice: some View {
