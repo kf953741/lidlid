@@ -7,7 +7,6 @@
 @media(max-width:390px){.wrap{width:calc(100% - 32px)}.nav-actions{gap:13px}.nav-actions .button{font-size:12px;padding:11px 12px}.brand{font-size:18px}.hero h1{font-size:49px}.hero-art{height:365px}.hero-app{width:175px;right:0}.hero-actions .button{padding:15px 16px;font-size:13px}.work-types ul{font-size:12px;gap:6px}.work-types li{gap:4px}.interface-stage::before{width:290px;height:290px}.footer-links{gap:18px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}}
 .hero-art img{width:200%;max-width:none;margin-left:-100%;object-position:center}
-.hero-art img[src$="hero-en.jpg"]{width:225%;margin-left:-125%}
 body:has(dialog[open]){overflow:hidden}
 .language{display:inline-flex;align-items:center;justify-content:center;min-width:28px;min-height:36px}
 .button.small,.state-tabs button{min-height:42px}

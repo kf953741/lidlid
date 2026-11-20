@@ -1,8 +1,8 @@
 # Artwork and screenshots
 
 - `Resources/AppIcon.png` and `docs/assets/app-icon.png`: the project's owl icon, generated with the built-in `image_gen` tool and refined from the project's own earlier owl concept.
-- `zh-CN/hero-mobility.png` and `zh-CN/use-case-mobility.png`: AI-generated Chinese campaign artwork showing a developer carrying their laptop while leaving. The comparison shows open-laptop carrying with both hands and closed-laptop carrying with one hand. No edition badge or third-party product logos are used.
-- `hero-mobility.png` and `use-case-mobility.png`: English text localizations of those Chinese illustrations, preserving the character, walking poses, laptop states, layout, and artwork. Each README uses its matching language. These are conceptual scenes, not hardware test evidence.
+- `zh-CN/hero-mobility.png` and `zh-CN/use-case-mobility.png`: the Chinese campaign uses the approved 3D cartoon character, with matching shots of the open laptop carried in both hands and the closed laptop carried in one hand.
+- `hero-mobility.png` and `use-case-mobility.png`: the English versions use the same illustrations and localized typography. The website uses compressed copies, and the next App Store lead image pairs the closed-lid illustration with the native interface. See the [cartoon campaign prompts](assets/cartoon-campaign.json).
 - `en/interface-{off,on,options}.jpg` and `zh-CN/interface-{off,on,options}.jpg`: the graphite and blue native interface rendered in English and simplified Chinese with example session states. Each README uses the matching language. The website uses the same renders.
 - `workflow.svg` and `workflow.zh-CN.svg`: original code-native explanatory artwork in English and simplified Chinese.
 - The menu-bar owl is original AppKit vector drawing code in `Sources/LidOnce/OwlMenuSymbol.swift`.

@@ -11,7 +11,7 @@
   <a href="README.md">English</a>
 </p>
 
-![盖盖 · LidLid：MacBook 合盖不休眠，合上盖子，带着任务走。](docs/assets/zh-CN/hero-mobility.png)
+![盖盖 · LidLid：MacBook 合盖不休眠，任务还在跑，合盖就能走。](docs/assets/zh-CN/hero-mobility.png)
 
 **盖盖是一款 MacBook 合盖不休眠工具，让本机 Codex、Claude Code 在合盖后继续运行。** 编译或下载还没结束，你已经要出发。打开开关，合上电脑、从容带走；再次开盖，本次自动结束。
 
