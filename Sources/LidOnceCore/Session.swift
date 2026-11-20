@@ -39,6 +39,20 @@ public struct Command: Codable {
     }
 }
 
+public struct DisplayAwakeStatus: Codable {
+    public var active: Bool
+    public var requested: Bool
+    public var deadline: TimeInterval?
+    public var error: String?
+
+    public init(active: Bool, requested: Bool, deadline: TimeInterval?, error: String?) {
+        self.active = active
+        self.requested = requested
+        self.deadline = deadline
+        self.error = error
+    }
+}
+
 public struct Snapshot: Codable {
     public var compatibilityReady = false
     public var compatibilityMessage = "请先安装并授权盖盖兼容组件"
@@ -47,6 +61,7 @@ public struct Snapshot: Codable {
     public var openAwakeActive = false
     public var openAwakeMessage = "屏幕仍可自动熄灭，合盖时暂停"
     public var openAwakeError = false
+    public var displayAwake: DisplayAwakeStatus?
     public var agentPID: Int32? = nil
     public var sandboxContainer: String? = nil
     public var message = "点一次，下次合盖继续运行"

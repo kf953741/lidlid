@@ -56,6 +56,19 @@ struct StoreModelHarness {
         try Data().write(to: URL(fileURLWithPath: CommandLine.arguments[3]))
         let phase = Phase(rawValue: CommandLine.arguments[4])!
         let model = AppModel(); model.conflict = false
+        let menuCases: [(Phase, Bool, GuardianMenuState)] = [
+            (.off, false, .off), (.armed, false, .on), (.off, true, .openLid), (.armed, true, .both)
+        ]
+        for (phase, openLid, expected) in menuCases {
+            model.state.phase = phase
+            model.state.openAwakeRequested = openLid
+            precondition(model.menuState == expected, "menu icon must represent both lid modes")
+            model.state.displayAwake = DisplayAwakeStatus(active: true, requested: true, deadline: 1800, error: nil)
+            precondition(model.menuState == expected, "display keep-awake must not mask either lid mode")
+            precondition(model.menuLabel.contains(model.text("屏幕常亮")))
+            model.state.displayAwake = nil
+        }
+        model.state = Snapshot()
         model.launchAgent()
         wait("fixture must connect") { model.connected }
 
@@ -72,6 +85,7 @@ struct StoreModelHarness {
         precondition(model.canToggle)
         model.toggle()
         wait("trial must permit the first closed-lid session") { model.state.phase == phase }
+        precondition(model.menuState == .both)
         let before = commands()
         precondition(!before.contains("stop") && !before.contains("open-awake-off"))
 
@@ -91,6 +105,7 @@ struct StoreModelHarness {
         if phase == .closed { model.send(Command("test-reopened")) }
         else { model.toggle() }
         wait("manual stop or lid reopening must finish normally") { model.state.phase == .off }
+        precondition(model.menuState == .openLid)
         precondition(!model.canToggle)
         model.toggle()
         model.send(Command("arm"))

@@ -68,6 +68,7 @@ private struct CompatibilitySetupView: View {
     @State private var installedURL: URL?
     @State private var downloadRequested = false
     @State private var launchFailed = false
+    @State private var componentOpened = false
     private let refresh = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     // A user click hands this fixed, official download to the system browser.
     // The sandboxed app does not fetch, mount, copy, install or execute it.
@@ -107,7 +108,7 @@ private struct CompatibilitySetupView: View {
                         VStack(alignment: .leading, spacing: 17) {
                             step(1, "下载免费组件", "点下方按钮，在浏览器下载盖盖的官方安装包。")
                             step(2, "拖入「应用程序」", "打开下载的 DMG，将 LidLid Compatibility 拖入「应用程序」。")
-                            step(3, "完成系统授权", "打开 LidLid Compatibility，点「安装兼容服务」，按 macOS 提示授权。系统可能要求 Touch ID 或管理员密码。")
+                            step(3, "打开组件查看状态", "如果看到「安装兼容服务」，点击并按 macOS 提示操作。已经就绪时，直接返回盖盖。")
                         }
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(18).background(.quaternary.opacity(0.45), in: RoundedRectangle(cornerRadius: 14))
@@ -116,12 +117,12 @@ private struct CompatibilitySetupView: View {
                         Image(systemName: ready ? "checkmark.circle.fill" : "clock")
                             .foregroundStyle(ready ? Color.green : Color.blue)
                         VStack(alignment: .leading, spacing: 5) {
-                            Text(model.text(ready ? "兼容组件已就绪" : installedURL == nil ? "等待安装组件" : "已安装，等待连接"))
+                            Text(model.text(ready ? "兼容组件已就绪" : installedURL == nil ? "等待安装组件" : "兼容组件已安装"))
                                 .font(.callout.weight(.semibold))
                                 .accessibilityIdentifier("compatibility-setup-state")
                             Text(model.text(ready ? nextStep : installedURL == nil
                                             ? "安装并授权后，这里会自动更新，无需重启盖盖。"
-                                            : model.state.compatibilityMessage))
+                                            : installedComponentMessage))
                                 .font(.callout).foregroundStyle(.secondary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
@@ -155,11 +156,10 @@ private struct CompatibilitySetupView: View {
                         .accessibilityIdentifier("compatibility-download")
                 }
                 if let installedURL {
-                    Button(model.text(ready ? "管理组件" : "打开组件并授权")) {
-                        NSWorkspace.shared.openApplication(at: installedURL, configuration: .init()) { _, error in
-                            DispatchQueue.main.async { launchFailed = error != nil }
-                        }
-                    }.accessibilityIdentifier("compatibility-open")
+                    Button(model.text(ready ? "管理组件" : "打开兼容组件")) {
+                        openComponent(at: installedURL)
+                    }
+                    .accessibilityIdentifier("compatibility-open")
                 }
                 Spacer()
                 Link(model.text("组件帮助"), destination: URL(string: model.language.resolved() == .simplifiedChinese
@@ -171,7 +171,26 @@ private struct CompatibilitySetupView: View {
         .onAppear(perform: findInstalledComponent)
         .onReceive(refresh) { _ in findInstalledComponent() }
         .onChange(of: ready) { _, isReady in
-            if isReady { launchFailed = false; downloadRequested = false }
+            if isReady { launchFailed = false; downloadRequested = false; componentOpened = false }
+        }
+    }
+
+    private var installedComponentMessage: String {
+        if componentOpened { return "请查看组件窗口。显示「兼容组件已就绪」时，无需再次授权。" }
+        let message = model.state.compatibilityMessage
+        if message == Snapshot().compatibilityMessage { return "盖盖尚未连接，请打开组件查看状态。" }
+        return message
+    }
+
+    private func openComponent(at url: URL) {
+        let configuration = NSWorkspace.OpenConfiguration()
+        configuration.activates = true
+        NSWorkspace.shared.openApplication(at: url, configuration: configuration) { _, error in
+            DispatchQueue.main.async {
+                componentOpened = !ready && error == nil
+                launchFailed = error != nil
+                downloadRequested = false
+            }
         }
     }
 
@@ -196,6 +215,7 @@ private struct CompatibilitySetupView: View {
     }
 
     private func downloadComponent() {
+        componentOpened = false
         downloadRequested = NSWorkspace.shared.open(download)
         launchFailed = !downloadRequested
     }

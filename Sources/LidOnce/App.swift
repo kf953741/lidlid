@@ -53,12 +53,20 @@ final class AppModel: ObservableObject {
 
     var busy: Bool { state.phase != .off }
     var openAwakeEnabled: Bool { state.openAwakeRequested || state.openAwakeActive }
-    var anySessionActive: Bool { busy || openAwakeEnabled }
-    var menuState: GuardianMenuState { openAwakeEnabled ? .openLid : enabled ? .on : .off }
+    var displayAwakeEnabled: Bool { state.displayAwake?.active == true }
+    var anySessionActive: Bool { busy || openAwakeEnabled || displayAwakeEnabled }
+    var menuState: GuardianMenuState {
+        GuardianMenuState(closedLidEnabled: enabled, openLidEnabled: openAwakeEnabled)
+    }
     var canToggleOpenAwake: Bool { connected && !quitting && !(!state.openAwakeRequested && state.openAwakeActive) }
+    var canToggleDisplayAwake: Bool {
+        connected && !quitting && (displayAwakeEnabled ? state.displayAwake?.requested == true : state.lidClosed == false)
+    }
     var menuLabel: String {
-        text(openAwakeEnabled ? (enabled ? "盖盖：合盖与开盖不休眠已开启" : "盖盖：开盖不休眠已开启")
-             : enabled ? "盖盖：已开启，仅本次合盖不休眠" : "盖盖：已关闭")
+        let lidStatus = text(GuardianMenuSymbol.label(menuState))
+        guard displayAwakeEnabled else { return lidStatus }
+        return menuState == .off ? text("盖盖：屏幕常亮已开启")
+            : "\(lidStatus) · \(text("屏幕常亮"))"
     }
     // The one-shot needs armed/closed internally; the person sees a single on state.
     var enabled: Bool { state.phase == .armed || state.phase == .closed || state.phase == .restoring }
@@ -119,7 +127,7 @@ final class AppModel: ObservableObject {
             state = update; connected = true
             if update.phase == .off { requestedArm = false }
             changed?()
-            if quitting && update.phase == .off && !update.openAwakeRequested && !update.openAwakeActive { send(Command("quit")) }
+            if quitting && !anySessionActive { send(Command("quit")) }
         }
     }
     func send(_ command: Command) {
@@ -137,6 +145,10 @@ final class AppModel: ObservableObject {
         guard canToggleOpenAwake else { return }
         send(Command(enabled ? "open-awake-on" : "open-awake-off"))
     }
+    func setDisplayAwake(_ enabled: Bool, duration: DisplayAwakeDuration) {
+        guard canToggleDisplayAwake else { return }
+        send(enabled ? Command("display-awake-on", minutes: duration.rawValue) : Command("display-awake-off"))
+    }
     func quit() {
         quitting = true
         if process?.isRunning == true { send(Command("quit")) }
@@ -146,6 +158,7 @@ final class AppModel: ObservableObject {
         output?.fileHandleForReading.readabilityHandler = nil
         heartbeat?.invalidate(); heartbeat = nil
         connected = false; process = nil
+        state.displayAwake = nil  // macOS releases this process-owned assertion on exit.
         // The worker's XPC disconnect revokes its lease. Confirm recovery via
         // the independently running service before showing Off.
         if anySessionActive || requestedArm {
@@ -252,14 +265,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         popover.contentViewController?.view.window?.makeKey()
     }
     private func updateIcon() {
-        status?.button?.setAccessibilityLabel(model.brandName)
-        status?.button?.image = (model.state.error || model.state.openAwakeError)
-            ? NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: model.text(model.state.error ? model.state.message : model.state.openAwakeMessage))
-            : GuardianMenuSymbol.image(for: model.menuState)
-        if !model.state.error && !model.state.openAwakeError {
-            status?.button?.image?.accessibilityDescription = model.menuLabel
-        }
-        status?.button?.title = ""
-        status?.button?.toolTip = model.menuLabel
+        guard let button = status?.button else { return }
+        let state = model.menuState
+        let warning = model.state.error ? model.state.message
+            : model.state.openAwakeError ? model.state.openAwakeMessage : nil
+        let label = warning.map { "\(model.menuLabel) · \(model.text($0))" } ?? model.menuLabel
+        let image = state == .off && warning != nil
+            ? NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: label)
+            : GuardianMenuSymbol.image(for: state)
+        image?.accessibilityDescription = label
+        button.setAccessibilityLabel(label)
+        button.image = image
+        button.title = ""
+        button.toolTip = label
     }
 }

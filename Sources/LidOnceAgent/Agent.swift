@@ -10,6 +10,7 @@ final class SessionAgent {
     let driver: PowerDriver
     private var session = OneShot()
     private let openLid = OpenLidSession(assertion: OpenLidAssertion())
+    private let displayAwake = OpenLidSession(assertion: OpenLidAssertion(scope: .display))
     private var systemSleeping = false
     private var snapshot = Snapshot()
     private var ownsSession = false
@@ -72,6 +73,7 @@ final class SessionAgent {
             guard let self else { return }
             self.systemSleeping = true
             self.updateOpenLid()
+            self.updateDisplayAwake(lidClosed: self.snapshot.lidClosed)
             self.stop("系统正在睡眠，本次已结束")
         })
         for code in [SIGTERM, SIGINT, SIGHUP] {
@@ -98,6 +100,13 @@ final class SessionAgent {
         case "arm": arm(minutes: command.minutes ?? 0)
         case "open-awake-on": setOpenLid(true)
         case "open-awake-off": setOpenLid(false)
+        case "display-awake-on":
+            if let minutes = command.minutes, let duration = DisplayAwakeDuration(rawValue: minutes) {
+                startDisplayAwake(duration)
+            }
+        case "display-awake-off":
+            stopDisplayAwake()
+            publish()
         case "stop": stop("已取消，恢复正常合盖睡眠")
         case "quit": finish()
         default: break
@@ -145,6 +154,52 @@ final class SessionAgent {
                     ? "合盖或睡眠时暂停，开盖唤醒后恢复" : "屏幕仍可自动熄灭，合盖时暂停"
             }
         } catch { failOpenLid(error.localizedDescription) }
+    }
+    private func startDisplayAwake(_ duration: DisplayAwakeDuration) {
+        guard !exiting, !displayAwake.requested, !displayAwake.active else { return }
+        defer { publish() }
+        guard driver.bool("AppleClamshellState") == false, !systemSleeping else {
+            stopDisplayAwake(error: "请先打开电脑盖子"); return
+        }
+        guard openLidSafetyIssue() == nil else {
+            stopDisplayAwake(error: "电量或温度触发保护，屏幕常亮已关闭"); return
+        }
+        do {
+            try displayAwake.setEnabled(true, now: ProcessInfo.processInfo.systemUptime,
+                                       lidClosed: false, displayDuration: duration)
+            syncDisplayAwake()
+        } catch {
+            EventLog.write("display keep-awake: \(error.localizedDescription)")
+            stopDisplayAwake(error: "无法保持屏幕常亮，请重试")
+        }
+    }
+    private func updateDisplayAwake(lidClosed: Bool?) {
+        guard displayAwake.requested || displayAwake.active else { return }
+        guard !displayAwake.requested || openLidSafetyIssue() == nil else {
+            stopDisplayAwake(error: "电量或温度触发保护，屏幕常亮已关闭"); return
+        }
+        do {
+            try displayAwake.tick(now: ProcessInfo.processInfo.systemUptime,
+                                  lidClosed: lidClosed, systemSleeping: systemSleeping)
+            syncDisplayAwake()
+        } catch {
+            EventLog.write("display keep-awake: \(error.localizedDescription)")
+            stopDisplayAwake(error: "屏幕常亮已中断，请重新开启")
+        }
+    }
+    private func stopDisplayAwake(error: String? = nil) {
+        do {
+            try displayAwake.disable()
+            syncDisplayAwake(error: error)
+        } catch {
+            EventLog.write("display keep-awake cleanup: \(error.localizedDescription)")
+            syncDisplayAwake(error: "正在结束屏幕常亮…")
+        }
+    }
+    private func syncDisplayAwake(error: String? = nil) {
+        snapshot.displayAwake = DisplayAwakeStatus(active: displayAwake.active,
+                                                   requested: displayAwake.requested,
+                                                   deadline: displayAwake.deadline, error: error)
     }
     private func arm(minutes: Int) {
         guard !ownsSession, !restoring, !exiting else { return }
@@ -195,6 +250,7 @@ final class SessionAgent {
     private func lidChanged(_ closed: Bool) {
         snapshot.lidClosed = closed
         updateOpenLid()
+        updateDisplayAwake(lidClosed: closed)
         guard ownsSession, !restoring else { publish(); return }
         if snapshot.phase == .starting {
             if closed { stop("请先打开电脑盖子", error: true) }
@@ -247,7 +303,8 @@ final class SessionAgent {
         }
     }
     private func tick() {
-        if (ownsSession || openLid.requested || openLid.active), ProcessInfo.processInfo.systemUptime - lastHeartbeat > 12 {
+        if (ownsSession || openLid.requested || openLid.active || displayAwake.requested || displayAwake.active),
+           ProcessInfo.processInfo.systemUptime - lastHeartbeat > 12, !exiting {
             finish(); return
         }
         updateOpenLid()
@@ -255,7 +312,9 @@ final class SessionAgent {
         snapshot.battery = battery.percent; snapshot.onBattery = battery.onBattery
         snapshot.thermal = thermalLabel()
         snapshot.causesSleep = driver.bool("AppleClamshellCausesSleep")
-        if exiting && !ownsSession && !restoring && !openLid.active { publish(); exit(0) }
+        snapshot.lidClosed = driver.bool("AppleClamshellState")
+        updateDisplayAwake(lidClosed: snapshot.lidClosed)
+        if exiting && !ownsSession && !restoring && !openLid.active && !displayAwake.active { publish(); exit(0) }
         if restoring { restore(); return }
         if ownsSession {
             if ProcessInfo.processInfo.thermalState.rawValue >= ProcessInfo.ThermalState.serious.rawValue {
@@ -267,12 +326,12 @@ final class SessionAgent {
             do {
                 if try externalDisplayCount() > 0 { stop("已连接外接屏，本次结束，由 macOS 管理睡眠"); return }
             } catch { stop(error.localizedDescription, error: true); return }
-            guard let closed = driver.bool("AppleClamshellState") else {
+            guard let closed = snapshot.lidClosed else {
                 stop("合盖传感器读取中断，已恢复正常睡眠", error: true); return
             }
             lidChanged(closed)
             guard ownsSession, !restoring else { return }
-        } else { snapshot.lidClosed = driver.bool("AppleClamshellState") }
+        }
         if ProcessInfo.processInfo.systemUptime - lastCompatibilityCheck >= CompatibilityService.renewalSeconds {
             checkCompatibility()
         }
@@ -287,7 +346,7 @@ final class SessionAgent {
         session.reset(); snapshot.deadline = nil
         if ownsSession {
             restoring = true; snapshot.phase = .restoring; restoreAttempts = 0; restore()
-        } else { snapshot.phase = .off; publish(); if exiting && !openLid.active { exit(0) } }
+        } else { snapshot.phase = .off; publish(); if exiting && !openLid.active && !displayAwake.active { exit(0) } }
     }
     private func restore() {
         guard !operationPending else { return }
@@ -310,7 +369,7 @@ final class SessionAgent {
                     self.snapshot.compatibilityReady = serviceConfirmed
                     EventLog.write("restore: original sleep setting confirmed; service=\(serviceConfirmed)")
                     self.publish()
-                    if self.exiting && !self.openLid.active { exit(0) }
+                    if self.exiting && !self.openLid.active && !self.displayAwake.active { exit(0) }
                 } else {
                     // Invalidating the old connection also revokes its lease.
                     // Never report Off before the service confirms restoration.
@@ -327,6 +386,7 @@ final class SessionAgent {
     private func finish() {
         guard !exiting else { return }
         exiting = true
+        stopDisplayAwake()
         do { try openLid.disable() } catch { failOpenLid(error.localizedDescription) }
         snapshot.openAwakeRequested = openLid.requested
         snapshot.openAwakeActive = openLid.active

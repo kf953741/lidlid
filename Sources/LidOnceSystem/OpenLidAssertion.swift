@@ -2,13 +2,15 @@ import Foundation
 import IOKit.pwr_mgt
 import LidOnceCore
 
-/// Public idle-sleep API only. It does not hold the display awake, change
-/// SleepDisabled, veto manual sleep, or suppress normal clamshell sleep.
+/// Renewable public idle-sleep request. System and display requests have
+/// independent lifetimes and are released when their owning session ends.
 /// powerd releases it after 30 seconds even if this worker freezes.
 public final class OpenLidAssertion: TimedIdleAssertion {
+    public enum Scope { case system, display }
+    private let scope: Scope
     private var id: IOPMAssertionID?
     public var held: Bool { id != nil }
-    public init() {}
+    public init(scope: Scope = .system) { self.scope = scope }
     deinit { try? release() }
 
     public func renew() throws {
@@ -18,8 +20,9 @@ public final class OpenLidAssertion: TimedIdleAssertion {
                                              NSNumber(value: OpenLidSession.leaseSeconds))
         } else {
             let properties: [String: Any] = [
-                kIOPMAssertionTypeKey: kIOPMAssertionTypePreventUserIdleSystemSleep,
-                kIOPMAssertionNameKey: "LidLid · Open-lid keep awake",
+                kIOPMAssertionTypeKey: scope == .display
+                    ? kIOPMAssertionTypePreventUserIdleDisplaySleep : kIOPMAssertionTypePreventUserIdleSystemSleep,
+                kIOPMAssertionNameKey: scope == .display ? "LidLid · Keep display awake" : "LidLid · Open-lid keep awake",
                 kIOPMAssertionLevelKey: kIOPMAssertionLevelOn,
                 kIOPMAssertionTimeoutKey as String: OpenLidSession.leaseSeconds,
                 kIOPMAssertionTimeoutActionKey as String: kIOPMAssertionTimeoutActionRelease

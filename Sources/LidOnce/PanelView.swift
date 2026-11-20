@@ -17,6 +17,7 @@ private enum PanelStyle {
 
 struct PanelView: View {
     @ObservedObject var model: AppModel
+    @State private var displayDuration: DisplayAwakeDuration = .halfHour
 
     var body: some View {
         Group {
@@ -35,7 +36,7 @@ struct PanelView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: 8) {
                 Image(nsImage: GuardianMenuSymbol.image(for: model.menuState, size: 20))
-                    .renderingMode(model.openAwakeEnabled ? .original : .template)
+                    .renderingMode(model.menuState.openLidEnabled ? .original : .template)
                     .foregroundStyle(PanelStyle.accent)
                     .accessibilityHidden(true)
                 Text(model.brandName)
@@ -116,7 +117,8 @@ struct PanelView: View {
             HStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 5) {
                     Text(model.text("开盖不休眠")).font(.system(size: 12, weight: .medium))
-                    Text(model.text(model.state.openAwakeMessage))
+                    Text(model.text(model.displayAwakeEnabled && !model.state.openAwakeError
+                                    ? "合盖时暂停" : model.state.openAwakeMessage))
                         .font(.system(size: 11))
                         .foregroundStyle(model.state.openAwakeError ? Color.orange : Color.secondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -130,12 +132,90 @@ struct PanelView: View {
                 .accessibilityIdentifier("open-awake-switch")
             }
 
+            displayAwakeCard.padding(.top, 14)
+
             if model.store.isStoreEdition {
                 Divider().opacity(0.6).padding(.vertical, 18)
                 StoreAccessView(store: model.store, text: model.text, compatibilityReady: model.state.compatibilityReady)
             }
 
         }
+    }
+
+    private var displayAwakeCard: some View {
+        let active = model.displayAwakeEnabled
+        let emphasis = active ? PanelStyle.accent : Color.secondary
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 9) {
+                Image(systemName: active ? "sun.max.fill" : "sun.max")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(emphasis)
+                    .frame(width: 28, height: 28)
+                    .background(emphasis.opacity(0.10), in: RoundedRectangle(cornerRadius: 8))
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(model.text("屏幕常亮"))
+                        .font(.system(size: 12, weight: .semibold))
+                    Text(model.text(model.state.displayAwake?.error ?? "阻止开盖时自动熄屏"))
+                        .font(.system(size: 11))
+                        .foregroundStyle(model.state.displayAwake?.error == nil ? Color.secondary : .orange)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+                Toggle(model.text("屏幕常亮"), isOn: Binding(
+                    get: { active },
+                    set: { model.setDisplayAwake($0, duration: displayDuration) }
+                ))
+                .toggleStyle(.switch).labelsHidden().controlSize(.small)
+                .disabled(!model.canToggleDisplayAwake)
+                .accessibilityIdentifier("display-awake-switch")
+            }
+            if active, let status = model.state.displayAwake, status.requested {
+                if let deadline = status.deadline {
+                    TimelineView(.periodic(from: .now, by: 1)) { _ in
+                        let remaining = Int(ceil(max(0, deadline - ProcessInfo.processInfo.systemUptime)))
+                        displayAwakeBadge("剩余时间",
+                                          detail: String(format: "%02d:%02d", remaining / 60, remaining % 60),
+                                          icon: "timer")
+                    }
+                    .accessibilityIdentifier("display-awake-countdown")
+                } else {
+                    displayAwakeBadge("持续常亮", detail: model.text("合盖即结束"), icon: "infinity")
+                        .accessibilityIdentifier("display-awake-continuous")
+                }
+            } else {
+                Picker(model.text("常亮时长"), selection: $displayDuration) {
+                    ForEach(DisplayAwakeDuration.allCases, id: \.self) { duration in
+                        Text(duration == .continuous ? model.text("持续") : model.text.duration(duration.rawValue))
+                            .tag(duration)
+                    }
+                }
+                .pickerStyle(.segmented).labelsHidden().controlSize(.small)
+                .disabled(!model.canToggleDisplayAwake)
+                .accessibilityIdentifier("display-awake-duration")
+            }
+        }
+        .padding(10)
+        .background(emphasis.opacity(active ? 0.06 : 0.045), in: RoundedRectangle(cornerRadius: 12))
+        .overlay {
+            RoundedRectangle(cornerRadius: 12)
+                .strokeBorder(emphasis.opacity(active ? 0.24 : 0.14), lineWidth: 1)
+                .allowsHitTesting(false)
+        }
+    }
+
+    private func displayAwakeBadge(_ title: String, detail: String, icon: String) -> some View {
+        HStack(spacing: 6) {
+            Label(model.text(title), systemImage: icon)
+            Spacer(minLength: 0)
+            Text(detail).monospacedDigit()
+        }
+        .font(.system(size: 11, weight: .medium))
+        .foregroundStyle(PanelStyle.accent)
+        .frame(height: 20)
+        .padding(.horizontal, 8)
+        .background(PanelStyle.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 5))
+        .accessibilityElement(children: .combine)
     }
 
     private var settings: some View {

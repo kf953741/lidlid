@@ -16,6 +16,56 @@ private final class Assertion: TimedIdleAssertion {
     }
 }
 final class OpenLidSessionTests: XCTestCase {
+    func testTimedDisplaySessionReleasesAtItsDeadline() throws {
+        for duration in [DisplayAwakeDuration.halfHour, .oneHour] {
+            let driver = Assertion()
+            let session = OpenLidSession(assertion: driver)
+            try session.setEnabled(true, now: 10, lidClosed: false, displayDuration: duration)
+            let deadline = 10 + Double(duration.rawValue * 60)
+            XCTAssertEqual(session.deadline, deadline)
+            for time in stride(from: 15, to: deadline, by: 5) {
+                try session.tick(now: time, lidClosed: false)
+            }
+            XCTAssertTrue(session.active)
+            try session.tick(now: deadline, lidClosed: false)
+            XCTAssertFalse(session.active)
+            XCTAssertFalse(session.requested)
+            XCTAssertNil(session.deadline)
+        }
+    }
+
+    func testDisplaySessionEndsOnLidCloseOrSleepWithoutResuming() throws {
+        for duration in DisplayAwakeDuration.allCases {
+            for lidClosed in [true, false] {
+                let driver = Assertion()
+                let session = OpenLidSession(assertion: driver)
+                try session.setEnabled(true, now: 0, lidClosed: false, displayDuration: duration)
+                try session.tick(now: 1, lidClosed: lidClosed, systemSleeping: !lidClosed)
+                XCTAssertFalse(driver.held)
+                XCTAssertNil(session.deadline)
+                try session.tick(now: 2, lidClosed: false)
+                XCTAssertFalse(session.active)
+                XCTAssertFalse(session.requested)
+                XCTAssertEqual(driver.renewals, 1)
+            }
+        }
+    }
+
+    func testContinuousDisplaySessionHasNoDeadlineAndCanBeTurnedOff() throws {
+        let driver = Assertion()
+        let session = OpenLidSession(assertion: driver)
+        try session.setEnabled(true, now: 0, lidClosed: false, displayDuration: .continuous)
+        for time in stride(from: 5.0, through: 7200.0, by: 5) {
+            try session.tick(now: time, lidClosed: false)
+        }
+        XCTAssertNil(session.deadline)
+        XCTAssertTrue(session.requested)
+        XCTAssertTrue(driver.held)
+        try session.setEnabled(false, now: 7201, lidClosed: false)
+        XCTAssertFalse(session.requested)
+        XCTAssertFalse(driver.held)
+    }
+
     func testRenewalIsBoundedAndTurningOffReleases() throws {
         let driver = Assertion()
         let active = OpenLidSession(assertion: driver)
