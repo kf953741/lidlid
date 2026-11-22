@@ -54,4 +54,4 @@ Open **Options → Language** and select **English**, **简体中文** or **Syst
 - **This is for local work.** Jobs already running on a remote server or in the cloud do not need LidLid to keep that remote machine working.
 - **You still handle approvals.** LidLid does not approve agent permission requests or detect task completion. Reopening, manual off, the time limit or a protection condition ends the session.
 
-Need help? Email [kf953741@gmail.com](mailto:kf953741@gmail.com) or return to [LidLid](../README.md).
+Need help? Email [lidlid@bigsmart.cc](mailto:lidlid@bigsmart.cc) or return to [LidLid](../README.md).

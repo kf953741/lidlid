@@ -316,10 +316,10 @@ struct PanelView: View {
                 .buttonStyle(.link).font(.system(size: 11)).padding(.top, 16)
             HStack(spacing: 16) {
                 Link(model.text("隐私政策"), destination: URL(string: model.language.resolved() == .simplifiedChinese
-                    ? "https://lidlid.vercel.app/privacy/" : "https://lidlid.vercel.app/en/privacy/")!)
+                    ? "https://lidlid.bigsmart.cc/privacy/" : "https://lidlid.bigsmart.cc/en/privacy/")!)
                     .accessibilityIdentifier("privacy-link")
                 Link(model.text("支持与帮助"), destination: URL(string: model.language.resolved() == .simplifiedChinese
-                    ? "https://lidlid.vercel.app/support/" : "https://lidlid.vercel.app/en/support/")!)
+                    ? "https://lidlid.bigsmart.cc/support/" : "https://lidlid.bigsmart.cc/en/support/")!)
                     .accessibilityIdentifier("support-link")
             }
             .font(.system(size: 11))

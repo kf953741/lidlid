@@ -20,4 +20,4 @@
 
 修改文案后运行 node scripts/prepare-app-store.mjs。修改截图排版后先运行 swift scripts/render-app-store.swift .，再运行生成脚本。图标导出需要先通过 scripts/build.sh 构建应用。
 
-应用内已提供按界面语言打开的隐私政策与支持链接。公开客服邮箱为 kf953741@gmail.com；审核专用个人联系方式只在本机或 Apple 后台填写，不放入公开仓库。
+应用内已提供按界面语言打开的隐私政策与支持链接。公开客服邮箱为 lidlid@bigsmart.cc；审核专用个人联系方式只在本机或 Apple 后台填写，不放入公开仓库。

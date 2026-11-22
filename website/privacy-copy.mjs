@@ -1,5 +1,7 @@
 import { site } from "./site.config.mjs";
 
+const base = site.url.replace(/\/$/, "");
+
 // Shared by the public policy pages and the App Store material generator.
 export const privacyCopy = {
   "zh": {
@@ -28,11 +30,11 @@ export const privacyCopy = {
       ],
       [
         "下载与主动反馈",
-        "<p>免费兼容组件的 DMG 由盖盖官网提供，适用上述 Vercel 隐私说明。如通过 App Store 下载或购买，相关处理由 Apple 按其适用条款完成。</p><p>如果你主动通过邮件发送联系邮箱、问题描述、机型、系统版本、日志或截图，我们会使用你提供的内容协助处理请求。邮件服务商也会按其规则处理邮件的传输与存储。请只发送处理问题所需的信息，不要包含密码、密钥或无关的私人内容。你可以通过同一邮箱请求更正或删除我们能够控制的反馈内容；第三方服务的数据处理和保留由其自身政策约束。</p>"
+        "<p>免费兼容组件的 DMG 由盖盖官网提供，适用上述 Vercel 隐私说明。如通过 App Store 下载或购买，相关处理由 Apple 按其适用条款完成。</p><p>如果你主动通过邮件发送联系邮箱、问题描述、机型、系统版本、日志或截图，我们会使用你提供的内容协助处理请求。发往品牌支持邮箱的来信由 Cloudflare Email Routing 转发到开发者的 Gmail。请只发送处理问题所需的信息，不要包含密码、密钥或无关的私人内容。你可以通过同一邮箱请求更正或删除我们能够控制的反馈内容；第三方服务的数据处理和保留由其自身政策约束。</p>"
       ],
       [
         "联系与更新",
-        `<p>有关客服或隐私的问题，请发送邮件至 <a href="mailto:${site.supportEmail}">${site.supportEmail}</a>，联系开发者 Fei Kang。也可以查看<a href="https://lidlid.vercel.app/support/">盖盖支持页面</a>的使用帮助。如果后续版本改变信息处理方式，我们会更新本政策与对应的商店隐私声明。</p>`
+        `<p>有关客服或隐私的问题，请发送邮件至 <a href="mailto:${site.supportEmail}">${site.supportEmail}</a>，联系开发者 Fei Kang。也可以查看<a href="${base}/support/">盖盖支持页面</a>的使用帮助。如果后续版本改变信息处理方式，我们会更新本政策与对应的商店隐私声明。</p>`
       ]
     ]
   },
@@ -62,11 +64,11 @@ export const privacyCopy = {
       ],
       [
         "Downloads and voluntary support requests",
-        "<p>The free compatibility component DMG is served from this website under the Vercel Privacy Notice above. If you download or purchase through the App Store, Apple handles that transaction under its applicable terms.</p><p>If you choose to email us, we use the contact address, message, Mac model, macOS version, log or screenshot you provide to help address your request. Email service providers also process transmission and storage under their own policies. Send only information relevant to your request, without passwords, keys or unrelated private content. You can use the same email address to request correction or deletion of support content within our control. Third-party processing and retention are governed by those services’ own policies.</p>"
+        "<p>The free compatibility component DMG is served from this website under the Vercel Privacy Notice above. If you download or purchase through the App Store, Apple handles that transaction under its applicable terms.</p><p>If you choose to email us, we use the contact address, message, Mac model, macOS version, log or screenshot you provide to help address your request. Cloudflare Email Routing forwards mail sent to the support address to the developer’s Gmail inbox. Send only information relevant to your request, without passwords, keys or unrelated private content. You can use the same email address to request correction or deletion of support content within our control. Third-party processing and retention are governed by those services’ own policies.</p>"
       ],
       [
         "Contact and updates",
-        `<p>For support or privacy questions, email developer Fei Kang at <a href="mailto:${site.supportEmail}">${site.supportEmail}</a>. The <a href="https://lidlid.vercel.app/en/support/">LidLid support page</a> also provides usage help. If a future version changes how information is handled, we will update this policy and the corresponding App Store privacy disclosures.</p>`
+        `<p>For support or privacy questions, email developer Fei Kang at <a href="mailto:${site.supportEmail}">${site.supportEmail}</a>. The <a href="${base}/en/support/">LidLid support page</a> also provides usage help. If a future version changes how information is handled, we will update this policy and the corresponding App Store privacy disclosures.</p>`
       ]
     ]
   }

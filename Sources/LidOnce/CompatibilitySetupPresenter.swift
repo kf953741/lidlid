@@ -73,7 +73,7 @@ private struct CompatibilitySetupView: View {
     private let refresh = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     // A user click hands this fixed, official download to the system browser.
     // The sandboxed app does not fetch, mount, copy, install or execute it.
-    private let download = URL(string: "https://lidlid.vercel.app/downloads/LidLid-Compatibility-1.0.1-macOS-arm64.dmg")!
+    private let download = URL(string: "https://lidlid.bigsmart.cc/downloads/LidLid-Compatibility-1.0.1-macOS-arm64.dmg")!
 
     private var ready: Bool { model.state.compatibilityReady }
 
@@ -141,7 +141,7 @@ private struct CompatibilitySetupView: View {
                 }
                 Spacer(minLength: 0)
                 Link(model.text("组件帮助"), destination: URL(string: model.language.resolved() == .simplifiedChinese
-                    ? "https://lidlid.vercel.app/support/#compatibility" : "https://lidlid.vercel.app/en/support/#compatibility")!)
+                    ? "https://lidlid.bigsmart.cc/support/#compatibility" : "https://lidlid.bigsmart.cc/en/support/#compatibility")!)
             }
         }
         .padding(22).frame(width: size.width, height: size.height, alignment: .topLeading)

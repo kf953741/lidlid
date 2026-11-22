@@ -22,7 +22,7 @@ vercel link --yes --project lidlid --scope bigsmart
 vercel --prod --yes --scope bigsmart
 ```
 
-The project builds this directory with Node.js 24 and serves `dist/`. Production is `https://lidlid.vercel.app`. Local Vercel linkage and generated output are ignored by Git; do not commit credentials or environment files.
+The project builds this directory with Node.js 24 and serves `dist/`. Production is `https://lidlid.bigsmart.cc`. Local Vercel linkage and generated output are ignored by Git; do not commit credentials or environment files.
 
 ## Product updates
 

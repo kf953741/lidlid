@@ -4,7 +4,7 @@
 
 ## 首次设置
 
-1. 从[官网下载页](https://lidlid.vercel.app/support/#compatibility)获取免费 DMG（包内组件已使用 Developer ID 签名并通过 Apple 公证），将组件拖到 `/Applications`。开发测试构建不等于正式公证下载包。
+1. 从[官网下载页](https://lidlid.bigsmart.cc/support/#compatibility)获取免费 DMG（包内组件已使用 Developer ID 签名并通过 Apple 公证），将组件拖到 `/Applications`。开发测试构建不等于正式公证下载包。
 2. 打开组件，点击「安装兼容服务」，按 macOS 提示授权。若显示等待批准，打开「系统设置 → 通用 → 登录项与扩展」允许组件。
 3. 回到盖盖，确认组件已就绪，打开本次开关；看到「已开启」后再合盖。
 
@@ -18,6 +18,6 @@
 
 主应用退出、异常结束或连接断开时，组件会结束会话；连接挂住但未断开时，最多 30 秒租期加服务处理时间后恢复。组件保存全局睡眠设置的原值；恢复失败会保留记录并持续重试。服务异常退出后由 launchd 重启，并在接受新会话前恢复遗留记录。
 
-若组件已损坏且 Mac 无法正常睡眠，先保持开盖、停止盖盖并联系 [kf953741@gmail.com](mailto:kf953741@gmail.com)。管理员可用 `sudo pmset -a disablesleep 0` 应急恢复默认值；这会设为默认值，不能代替组件保存的精确原值。
+若组件已损坏且 Mac 无法正常睡眠，先保持开盖、停止盖盖并联系 [lidlid@bigsmart.cc](mailto:lidlid@bigsmart.cc)。管理员可用 `sudo pmset -a disablesleep 0` 应急恢复默认值；这会设为默认值，不能代替组件保存的精确原值。
 
 正式组件版本为 1.0.1。商店主应用准备上架中；DMG 仅包含免费组件。实现与开发测试见 [COMPATIBILITY-ENGINEERING.md](COMPATIBILITY-ENGINEERING.md)。

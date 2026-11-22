@@ -1,6 +1,6 @@
 LidLid Privacy Policy
 
-Updated November 2, 2026
+Updated November 22, 2026
 
 LidLid is a Mac menu bar utility developed by Fei Kang. The app runs locally, requires no account, does not upload usage data to the developer, and includes no advertising or tracking SDK.
 
@@ -28,7 +28,7 @@ Choosing a privacy or support link in the app opens the relevant page in your br
 Downloads and voluntary support requests
 The free compatibility component DMG is served from this website under the Vercel Privacy Notice above. If you download or purchase through the App Store, Apple handles that transaction under its applicable terms.
 
-If you choose to email us, we use the contact address, message, Mac model, macOS version, log or screenshot you provide to help address your request. Email service providers also process transmission and storage under their own policies. Send only information relevant to your request, without passwords, keys or unrelated private content. You can use the same email address to request correction or deletion of support content within our control. Third-party processing and retention are governed by those services’ own policies.
+If you choose to email us, we use the contact address, message, Mac model, macOS version, log or screenshot you provide to help address your request. Cloudflare Email Routing forwards mail sent to the support address to the developer’s Gmail inbox. Send only information relevant to your request, without passwords, keys or unrelated private content. You can use the same email address to request correction or deletion of support content within our control. Third-party processing and retention are governed by those services’ own policies.
 
 Contact and updates
-For support or privacy questions, email developer Fei Kang at kf953741@gmail.com (mailto:kf953741@gmail.com). The LidLid support page (https://lidlid.vercel.app/en/support/) also provides usage help. If a future version changes how information is handled, we will update this policy and the corresponding App Store privacy disclosures.
+For support or privacy questions, email developer Fei Kang at lidlid@bigsmart.cc (mailto:lidlid@bigsmart.cc). The LidLid support page (https://lidlid.bigsmart.cc/en/support/) also provides usage help. If a future version changes how information is handled, we will update this policy and the corresponding App Store privacy disclosures.

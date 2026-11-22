@@ -38,6 +38,6 @@
 
 等待 Apple 审核结果；如有审核问题，按具体反馈处理。审核通过后由持有人预览并确认公开发布时间，当前不自动发布。
 
-公开客服与隐私邮箱：[kf953741@gmail.com](mailto:kf953741@gmail.com)。不提供 GitHub 反馈入口。正式支持网址为 https://lidlid.vercel.app/zh/support/ 和 https://lidlid.vercel.app/en/support/。
+公开客服与隐私邮箱：[lidlid@bigsmart.cc](mailto:lidlid@bigsmart.cc)。不提供 GitHub 反馈入口。正式支持网址为 https://lidlid.bigsmart.cc/support/ 和 https://lidlid.bigsmart.cc/en/support/。
 
 metadata/zh-Hans 和 metadata/en-US 可复制商店字段；screenshots 按 01–05 上传对应语言 PNG。review-notes.en.txt 用于 Apple 审核。submission-inputs.example.json 仅为空模板；真实审核联系人保存在本机或 Apple 后台，不放入公开仓库。

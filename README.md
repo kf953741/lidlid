@@ -5,9 +5,9 @@
 <p align="center"><strong>Close the lid. Carry on.</strong></p>
 
 <p align="center">
-  <a href="https://lidlid.vercel.app/en/support/#app-store">Get LidLid</a> ·
-  <a href="https://lidlid.vercel.app/en/">Website</a> ·
-  <a href="https://lidlid.vercel.app/en/support/">Getting started</a> ·
+  <a href="https://lidlid.bigsmart.cc/en/support/#app-store">Get LidLid</a> ·
+  <a href="https://lidlid.bigsmart.cc/en/">Website</a> ·
+  <a href="https://lidlid.bigsmart.cc/en/support/">Getting started</a> ·
   <a href="README.zh-CN.md">简体中文 · MacBook 合盖不休眠</a>
 </p>
 
@@ -53,7 +53,7 @@
 
 For **Apple Silicon (M-series) MacBooks on macOS 14 or later**, without an external display connected. Intel Macs are not currently supported.
 
-The Mac App Store version is being prepared for launch. Its link will appear on the [website](https://lidlid.vercel.app/en/support/#app-store). Open-lid mode is always free. Try closed-lid mode free for 7 days, then unlock it for life for US$4.99 (¥38 in mainland China). No subscription or automatic renewal.
+The Mac App Store version is being prepared for launch. Its link will appear on the [website](https://lidlid.bigsmart.cc/en/support/#app-store). Open-lid mode is always free. Try closed-lid mode free for 7 days, then unlock it for life for US$4.99 (¥38 in mainland China). No subscription or automatic renewal.
 
 1. Install and open LidLid.
 2. For closed-lid mode, choose **Set up free compatibility component** in LidLid. Download the DMG, drag the component into **Applications**, open it and approve its service in macOS. LidLid detects readiness automatically.
@@ -61,13 +61,13 @@ The Mac App Store version is being prepared for launch. Its link will appear on 
 
 For open-lid keep-awake, just turn on the free switch. No component needed; your display can still sleep. Trial expiry never interrupts a session already in progress.
 
-[Setup guide](https://lidlid.vercel.app/en/support/) · [Free compatibility component DMG](https://github.com/kf953741/lidlid/releases/download/compatibility-v1.0.1/LidLid-Compatibility-1.0.1-macOS-arm64.dmg) (requires the LidLid main app).
+[Setup guide](https://lidlid.bigsmart.cc/en/support/) · [Free compatibility component DMG](https://lidlid.bigsmart.cc/downloads/LidLid-Compatibility-1.0.1-macOS-arm64.dmg) (requires the LidLid main app).
 
 Online tasks still need a connection.
 
 
 ---
 
-Questions or feedback? Email [kf953741@gmail.com](mailto:kf953741@gmail.com). If LidLid helps you, give it a Star.
+Questions or feedback? Email [lidlid@bigsmart.cc](mailto:lidlid@bigsmart.cc). If LidLid helps you, give it a Star.
 
 [MIT license](LICENSE)

@@ -53,10 +53,10 @@ for (const [locale, fields] of Object.entries(listing)) {
   }
   report.reviewScreenshots.push({ locale, file: `review-screenshots/${locale}/review-purchase-ui.png`, captureBuild: captures.review_capture_build, status: captures.purchase_review });
   const policy = privacyCopy[locale === 'zh-Hans' ? 'zh' : 'en'];
-  const text = `${policy.title}\n\n${locale === 'zh-Hans' ? '更新日期：2026 年 11 月 2 日' : 'Updated November 2, 2026'}\n\n${policy.intro}\n\n`
+  const text = `${policy.title}\n\n${locale === 'zh-Hans' ? '更新日期：2026 年 11 月 22 日' : 'Updated November 22, 2026'}\n\n${policy.intro}\n\n`
     + policy.sections.map(([title, body]) => title + '\n' + plain(body)).join('\n\n') + '\n';
   await writeFile(path.join(out, 'privacy', locale + '.txt'), text);
-  const html = `<!doctype html><html lang="${locale === 'zh-Hans' ? 'zh-CN' : 'en'}"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${e(policy.title)}</title><style>body{max-width:760px;margin:64px auto;padding:0 24px;font:17px/1.8 -apple-system,BlinkMacSystemFont,sans-serif;color:#173c33;background:#faf9f5}h1{font-size:36px;line-height:1.2}h2{font-size:23px;margin-top:36px}a{color:#236c55}code{font-size:13px;overflow-wrap:anywhere}p{margin:16px 0}.date{color:#62736b}</style><h1>${e(policy.title)}</h1><p class="date">2026-11-02</p><p>${e(policy.intro)}</p>${policy.sections.map(([title, body]) => `<section><h2>${e(title)}</h2>${body}</section>`).join('')}</html>`;
+  const html = `<!doctype html><html lang="${locale === 'zh-Hans' ? 'zh-CN' : 'en'}"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${e(policy.title)}</title><style>body{max-width:760px;margin:64px auto;padding:0 24px;font:17px/1.8 -apple-system,BlinkMacSystemFont,sans-serif;color:#173c33;background:#faf9f5}h1{font-size:36px;line-height:1.2}h2{font-size:23px;margin-top:36px}a{color:#236c55}code{font-size:13px;overflow-wrap:anywhere}p{margin:16px 0}.date{color:#62736b}</style><h1>${e(policy.title)}</h1><p class="date">2026-11-22</p><p>${e(policy.intro)}</p>${policy.sections.map(([title, body]) => `<section><h2>${e(title)}</h2>${body}</section>`).join('')}</html>`;
   await writeFile(path.join(out, 'privacy', locale + '.html'), html);
 }
 

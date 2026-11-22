@@ -71,7 +71,7 @@ Use a desk, sufficient charge, no external display, and one lid controller. Star
 3. Close the lid for about 30 seconds, then reopen it.
 4. Check whether the task actually advanced while closed. Merely finding the process alive or seeing an accepted request is insufficient.
 5. Confirm LidLid returns to off. Close the lid again and check that ordinary sleep is restored.
-6. [Report the model, OS, power source, duration, and both results](mailto:kf953741@gmail.com).
+6. [Report the model, OS, power source, duration, and both results](mailto:lidlid@bigsmart.cc).
 
 Do not deliberately overheat the Mac, drain its battery to test the cutoff during this check. Keep the lid open and restart if restoration is uncertain.
 

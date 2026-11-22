@@ -5,9 +5,9 @@
 <p align="center"><strong>合上盖子，带着任务走。</strong></p>
 
 <p align="center">
-  <a href="https://lidlid.vercel.app/support/#app-store">获取盖盖</a> ·
-  <a href="https://lidlid.vercel.app/">官网</a> ·
-  <a href="https://lidlid.vercel.app/support/">上手教程</a> ·
+  <a href="https://lidlid.bigsmart.cc/support/#app-store">获取盖盖</a> ·
+  <a href="https://lidlid.bigsmart.cc/">官网</a> ·
+  <a href="https://lidlid.bigsmart.cc/support/">上手教程</a> ·
   <a href="README.md">English</a>
 </p>
 
@@ -53,7 +53,7 @@
 
 适用于 **M 系列 MacBook、macOS 14 或更新版本**，不连接外接屏。目前不支持 Intel Mac。
 
-Mac App Store 版正在准备上架，正式开放后会在[官网](https://lidlid.vercel.app/support/#app-store)提供入口。开盖不休眠永久免费；合盖可试用 7 天，之后 US$4.99／¥38 一次购买永久解锁，没有自动续费。
+Mac App Store 版正在准备上架，正式开放后会在[官网](https://lidlid.bigsmart.cc/support/#app-store)提供入口。开盖不休眠永久免费；合盖可试用 7 天，之后 US$4.99／¥38 一次购买永久解锁，没有自动续费。
 
 1. 安装并打开盖盖。
 2. 首次合盖使用，在盖盖中点「设置免费兼容组件」：直接下载 DMG、拖入「应用程序」、打开组件并完成系统授权，盖盖会自动识别就绪。
@@ -61,12 +61,12 @@ Mac App Store 版正在准备上架，正式开放后会在[官网](https://lidl
 
 只需要开盖不休眠？直接打开免费开关，无需兼容组件，屏幕仍可自动熄灭。试用到期也不会打断已经开始的合盖会话。
 
-[安装与使用指南](https://lidlid.vercel.app/support/) · [免费兼容组件 DMG](https://github.com/kf953741/lidlid/releases/download/compatibility-v1.0.1/LidLid-Compatibility-1.0.1-macOS-arm64.dmg)（需配合盖盖主应用）。
+[安装与使用指南](https://lidlid.bigsmart.cc/support/) · [免费兼容组件 DMG](https://lidlid.bigsmart.cc/downloads/LidLid-Compatibility-1.0.1-macOS-arm64.dmg)（需配合盖盖主应用）。
 
 联网任务仍需网络连接。
 
 ---
 
-问题或建议请发邮件至 [kf953741@gmail.com](mailto:kf953741@gmail.com)。喜欢盖盖，欢迎点一个 Star。
+问题或建议请发邮件至 [lidlid@bigsmart.cc](mailto:lidlid@bigsmart.cc)。喜欢盖盖，欢迎点一个 Star。
 
 [MIT 开源协议](LICENSE)
