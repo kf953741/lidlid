@@ -9,6 +9,24 @@ enum ClosedLidAction: Equatable {
     case checking, setup, tryFree, unlock, toggle
 }
 
+extension AppAppearance {
+    var nsAppearance: NSAppearance? {
+        switch self {
+        case .system: return nil
+        case .light: return NSAppearance(named: .aqua)
+        case .dark: return NSAppearance(named: .darkAqua)
+        }
+    }
+
+    var colorScheme: ColorScheme? {
+        switch self {
+        case .system: return nil
+        case .light: return .light
+        case .dark: return .dark
+        }
+    }
+}
+
 final class AppModel: ObservableObject {
     let store = StoreAccessManager()
     private var storeChanges: AnyCancellable?
@@ -19,6 +37,12 @@ final class AppModel: ObservableObject {
     @Published var language = AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system {
         didSet {
             UserDefaults.standard.set(language.rawValue, forKey: "appLanguage")
+            changed?()
+        }
+    }
+    @Published var appearance = AppAppearance(rawValue: UserDefaults.standard.string(forKey: "appAppearance") ?? "") ?? .system {
+        didSet {
+            UserDefaults.standard.set(appearance.rawValue, forKey: "appAppearance")
             changed?()
         }
     }
@@ -286,6 +310,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         }
         popover.behavior = .transient
         popover.delegate = self
+        popover.appearance = model.appearance.nsAppearance
         popover.contentViewController = NSHostingController(rootView: PanelView(model: model))
         model.store.confirmation.willPresent = { [weak self] in self?.popover.performClose(nil) }
         model.store.confirmation.didDismiss = { [weak self] in self?.show() }
@@ -385,6 +410,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         popover.contentViewController?.view.window?.makeKey()
     }
     private func updateIcon() {
+        popover.appearance = model.appearance.nsAppearance
         guard let button = status?.button else { return }
         let state = model.menuState
         let displayAwake = model.displayAwakeEnabled

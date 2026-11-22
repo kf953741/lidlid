@@ -9,6 +9,7 @@ final class CompatibilitySetupPresenter: NSObject, NSWindowDelegate {
     private var window: NSWindow?
     private var readiness: AnyCancellable?
     private var languageSync: AnyCancellable?
+    private var appearanceSync: AnyCancellable?
 
     fileprivate static func contentSize(ready: Bool) -> NSSize {
         NSSize(width: 484, height: ready ? 152 : 286)
@@ -23,6 +24,7 @@ final class CompatibilitySetupPresenter: NSObject, NSWindowDelegate {
         let window = NSWindow(contentRect: NSRect(origin: .zero, size: size),
                               styleMask: [.titled, .closable], backing: .buffered, defer: false)
         window.title = model.text("合盖功能设置")
+        window.appearance = model.appearance.nsAppearance
         window.isReleasedWhenClosed = false
         window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
         window.delegate = self
@@ -44,6 +46,9 @@ final class CompatibilitySetupPresenter: NSObject, NSWindowDelegate {
             guard let window, let model else { return }
             window.title = model.text("合盖功能设置")
         }
+        appearanceSync = model.$appearance.dropFirst().receive(on: RunLoop.main).sink { [weak window] appearance in
+            window?.appearance = appearance.nsAppearance
+        }
         window.center()
         if let screen {
             let visible = screen.visibleFrame, size = window.frame.size
@@ -63,6 +68,7 @@ final class CompatibilitySetupPresenter: NSObject, NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         readiness = nil
         languageSync = nil
+        appearanceSync = nil
         window?.contentViewController = nil
         window = nil
         didDismiss?()
@@ -164,6 +170,7 @@ private struct CompatibilitySetupView: View {
         .padding(22).frame(width: size.width, height: size.height, alignment: .topLeading)
         .background { PanelBackdrop(material: .windowBackground) }
         .tint(PanelStyle.controlTint)
+        .preferredColorScheme(model.appearance.colorScheme)
         .environment(\.locale, model.language.locale)
         .onAppear(perform: findInstalledComponent)
         .onReceive(refresh) { _ in findInstalledComponent() }

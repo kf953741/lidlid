@@ -15,6 +15,12 @@ public enum AppLanguage: String, CaseIterable {
     }
 }
 
+public enum AppAppearance: String, CaseIterable {
+    case system
+    case light
+    case dark
+}
+
 /// The source copy is also the Chinese fallback. Agent messages stay stable on
 /// the wire and are translated when displayed, so switching languages works
 /// immediately for a running session, its last result, and recovery notices.
@@ -176,6 +182,10 @@ public struct AppText {
         "安全保护": "Protection",
         "服务与支持": "Component & support",
         "返回": "Back",
+        "开启": "On",
+        "关闭": "Off",
+        "屏幕可熄灭": "Display can sleep",
+        "防自动熄屏": "Stay lit",
         "已关闭": "Off",
         "正在开启…": "Turning on…",
         "正在关闭…": "Turning off…",
@@ -183,6 +193,10 @@ public struct AppText {
         "直到开盖": "Until reopened",
         "最晚结束": "Ends by",
         "登录时启动": "Launch at login",
+        "外观": "Appearance",
+        "系统": "Auto",
+        "浅色": "Light",
+        "深色": "Dark",
         "语言": "Language",
         "跟随系统": "System default",
         "低电量保护": "Low battery cutoff",
