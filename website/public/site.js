@@ -20,6 +20,7 @@ dialog?.addEventListener('close', () => {
 
 const tabs = [...document.querySelectorAll('[data-preview-state]')];
 const preview = document.querySelector('[data-interface-preview]');
+const previewWebp = document.querySelector('[data-interface-preview-webp]');
 const panel = document.querySelector('#interface-panel');
 tabs.forEach((tab, index) => {
   tab.addEventListener('click', () => {
@@ -29,6 +30,7 @@ tabs.forEach((tab, index) => {
       item.tabIndex = selected ? 0 : -1;
     });
     const state = tab.dataset.previewState;
+    if (previewWebp) previewWebp.srcset = previewWebp.dataset[state];
     preview.src = preview.dataset[state];
     preview.width = Number(preview.dataset[state + 'Width']);
     preview.height = Number(preview.dataset[state + 'Height']);

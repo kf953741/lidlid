@@ -12,6 +12,8 @@ cp "$BIN_DIR/LidLidCompatibility" "$APP/Contents/MacOS/LidLidCompatibility"
 cp "$BIN_DIR/LidLidSleepService" "$APP/Contents/Library/HelperTools/LidLidSleepService"
 if [[ -f "$ROOT/dist/LidLid.app/Contents/Resources/LidLid.icns" ]]; then
     cp "$ROOT/dist/LidLid.app/Contents/Resources/LidLid.icns" "$APP/Contents/Resources/LidLid.icns"
+elif [[ -f "$ROOT/docs/app-store/assets/LidLid.icns" ]]; then
+    cp "$ROOT/docs/app-store/assets/LidLid.icns" "$APP/Contents/Resources/LidLid.icns"
 fi
 cp "$ROOT/Resources/PrivacyInfo.xcprivacy" "$APP/Contents/Resources/PrivacyInfo.xcprivacy"
 codesign --force --options runtime --sign "$IDENTITY" --identifier dev.kf.lidonce.sleep-service \

@@ -39,7 +39,7 @@ public struct Command: Codable {
     }
 }
 
-public struct DisplayAwakeStatus: Codable {
+public struct DisplayAwakeStatus: Codable, Equatable {
     public var active: Bool
     public var requested: Bool
     public var deadline: TimeInterval?
@@ -53,7 +53,7 @@ public struct DisplayAwakeStatus: Codable {
     }
 }
 
-public struct Snapshot: Codable {
+public struct Snapshot: Codable, Equatable {
     public var compatibilityReady = false
     public var compatibilityMessage = "请先安装并授权盖盖兼容组件"
     public var phase: Phase = .off

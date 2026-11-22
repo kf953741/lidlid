@@ -8,9 +8,10 @@ final class CompatibilitySetupPresenter: NSObject, NSWindowDelegate {
     var didDismiss: (() -> Void)?
     private var window: NSWindow?
     private var readiness: AnyCancellable?
+    private var languageSync: AnyCancellable?
 
     fileprivate static func contentSize(ready: Bool) -> NSSize {
-        NSSize(width: 484, height: ready ? 144 : 264)
+        NSSize(width: 484, height: ready ? 152 : 286)
     }
 
     func show(model: AppModel) {
@@ -39,6 +40,10 @@ final class CompatibilitySetupPresenter: NSObject, NSWindowDelegate {
                 frame.origin = NSPoint(x: window.frame.minX, y: max(bottom, window.frame.maxY - frame.height))
                 window.setFrame(frame, display: true)
             }
+        languageSync = model.$language.dropFirst().receive(on: RunLoop.main).sink { [weak window, weak model] _ in
+            guard let window, let model else { return }
+            window.title = model.text("合盖功能设置")
+        }
         window.center()
         if let screen {
             let visible = screen.visibleFrame, size = window.frame.size
@@ -57,6 +62,7 @@ final class CompatibilitySetupPresenter: NSObject, NSWindowDelegate {
 
     func windowWillClose(_ notification: Notification) {
         readiness = nil
+        languageSync = nil
         window?.contentViewController = nil
         window = nil
         didDismiss?()
@@ -110,9 +116,18 @@ private struct CompatibilitySetupView: View {
         }
     }
 
+    private var stepIndex: Int {
+        switch stage {
+        case .download: return 1
+        case .moveToApplications: return 2
+        case .approve: return 3
+        case .ready: return 3
+        }
+    }
+
     var body: some View {
         let size = CompatibilitySetupPresenter.contentSize(ready: ready)
-        return VStack(alignment: .leading, spacing: 15) {
+        return VStack(alignment: .leading, spacing: 14) {
             if ready {
                 stageCard
             } else {
@@ -121,10 +136,12 @@ private struct CompatibilitySetupView: View {
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 4) {
                         Text(model.text("设置合盖功能"))
-                            .font(.system(size: 20, weight: .semibold))
+                            .font(.system(size: 19, weight: .semibold))
                         Text(model.text("首次使用需安装免费兼容组件。"))
                             .font(.callout).foregroundStyle(.secondary)
                     }
+                    Spacer(minLength: 0)
+                    stepIndicator
                 }
                 ScrollView { stageCard }
                     .scrollBounceBehavior(.basedOnSize)
@@ -145,13 +162,29 @@ private struct CompatibilitySetupView: View {
             }
         }
         .padding(22).frame(width: size.width, height: size.height, alignment: .topLeading)
-        .background(PanelStyle.background)
+        .background { PanelBackdrop(material: .windowBackground) }
         .tint(PanelStyle.controlTint)
         .environment(\.locale, model.language.locale)
         .onAppear(perform: findInstalledComponent)
         .onReceive(refresh) { _ in findInstalledComponent() }
         .onChange(of: ready) { _, isReady in
             if isReady { launchFailed = false; downloadRequested = false; componentOpened = false }
+        }
+    }
+
+    private var stepIndicator: some View {
+        VStack(alignment: .trailing, spacing: 5) {
+            Text(String(format: model.text("第 %d 步，共 3 步"), stepIndex))
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.secondary)
+                .monospacedDigit()
+            HStack(spacing: 4) {
+                ForEach(1...3, id: \.self) { idx in
+                    Capsule()
+                        .fill(idx <= stepIndex ? PanelStyle.controlTint : Color.primary.opacity(0.14))
+                        .frame(width: idx == stepIndex ? 16 : 8, height: 4)
+                }
+            }
         }
     }
 
@@ -165,7 +198,7 @@ private struct CompatibilitySetupView: View {
                 Text(model.text(content.heading))
                     .accessibilityIdentifier("compatibility-setup-state")
             }
-            .font(.system(size: ready ? 20 : 14, weight: .semibold))
+            .font(.system(size: ready ? 19 : 14, weight: .semibold))
             if let detail = content.detail {
                 Text(model.text(detail))
                     .font(.callout).foregroundStyle(.secondary)
@@ -182,26 +215,34 @@ private struct CompatibilitySetupView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(ready ? 0 : 14)
-        .background(ready ? Color.clear : Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 12))
+        .background(ready ? Color.clear : PanelStyle.cardBackground,
+                    in: RoundedRectangle(cornerRadius: PanelStyle.cardCorner, style: .continuous))
+        .overlay {
+            if !ready {
+                RoundedRectangle(cornerRadius: PanelStyle.cardCorner, style: .continuous)
+                    .strokeBorder(PanelStyle.subtleBorder, lineWidth: 0.75)
+                    .allowsHitTesting(false)
+            }
+        }
     }
 
     @ViewBuilder private var primaryAction: some View {
         switch stage {
         case .download:
             Button(model.text("下载免费组件"), action: downloadComponent)
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(BrandProminentButtonStyle())
                 .accessibilityIdentifier("compatibility-download")
         case .moveToApplications:
             Button(model.text("打开下载文件夹")) {
                 let downloads = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
                 launchFailed = downloads.map { !NSWorkspace.shared.open($0) } ?? true
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(BrandProminentButtonStyle())
             .accessibilityIdentifier("compatibility-download-folder")
         case .approve:
             if let installedURL {
                 Button(model.text("打开兼容组件")) { openComponent(at: installedURL) }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(BrandProminentButtonStyle())
                     .accessibilityIdentifier("compatibility-open")
             }
         case .ready:
@@ -211,11 +252,11 @@ private struct CompatibilitySetupView: View {
                     done()
                     model.store.startTrial(compatibilityReady: ready)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(BrandProminentButtonStyle())
                 .accessibilityIdentifier("start-store-trial")
             } else {
                 Button(model.text("返回盖盖"), action: done)
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(BrandProminentButtonStyle())
                     .accessibilityIdentifier("compatibility-setup-done")
             }
         }

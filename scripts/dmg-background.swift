@@ -8,9 +8,10 @@ let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: width * 2,
 bitmap.size = NSSize(width: width, height: height)
 NSGraphicsContext.saveGraphicsState()
 NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: bitmap)
-let cream = NSColor(calibratedRed: 0.973, green: 0.965, blue: 0.937, alpha: 1)
-let pine = NSColor(calibratedRed: 0.086, green: 0.235, blue: 0.216, alpha: 1)
-let muted = NSColor(calibratedRed: 0.36, green: 0.41, blue: 0.38, alpha: 1)
+let cream = NSColor(srgbRed: 0.980, green: 0.978, blue: 0.967, alpha: 1)
+let slate = NSColor(srgbRed: 0.08, green: 0.10, blue: 0.14, alpha: 1)
+let cobalt = NSColor(srgbRed: 0.15, green: 0.35, blue: 0.80, alpha: 1)
+let muted = NSColor(srgbRed: 0.34, green: 0.38, blue: 0.45, alpha: 1)
 cream.setFill()
 NSRect(x: 0, y: 0, width: width, height: height).fill()
 
@@ -20,8 +21,8 @@ func text(_ value: String, x: CGFloat, top: CGFloat, size: CGFloat,
         withAttributes: [.font: NSFont.systemFont(ofSize: size, weight: weight), .foregroundColor: color])
 }
 
-text("盖盖 · LidLid", x: 44, top: 32, size: 23, weight: .semibold, color: pine)
-text("拖入「应用程序」即可安装", x: 44, top: 80, size: 17, weight: .medium, color: pine)
+text("盖盖 · LidLid", x: 44, top: 32, size: 23, weight: .semibold, color: slate)
+text("拖入「应用程序」即可安装", x: 44, top: 80, size: 17, weight: .medium, color: slate)
 text("Drag LidLid to Applications to install.", x: 44, top: 108, size: 12, color: muted)
 
 let arrow = NSBezierPath()
@@ -33,7 +34,7 @@ arrow.line(to: NSPoint(x: 349, y: CGFloat(height - 229)))
 arrow.lineWidth = 2.5
 arrow.lineCapStyle = .round
 arrow.lineJoinStyle = .round
-pine.withAlphaComponent(0.55).setStroke()
+cobalt.withAlphaComponent(0.75).setStroke()
 arrow.stroke()
 
 text("安装后，请从「应用程序」打开盖盖。", x: 44, top: 308, size: 11, color: muted)

@@ -1,8 +1,8 @@
 import AppKit
 
 /// Original vector artwork. Designed on a 24-unit grid for an 18 pt status item.
-/// Solid fill signals a closed-lid session. Blue ink and a dot signal open-lid
-/// keep-awake. Both marks are visible when both modes are enabled.
+/// Solid fill signals a closed-lid session. Blue ink and a top-right dot signal
+/// open-lid keep-awake. A crisp top-left ring marks display keep-awake.
 enum GuardianMenuState: String, CaseIterable {
     case off, on, openLid, both
 
@@ -20,14 +20,21 @@ enum GuardianMenuState: String, CaseIterable {
 }
 
 enum GuardianMenuSymbol {
-    static let openLidColor = NSColor(srgbRed: 0.26, green: 0.50, blue: 0.94, alpha: 1)
-    static func image(for state: GuardianMenuState, size: CGFloat = 18) -> NSImage {
+    static let openLidColor = NSColor(name: "LidLidMenuBlue") { appearance in
+        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            ? NSColor(srgbRed: 0.39, green: 0.64, blue: 1.0, alpha: 1)
+            : NSColor(srgbRed: 0.15, green: 0.37, blue: 0.84, alpha: 1)
+    }
+
+    static func image(for state: GuardianMenuState, displayAwake: Bool = false,
+                      size: CGFloat = 18, accessibilityDescription: String? = nil) -> NSImage {
         let image = NSImage(size: NSSize(width: size, height: size), flipped: false) { rect in
-            draw(state, in: rect, color: state.openLidEnabled ? openLidColor : .black)
+            draw(state, displayAwake: displayAwake, in: rect,
+                 color: state.openLidEnabled ? openLidColor : .black)
             return true
         }
         image.isTemplate = !state.openLidEnabled
-        image.accessibilityDescription = label(state)
+        image.accessibilityDescription = accessibilityDescription ?? label(state)
         return image
     }
 
@@ -40,7 +47,8 @@ enum GuardianMenuSymbol {
         }
     }
 
-    static func draw(_ state: GuardianMenuState, in rect: NSRect, color: NSColor) {
+    static func draw(_ state: GuardianMenuState, displayAwake: Bool = false,
+                     in rect: NSRect, color: NSColor) {
         NSGraphicsContext.saveGraphicsState()
         defer { NSGraphicsContext.restoreGraphicsState() }
         let transform = AffineTransform(
@@ -78,7 +86,7 @@ enum GuardianMenuSymbol {
             head.stroke()
         }
 
-        if state == .off {
+        if state == .off && !displayAwake {
             for x: CGFloat in [8.1, 15.9] {
                 let lid = NSBezierPath()
                 lid.move(to: NSPoint(x: x - 2.2, y: 11.8))
@@ -93,6 +101,12 @@ enum GuardianMenuSymbol {
 
         if state.openLidEnabled {
             NSBezierPath(ovalIn: NSRect(x: 20.2, y: 0.65, width: 3.8, height: 3.8)).fill()
+        }
+
+        if displayAwake {
+            let sun = NSBezierPath(ovalIn: NSRect(x: 0.85, y: 0.85, width: 3.4, height: 3.4))
+            sun.lineWidth = 1.4
+            sun.stroke()
         }
     }
 }

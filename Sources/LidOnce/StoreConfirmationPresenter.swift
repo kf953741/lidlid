@@ -23,7 +23,7 @@ final class StoreConfirmationPresenter: NSObject, NSWindowDelegate {
         // popover. Restore the menu-bar-only policy after StoreKit finishes.
         NSApp.setActivationPolicy(.regular)
         let text = AppText(language: AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system)
-        let frame = NSRect(x: 0, y: 0, width: 640, height: 560)
+        let frame = NSRect(x: 0, y: 0, width: 540, height: 470)
         let window = NSWindow(contentRect: frame,
                               styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false)
         window.title = text("盖盖") + " · App Store"
@@ -166,18 +166,35 @@ private struct StoreProductConfirmationView: View {
     @State private var purchasing = false
 
     var body: some View {
-        VStack(spacing: 24) {
+        let isTrial = product.id == StoreProducts.trial
+        return VStack(spacing: 20) {
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: 20) {
                     ProductView(product) {
                         Image(nsImage: NSApp.applicationIconImage)
-                            .resizable().frame(width: 80, height: 80)
+                            .resizable().frame(width: 74, height: 74)
                     }
                     .productViewStyle(StorePurchaseProductStyle(text: text, purchasing: purchasing))
-                    Text(text(product.id == StoreProducts.trial
+                    VStack(alignment: .leading, spacing: 9) {
+                        trustRow("checkmark.circle.fill", "一次购买，永不自动续费")
+                        trustRow("bolt.fill", "开盖不休眠永久免费")
+                        if isTrial {
+                            trustRow("clock.badge.checkmark", "试用到期不打断当前会话")
+                        }
+                        trustRow("puzzlepiece.extension", "合盖功能需免费兼容组件")
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(14)
+                    .background(PanelStyle.cardBackground,
+                                in: RoundedRectangle(cornerRadius: PanelStyle.cardCorner, style: .continuous))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: PanelStyle.cardCorner, style: .continuous)
+                            .strokeBorder(PanelStyle.subtleBorder, lineWidth: 0.75)
+                    }
+                    Text(text(isTrial
                         ? "合盖试用 7 天。到期仅限制新会话，已开启的本次会话按原设置结束。永久版一次购买，不自动续费。合盖功能需免费兼容组件。"
                         : "一次购买，永久解锁合盖功能，不自动续费。开盖不休眠永久免费；合盖功能需免费兼容组件。"))
-                        .font(.callout).foregroundStyle(.secondary)
+                        .font(.footnote).foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -185,15 +202,31 @@ private struct StoreProductConfirmationView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
             Button(text("暂不购买"), action: cancel)
+                .buttonStyle(HoverPillButtonStyle(cornerRadius: 8, horizontalPadding: 14, verticalPadding: 6))
+                .foregroundStyle(.secondary)
                 .disabled(purchasing)
                 .accessibilityIdentifier("cancel-store-confirmation")
         }
-        .padding(40).frame(width: 640, height: 560)
+        .padding(32).frame(width: 540, height: 470)
+        .background(PanelStyle.background)
         .environment(\.locale, text.language.locale)
         .onInAppPurchaseStart { _ in
             await MainActor.run { purchasing = true; started() }
         }
         .onInAppPurchaseCompletion { _, result in completed(result) }
+    }
+
+    private func trustRow(_ icon: String, _ title: String) -> some View {
+        HStack(spacing: 9) {
+            Image(systemName: icon)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(PanelStyle.accent)
+                .frame(width: 16)
+                .accessibilityHidden(true)
+            Text(text(title))
+                .font(.system(size: 12.5))
+                .foregroundStyle(.primary)
+        }
     }
 }
 
@@ -270,7 +303,11 @@ private struct StorePurchaseButtonStyle: ButtonStyle {
         configuration.label
             .padding(.horizontal, 18).padding(.vertical, 8)
             .foregroundStyle(.white)
-            .background(Color.blue.opacity(enabled ? (configuration.isPressed ? 0.8 : 1) : 0.4),
-                        in: RoundedRectangle(cornerRadius: 12))
+            .background(PanelStyle.controlTint.opacity(enabled ? (configuration.isPressed ? 0.82 : 1) : 0.4),
+                        in: RoundedRectangle(cornerRadius: 11, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 11, style: .continuous)
+                    .strokeBorder(Color.white.opacity(enabled ? 0.16 : 0), lineWidth: 0.75)
+            }
     }
 }

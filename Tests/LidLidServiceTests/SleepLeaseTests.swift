@@ -5,11 +5,15 @@ import Security
 
 private final class Power: SleepSetting {
     var value = false
+    var rejectRead = false
     var rejectWrite = false
     var failAfterMutation = false
     var ignoreWrites = false
     var writes: [Bool] = []
-    func read() throws -> Bool { value }
+    func read() throws -> Bool {
+        if rejectRead { throw ServiceFailure("系统睡眠设置超时，请保持开盖并重试") }
+        return value
+    }
     func write(disabled: Bool) throws {
         if rejectWrite { throw ServiceFailure("test write failure") }
         if !ignoreWrites { value = disabled }; writes.append(disabled)
@@ -163,5 +167,19 @@ final class SleepLeaseTests: XCTestCase {
         try service.begin(owner: owner, minutes: 0, now: 0, lidClosed: false)
         XCTAssertThrowsError(try service.renew(owner: owner, now: .infinity))
         XCTAssertFalse(power.value)
+    }
+
+    func testTransientReadFailureDuringRenewPreservesLeaseForRetry() throws {
+        let (service, power, _) = fixture(); let owner = UUID()
+        try service.begin(owner: owner, minutes: 0, now: 0, lidClosed: false)
+        power.rejectRead = true
+        XCTAssertThrowsError(try service.renew(owner: owner, now: 5))
+        XCTAssertTrue(service.active)
+        XCTAssertTrue(power.value)
+        power.rejectRead = false
+        try service.renew(owner: owner, now: 6)
+        try service.tick(now: 35, lidClosed: true, safe: true)
+        XCTAssertTrue(service.active)
+        XCTAssertTrue(power.value)
     }
 }

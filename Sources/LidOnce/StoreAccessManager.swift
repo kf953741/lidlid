@@ -52,11 +52,6 @@ final class StoreAccessManager: ObservableObject {
             self.working = false
             await self.loadProducts()
         }
-        let tick = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
-            guard let self, case .trial = self.access else { return }
-            self.recompute()
-        }
-        RunLoop.main.add(tick, forMode: .common); timer = tick
     }
 
     func retry() {
@@ -153,5 +148,20 @@ final class StoreAccessManager: ObservableObject {
         if now.timeIntervalSince(previous) >= 60 { UserDefaults.standard.set(now, forKey: "storeLastObservedDate") }
         let next = StoreAccess.evaluate(Array(records.values), now: now)
         if access != next { access = next }
+        syncTrialTimer(now: now)
+    }
+
+    private func syncTrialTimer(now: Date) {
+        timer?.invalidate()
+        timer = nil
+        guard case .trial(let deadline) = access else { return }
+        let remaining = max(0, deadline.timeIntervalSince(now))
+        let delay = remaining <= 60 ? max(1, remaining) : min(60, remaining - 30)
+        let nextTick = Timer(timeInterval: delay, repeats: false) { [weak self] _ in
+            self?.recompute()
+        }
+        nextTick.tolerance = delay >= 30 ? 5 : 0.2
+        RunLoop.main.add(nextTick, forMode: .common)
+        timer = nextTick
     }
 }

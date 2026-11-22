@@ -18,16 +18,25 @@ final class SessionAgent {
     private var operationPending = false
     private var generation = 0
     private var lastCompatibilityCheck: TimeInterval = -10
+    private var lastConfirmedRenewal: TimeInterval = 0
+    private var transientRenewFailures = 0
     private var restoring = false
     private var restoreAttempts = 0
     private var exiting = false
     private var lastHeartbeat = ProcessInfo.processInfo.systemUptime
     private var timer: Timer?
+    private var timerInterval: TimeInterval = 0
+    private var appNapActivity: NSObjectProtocol?
     private var notificationPort: IONotificationPortRef?
     private var notifier: io_object_t = 0
     private var observers: [NSObjectProtocol] = []
     private var signals: [DispatchSourceSignal] = []
-    private var lastPublished = Data()
+    private var lastPublished: Snapshot?
+    private let encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .sortedKeys
+        return encoder
+    }()
     private var lockFD: Int32 = -1
 
     init() throws {
@@ -44,6 +53,10 @@ final class SessionAgent {
         snapshot.agentPID = getpid()
         snapshot.sandboxContainer = NSHomeDirectory()
     }
+    deinit {
+        if let activity = appNapActivity { ProcessInfo.processInfo.endActivity(activity) }
+    }
+
     func start() throws {
         guard driver.bool("AppleClamshellState") != nil else {
             throw PowerError(text: "这台 Mac 没有可读取的合盖传感器")
@@ -91,8 +104,36 @@ final class SessionAgent {
             }
             DispatchQueue.main.async { self?.finish() }
         }
-        timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in self?.tick() }
+        syncTimer()
         tick()
+    }
+    private var needsFastPolling: Bool {
+        ownsSession || restoring || exiting
+            || openLid.requested || openLid.active
+            || displayAwake.requested || displayAwake.active
+    }
+    /// Poll at 4 Hz while any keep-awake or restoration path is active, and
+    /// back off to 3 s when completely idle (hardware lid notifications still
+    /// arrive immediately through IONotificationPort).
+    private func syncTimer() {
+        let active = needsFastPolling
+        if active, appNapActivity == nil {
+            appNapActivity = ProcessInfo.processInfo.beginActivity(
+                options: .userInitiatedAllowingIdleSystemSleep,
+                reason: "Keep LidLid worker lease renewals responsive"
+            )
+        } else if !active, let activity = appNapActivity {
+            ProcessInfo.processInfo.endActivity(activity)
+            appNapActivity = nil
+        }
+        let desired: TimeInterval = active ? 0.25 : 3.0
+        guard desired != timerInterval || timer == nil else { return }
+        timer?.invalidate()
+        timerInterval = desired
+        let scheduled = Timer(timeInterval: desired, repeats: true) { [weak self] _ in self?.tick() }
+        scheduled.tolerance = desired * 0.2
+        RunLoop.main.add(scheduled, forMode: .common)
+        timer = scheduled
     }
     private func receive(_ command: Command) {
         lastHeartbeat = ProcessInfo.processInfo.systemUptime
@@ -238,6 +279,8 @@ final class SessionAgent {
                     self.snapshot.phase = .armed
                     self.snapshot.deadline = minutes > 0 ? Date().timeIntervalSince1970 + Double(minutes * 60) : nil
                     self.lastCompatibilityCheck = ProcessInfo.processInfo.systemUptime
+                    self.lastConfirmedRenewal = self.lastCompatibilityCheck
+                    self.transientRenewFailures = 0
                     self.tick()
                 case .failure(let error): self.stop(error.localizedDescription, error: true)
                 }
@@ -284,7 +327,25 @@ final class SessionAgent {
             compatibility.renew { [weak self] result in
                 guard let self, token == self.generation else { return }
                 self.operationPending = false
-                if case .failure(let error) = result { self.stop(error.localizedDescription, error: true) }
+                switch result {
+                case .success:
+                    self.lastConfirmedRenewal = ProcessInfo.processInfo.systemUptime
+                    self.transientRenewFailures = 0
+                case .failure(let error):
+                    let message = error.localizedDescription
+                    let elapsed = ProcessInfo.processInfo.systemUptime - self.lastConfirmedRenewal
+                    // A single transient pmset -g timeout during lock-screen or heavy load
+                    // leaves the 30-second daemon lease intact; retry quickly within budget.
+                    if message == "系统睡眠设置超时，请保持开盖并重试",
+                       self.transientRenewFailures < 2,
+                       elapsed < CompatibilityService.leaseSeconds - 8 {
+                        self.transientRenewFailures += 1
+                        EventLog.write("renew: transient pmset timeout (attempt \(self.transientRenewFailures)); retrying within lease")
+                        self.lastCompatibilityCheck = ProcessInfo.processInfo.systemUptime - CompatibilityService.renewalSeconds + 1.0
+                    } else {
+                        self.stop(message, error: true)
+                    }
+                }
             }
         } else {
             compatibility.status { [weak self] result in
@@ -335,11 +396,13 @@ final class SessionAgent {
         if ProcessInfo.processInfo.systemUptime - lastCompatibilityCheck >= CompatibilityService.renewalSeconds {
             checkCompatibility()
         }
+        syncTimer()
         publish()
     }
     private func stop(_ message: String, error: Bool = false) {
         if ownsSession { EventLog.write("stop: \(message)") }
         generation += 1
+        transientRenewFailures = 0
         if operationPending { compatibility.invalidate() }
         operationPending = false
         snapshot.message = message; snapshot.error = error
@@ -393,9 +456,9 @@ final class SessionAgent {
         stop("会话已结束，恢复正常睡眠")
     }
     private func publish() {
-        let encoder = JSONEncoder(); encoder.outputFormatting = .sortedKeys
-        guard let data = try? encoder.encode(snapshot), data != lastPublished else { return }
-        lastPublished = data
+        syncTimer()
+        guard snapshot != lastPublished, let data = try? encoder.encode(snapshot) else { return }
+        lastPublished = snapshot
         do { try FileHandle.standardOutput.write(contentsOf: data + Data([10])) }
         catch { if !exiting { finish() } }
     }

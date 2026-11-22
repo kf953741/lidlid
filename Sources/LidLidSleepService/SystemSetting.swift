@@ -44,16 +44,26 @@ struct SystemSleepSetting: SleepSetting {
         task.arguments = arguments
         task.environment = ["PATH": "/usr/bin:/bin", "LC_ALL": "C", "LANG": "C"]
         task.standardOutput = pipe; task.standardError = FileHandle.nullDevice
+        var output = Data()
+        let readDone = DispatchSemaphore(value: 0)
         task.terminationHandler = { _ in done.signal() }
         try task.run()
+        try? pipe.fileHandleForWriting.close()
+        DispatchQueue.global(qos: .utility).async {
+            output = pipe.fileHandleForReading.readDataToEndOfFile()
+            readDone.signal()
+        }
         guard done.wait(timeout: .now() + 4) == .success else {
             kill(task.processIdentifier, SIGKILL)
             _ = done.wait(timeout: .now() + 1)
+            _ = readDone.wait(timeout: .now() + 1)
             throw ServiceFailure("系统睡眠设置超时，请保持开盖并重试")
         }
+        guard readDone.wait(timeout: .now() + 1) == .success else {
+            throw ServiceFailure("系统睡眠设置响应异常")
+        }
         guard task.terminationStatus == 0 else { throw ServiceFailure("系统拒绝兼容组件的睡眠设置") }
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        guard data.count <= 16_384 else { throw ServiceFailure("系统睡眠设置响应异常") }
-        return String(decoding: data, as: UTF8.self)
+        guard output.count <= 16_384 else { throw ServiceFailure("系统睡眠设置响应异常") }
+        return String(decoding: output, as: UTF8.self)
     }
 }

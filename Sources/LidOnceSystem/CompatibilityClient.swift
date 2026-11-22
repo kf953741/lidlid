@@ -21,9 +21,9 @@ public final class CompatibilityClient {
         call(reply) { proxy, finish in
             proxy.status { version, active, pending in
                 guard version == CompatibilityService.version else {
-                    finish(.failure(PowerError(text: "请更新盖盖兼容组件"))); return
+                    finish(.failure(PowerError(text: "请更新盖盖兼容组件")), true); return
                 }
-                finish(.success(CompatibilityStatus(active: active, recoveryPending: pending)))
+                finish(.success(CompatibilityStatus(active: active, recoveryPending: pending)), false)
             }
         }
     }
@@ -43,13 +43,15 @@ public final class CompatibilityClient {
                          operation: @escaping (LidLidSleepServiceProtocol, @escaping (Bool, String?) -> Void) -> Void) {
         call(reply) { proxy, finish in
             operation(proxy) { success, message in
-                if success { finish(.success(())) }
-                else { finish(.failure(PowerError(text: message ?? "兼容组件暂时不可用，请重新打开组件检查"))) }
+                // A clean RPC reply means the XPC channel is healthy; keep the
+                // connection alive so transient daemon timeouts do not drop lease ownership.
+                if success { finish(.success(()), false) }
+                else { finish(.failure(PowerError(text: message ?? "兼容组件暂时不可用，请重新打开组件检查")), false) }
             }
         }
     }
     private func call<Value>(_ reply: @escaping (Result<Value, Error>) -> Void,
-                             operation: (LidLidSleepServiceProtocol, @escaping (Result<Value, Error>) -> Void) -> Void) {
+                             operation: (LidLidSleepServiceProtocol, @escaping (Result<Value, Error>, Bool) -> Void) -> Void) {
         if connection == nil {
             let channel = NSXPCConnection(machServiceName: CompatibilityService.name, options: .privileged)
             channel.remoteObjectInterface = NSXPCInterface(with: LidLidSleepServiceProtocol.self)
@@ -57,29 +59,42 @@ public final class CompatibilityClient {
             channel.resume(); connection = channel
         }
         let current = connection!
-        let gate = ReplyGate<Value> { [weak self] result in
+        let gate = ReplyGate<Value> { [weak self] result, invalidateConnection in
             DispatchQueue.main.async {
-                if case .failure = result, self?.connection === current { self?.invalidate() }
+                if invalidateConnection, self?.connection === current { self?.invalidate() }
                 reply(result)
             }
         }
         let unavailable = PowerError(text: "请先安装并授权盖盖兼容组件")
-        guard let proxy = current.remoteObjectProxyWithErrorHandler({ _ in gate.finish(.failure(unavailable)) }) as? LidLidSleepServiceProtocol else {
-            gate.finish(.failure(unavailable)); return
+        guard let proxy = current.remoteObjectProxyWithErrorHandler({ _ in gate.finish(.failure(unavailable), invalidate: true) }) as? LidLidSleepServiceProtocol else {
+            gate.finish(.failure(unavailable), invalidate: true); return
         }
-        DispatchQueue.global().asyncAfter(deadline: .now() + 6) {
-            gate.finish(.failure(PowerError(text: "兼容组件响应超时，请保持开盖并检查组件")))
+        let timeout = DispatchWorkItem {
+            gate.finish(.failure(PowerError(text: "兼容组件响应超时，请保持开盖并检查组件")), invalidate: true)
         }
-        operation(proxy) { gate.finish($0) }
+        gate.attach(timeout: timeout)
+        DispatchQueue.global().asyncAfter(deadline: .now() + 6, execute: timeout)
+        operation(proxy) { result, invalidate in gate.finish(result, invalidate: invalidate) }
     }
 }
 
 private final class ReplyGate<Value>: @unchecked Sendable {
     private let lock = NSLock()
-    private var callback: ((Result<Value, Error>) -> Void)?
-    init(_ callback: @escaping (Result<Value, Error>) -> Void) { self.callback = callback }
-    func finish(_ result: Result<Value, Error>) {
-        lock.lock(); let callback = self.callback; self.callback = nil; lock.unlock()
-        callback?(result)
+    private var callback: ((Result<Value, Error>, Bool) -> Void)?
+    private var timeout: DispatchWorkItem?
+    init(_ callback: @escaping (Result<Value, Error>, Bool) -> Void) { self.callback = callback }
+    func attach(timeout: DispatchWorkItem) {
+        lock.lock()
+        if callback == nil { lock.unlock(); timeout.cancel(); return }
+        self.timeout = timeout
+        lock.unlock()
+    }
+    func finish(_ result: Result<Value, Error>, invalidate: Bool) {
+        lock.lock()
+        let callback = self.callback; self.callback = nil
+        let timeout = self.timeout; self.timeout = nil
+        lock.unlock()
+        timeout?.cancel()
+        callback?(result, invalidate)
     }
 }

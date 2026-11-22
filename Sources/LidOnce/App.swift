@@ -25,8 +25,15 @@ final class AppModel: ObservableObject {
     @Published var maximumMinutes = UserDefaults.standard.integer(forKey: "maximumMinutes") {
         didSet { UserDefaults.standard.set(maximumMinutes, forKey: "maximumMinutes") }
     }
+    @Published var displayDuration: DisplayAwakeDuration = {
+        guard UserDefaults.standard.object(forKey: "displayAwakeMinutes") != nil else { return .halfHour }
+        return DisplayAwakeDuration(rawValue: UserDefaults.standard.integer(forKey: "displayAwakeMinutes")) ?? .halfHour
+    }() {
+        didSet { UserDefaults.standard.set(displayDuration.rawValue, forKey: "displayAwakeMinutes") }
+    }
     @Published var loginEnabled = SMAppService.mainApp.status == .enabled
     @Published var loginMessage: String?
+    var isPopoverShown = false
     var changed: (() -> Void)?
     var readyToQuit: (() -> Void)?
     var showCompatibilitySetup: (() -> Void)?
@@ -40,6 +47,11 @@ final class AppModel: ObservableObject {
     private let repairClient = CompatibilityClient()
     private var checkingRepair = false
     private var repairTimer: Timer?
+    private var appNapActivity: NSObjectProtocol?
+
+    deinit {
+        if let activity = appNapActivity { ProcessInfo.processInfo.endActivity(activity) }
+    }
 
     init() {
         storeChanges = store.objectWillChange.sink { [weak self] _ in
@@ -126,13 +138,31 @@ final class AppModel: ObservableObject {
         } catch {
             process = nil; state.error = true; state.message = "无法启动合盖进程：\(error.localizedDescription)"
         }
-        heartbeat = Timer(timeInterval: 2, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: 2, repeats: true) { [weak self] _ in
             guard let self else { return }
-            self.send(Command("ping")); self.conflict = conflictingApp()
+            self.send(Command("ping"))
+            if self.busy || self.isPopoverShown { self.conflict = conflictingApp() }
         }
+        timer.tolerance = 0.2
+        heartbeat = timer
         // Native menus use an event-tracking run-loop mode. Keep the heartbeat
         // running while a duration or language menu is open.
-        RunLoop.main.add(heartbeat!, forMode: .common)
+        RunLoop.main.add(timer, forMode: .common)
+    }
+    /// Prevent macOS App Nap from throttling the 2-second heartbeat timer when
+    /// the screen locks during an active session, without holding any system or
+    /// display sleep assertion in the UI process.
+    private func syncAppNapActivity() {
+        let shouldGuard = anySessionActive || requestedArm
+        if shouldGuard, appNapActivity == nil {
+            appNapActivity = ProcessInfo.processInfo.beginActivity(
+                options: .userInitiatedAllowingIdleSystemSleep,
+                reason: "Keep LidLid session heartbeat responsive"
+            )
+        } else if !shouldGuard, let activity = appNapActivity {
+            ProcessInfo.processInfo.endActivity(activity)
+            appNapActivity = nil
+        }
     }
     private func consume(_ data: Data) {
         guard !data.isEmpty else { return }
@@ -142,6 +172,7 @@ final class AppModel: ObservableObject {
             guard let update = try? JSONDecoder().decode(Snapshot.self, from: line) else { continue }
             state = update; connected = true
             if update.phase == .off { requestedArm = false }
+            syncAppNapActivity()
             changed?()
             if quitting && !anySessionActive { send(Command("quit")) }
         }
@@ -153,9 +184,14 @@ final class AppModel: ObservableObject {
         try? handle.write(contentsOf: data + Data([10]))
     }
     func toggle() {
+        conflict = conflictingApp()
         guard connected, state.phase != .starting, state.phase != .restoring else { return }
         if busy { send(Command("stop")) }
-        else if store.allowsStartingClosedLidSession { requestedArm = true; send(Command("arm", minutes: maximumMinutes)) }
+        else if !conflict, store.allowsStartingClosedLidSession {
+            requestedArm = true
+            syncAppNapActivity()
+            send(Command("arm", minutes: maximumMinutes))
+        }
     }
     func setOpenAwake(_ enabled: Bool) {
         guard canToggleOpenAwake else { return }
@@ -185,6 +221,7 @@ final class AppModel: ObservableObject {
             repair()
         } else if quitting { readyToQuit?() }
         else { state.error = true; state.message = "合盖进程已结束，请重新打开盖盖" }
+        syncAppNapActivity()
         changed?()
     }
     private func repair() {
@@ -203,6 +240,7 @@ final class AppModel: ObservableObject {
                 self.state.openAwakeRequested = false; self.state.openAwakeActive = false
                 self.state.message = "意外退出后已恢复睡眠，请重新打开盖盖"
                 self.requestedArm = false
+                self.syncAppNapActivity()
                 if self.quitting { self.readyToQuit?() }
             } else { self.state.message = "兼容组件正在恢复睡眠，请保持开盖" }
             self.changed?()
@@ -222,9 +260,13 @@ final class AppModel: ObservableObject {
             loginMessage = SMAppService.mainApp.status == .requiresApproval ? "请在系统设置 → 登录项中允许盖盖" : nil
         } catch { loginEnabled = SMAppService.mainApp.status == .enabled; loginMessage = error.localizedDescription }
     }
+    func refreshSystemState() {
+        conflict = conflictingApp()
+        loginEnabled = SMAppService.mainApp.status == .enabled
+    }
 }
 
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     let model = AppModel()
     private var status: NSStatusItem!
     private let popover = NSPopover()
@@ -243,6 +285,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             button.setAccessibilityLabel(model.brandName)
         }
         popover.behavior = .transient
+        popover.delegate = self
         popover.contentViewController = NSHostingController(rootView: PanelView(model: model))
         model.store.confirmation.willPresent = { [weak self] in self?.popover.performClose(nil) }
         model.store.confirmation.didDismiss = { [weak self] in self?.show() }
@@ -258,7 +301,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.reply(toApplicationShouldTerminate: true)
         }
         model.launchAgent(); updateIcon()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { self.show() }
+        if !launchedAtLogin() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { self.show() }
+        }
+    }
+    private func launchedAtLogin() -> Bool {
+        guard let event = NSAppleEventManager.shared().currentAppleEvent,
+              event.eventID == kAEOpenApplication,
+              let prop = event.paramDescriptor(forKeyword: keyAEPropData) else { return false }
+        return prop.enumCodeValue == keyAELaunchedAsLogInItem
+    }
+    func popoverWillShow(_ notification: Notification) {
+        model.isPopoverShown = true
+        model.refreshSystemState()
+    }
+    func popoverDidClose(_ notification: Notification) {
+        model.isPopoverShown = false
     }
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool { show(); return true }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -267,12 +325,58 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
     @objc private func clicked() {
         if NSApp.currentEvent?.type == .rightMouseUp {
-            if !model.store.allowsStartingClosedLidSession && !model.enabled { show() }
-            else { model.toggle() }
+            showQuickMenu()
             return
         }
         if popover.isShown { popover.performClose(nil) } else { show() }
     }
+    private func showQuickMenu() {
+        guard let button = status?.button else { return }
+        popover.performClose(nil)
+        model.refreshSystemState()
+        let menu = NSMenu()
+        menu.autoenablesItems = false
+
+        let closedItem = NSMenuItem(title: model.text("合盖不休眠"), action: #selector(quickToggleClosedLid), keyEquivalent: "")
+        closedItem.target = self
+        closedItem.state = model.enabled ? .on : .off
+        closedItem.isEnabled = model.closedLidAction == .toggle ? model.canToggle : model.closedLidAction != .checking
+        menu.addItem(closedItem)
+
+        let openItem = NSMenuItem(title: model.text("开盖不休眠"), action: #selector(quickToggleOpenLid), keyEquivalent: "")
+        openItem.target = self
+        openItem.state = model.openAwakeEnabled ? .on : .off
+        openItem.isEnabled = model.canToggleOpenAwake
+        menu.addItem(openItem)
+
+        let displayItem = NSMenuItem(title: model.text("屏幕常亮"), action: #selector(quickToggleDisplayAwake), keyEquivalent: "")
+        displayItem.target = self
+        displayItem.state = model.displayAwakeEnabled ? .on : .off
+        displayItem.isEnabled = model.canToggleDisplayAwake
+        menu.addItem(displayItem)
+
+        menu.addItem(.separator())
+
+        let optionsItem = NSMenuItem(title: model.text("选项…"), action: #selector(quickOpenOptions), keyEquivalent: ",")
+        optionsItem.target = self
+        menu.addItem(optionsItem)
+
+        let quitItem = NSMenuItem(title: model.text("退出盖盖"), action: #selector(quickQuit), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
+
+        status.menu = menu
+        button.performClick(nil)
+        status.menu = nil
+    }
+    @objc private func quickToggleClosedLid() {
+        if model.closedLidAction == .toggle { model.toggle() }
+        else { model.options = false; show() }
+    }
+    @objc private func quickToggleOpenLid() { model.setOpenAwake(!model.openAwakeEnabled) }
+    @objc private func quickToggleDisplayAwake() { model.setDisplayAwake(!model.displayAwakeEnabled, duration: model.displayDuration) }
+    @objc private func quickOpenOptions() { model.options = true; show() }
+    @objc private func quickQuit() { NSApp.terminate(nil) }
     private func show() {
         if model.store.confirmation.activateIfPresented() || compatibilitySetup.activateIfPresented() { return }
         guard let button = status?.button else { return }
@@ -283,12 +387,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func updateIcon() {
         guard let button = status?.button else { return }
         let state = model.menuState
+        let displayAwake = model.displayAwakeEnabled
         let warning = model.state.error ? model.state.message
             : model.state.openAwakeError ? model.state.openAwakeMessage : nil
         let label = warning.map { "\(model.menuLabel) · \(model.text($0))" } ?? model.menuLabel
-        let image = state == .off && warning != nil
+        let image = state == .off && !displayAwake && warning != nil
             ? NSImage(systemSymbolName: "exclamationmark.triangle", accessibilityDescription: label)
-            : GuardianMenuSymbol.image(for: state)
+            : GuardianMenuSymbol.image(for: state, displayAwake: displayAwake, accessibilityDescription: label)
         image?.accessibilityDescription = label
         button.setAccessibilityLabel(label)
         button.image = image

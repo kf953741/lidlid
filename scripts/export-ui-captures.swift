@@ -24,11 +24,13 @@ for (store, docs, web) in locales {
         let jpeg = NSBitmapImageRep(cgImage: ctx.makeImage()!).representation(using: .jpeg, properties: [.compressionFactor: 0.92])!
         var targets = [
             "docs/assets/\(docs)/demo-\(state).jpg",
-            "docs/assets/\(docs)/interface-\(state).jpg",
-            "website/public/assets/interface-\(state)-\(web).jpg"
+            "docs/assets/\(docs)/interface-\(state).jpg"
         ]
+        if state == "on" || state == "off" {
+            targets.append("website/public/assets/interface-\(state)-\(web).jpg")
+        }
         if state == "off" {
-            targets += ["docs/assets/\(docs)/demo-reopened.jpg", "website/public/assets/interface-reopened-\(web).jpg"]
+            targets.append("docs/assets/\(docs)/demo-reopened.jpg")
         }
         for target in targets { try jpeg.write(to: root.appendingPathComponent(target)) }
         sizes[state] = [w, h]
