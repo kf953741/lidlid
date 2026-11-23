@@ -182,4 +182,35 @@ final class SleepLeaseTests: XCTestCase {
         XCTAssertTrue(service.active)
         XCTAssertTrue(power.value)
     }
+
+    func testTemporaryRemovalPauseExpiresAndDoesNotBrickDaemon() throws {
+        let (service, power, _) = fixture()
+        try service.begin(owner: UUID(), ownerUID: 501, minutes: 0, now: 10, lidClosed: false)
+        XCTAssertEqual(service.activeOwnerUID, 501)
+        try service.pauseAndRestore(now: 12, duration: 30)
+        XCTAssertFalse(power.value)
+        XCTAssertNil(service.activeOwnerUID)
+        XCTAssertTrue(service.isPaused(at: 20))
+        XCTAssertThrowsError(try service.begin(owner: UUID(), minutes: 0, now: 20, lidClosed: false))
+        // After the 30-second removal window expires, a cancelled unregister leaves the daemon usable.
+        XCTAssertFalse(service.isPaused(at: 42))
+        try service.begin(owner: UUID(), ownerUID: 502, minutes: 0, now: 42, lidClosed: false)
+        XCTAssertTrue(service.active)
+        XCTAssertEqual(service.activeOwnerUID, 502)
+        XCTAssertTrue(power.value)
+    }
+
+    func testRemovalPauseClearsWhenRestoreFails() throws {
+        let (service, power, _) = fixture()
+        try service.begin(owner: UUID(), minutes: 0, now: 0, lidClosed: false)
+        power.rejectWrite = true
+        XCTAssertThrowsError(try service.pauseAndRestore(now: 5, duration: 30))
+        XCTAssertTrue(service.recoveryPending)
+        XCTAssertFalse(service.isPaused(at: 6))
+        power.rejectWrite = false
+        try service.tick(now: 7, lidClosed: false, safe: true)
+        XCTAssertFalse(service.recoveryPending)
+        try service.begin(owner: UUID(), minutes: 0, now: 8, lidClosed: false)
+        XCTAssertTrue(service.active)
+    }
 }

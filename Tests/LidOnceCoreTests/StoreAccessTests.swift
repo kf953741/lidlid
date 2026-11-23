@@ -73,4 +73,23 @@ final class StoreAccessTests: XCTestCase {
         }
     }
 
+    func testForwardClockJumpThenCorrectionDoesNotExpireTrial() {
+        var clock = StoreAccessClock(wallTime: start, lastObserved: nil, uptime: 100)
+        // Simulate a bogus +30 day system clock jump while awake, then immediate correction.
+        let jumped = clock.now(wallTime: start.addingTimeInterval(30 * 86400), uptime: 105)
+        XCTAssertEqual(jumped, start.addingTimeInterval(5))
+        XCTAssertEqual(clock.persistableDate, start)
+        let corrected = clock.now(wallTime: start.addingTimeInterval(10), uptime: 110)
+        XCTAssertEqual(corrected, start.addingTimeInterval(10))
+        let trial = [StorePurchase(productID: StoreProducts.trial, originalPurchaseDate: start)]
+        XCTAssertEqual(StoreAccess.evaluate(trial, now: corrected), .trial(until: start.addingTimeInterval(7 * 86400)))
+    }
+
+    func testSnapshotBackwardCompatibleDecoding() throws {
+        let minimal = #"{"phase":"off","message":"ok"}"#.data(using: .utf8)!
+        let decoded = try JSONDecoder().decode(Snapshot.self, from: minimal)
+        XCTAssertEqual(decoded.phase, .off)
+        XCTAssertTrue(decoded.hasLidSensor)
+        XCTAssertNil(decoded.sleepDisabled)
+    }
 }

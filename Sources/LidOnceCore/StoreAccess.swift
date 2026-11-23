@@ -55,17 +55,33 @@ public enum StoreAccess: Equatable {
 
 /// Keep the trial clock moving during a running process even if wall time is
 /// moved backwards. A persisted high-water date also prevents simple rollback
-/// across relaunches. This is an offline safeguard, not a server clock.
+/// across relaunches. Guard against sudden bogus forward clock jumps within an
+/// awake session so correcting a bad system date cannot prematurely expire a trial.
 public struct StoreAccessClock {
+    private static let maxUnverifiedForwardJump: TimeInterval = 12 * 60 * 60
     private var anchorDate: Date
     private var anchorUptime: TimeInterval
+    private var persistedAnchor: Date
     public init(wallTime: Date, lastObserved: Date?, uptime: TimeInterval) {
-        anchorDate = max(wallTime, lastObserved ?? wallTime)
+        let initial = max(wallTime, lastObserved ?? wallTime)
+        anchorDate = initial
+        persistedAnchor = initial
         anchorUptime = uptime
     }
     public mutating func now(wallTime: Date, uptime: TimeInterval) -> Date {
-        anchorDate = max(wallTime, anchorDate.addingTimeInterval(max(0, uptime - anchorUptime)))
+        let deltaUptime = max(0, uptime - anchorUptime)
+        let monotonic = anchorDate.addingTimeInterval(deltaUptime)
+        let forwardDelta = wallTime.timeIntervalSince(monotonic)
+        if forwardDelta > Self.maxUnverifiedForwardJump {
+            // Sudden huge forward jump while awake: keep monotonic baseline so
+            // correcting an accidental system-clock error does not burn a trial.
+            anchorDate = monotonic
+        } else {
+            anchorDate = max(wallTime, monotonic)
+            persistedAnchor = max(persistedAnchor, anchorDate)
+        }
         anchorUptime = uptime
         return anchorDate
     }
+    public var persistableDate: Date { persistedAnchor }
 }

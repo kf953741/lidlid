@@ -57,6 +57,8 @@ public struct Snapshot: Codable, Equatable {
     public var compatibilityReady = false
     public var compatibilityMessage = "请先安装并授权盖盖兼容组件"
     public var phase: Phase = .off
+    public var hasLidSensor = true
+    public var sleepDisabled: Bool? = nil
     public var openAwakeRequested = false
     public var openAwakeActive = false
     public var openAwakeMessage = "屏幕仍可自动熄灭，合盖时暂停"
@@ -73,4 +75,29 @@ public struct Snapshot: Codable, Equatable {
     public var deadline: TimeInterval? = nil
     public var error = false
     public init() {}
+
+    public init(from decoder: Decoder) throws {
+        let defaults = Snapshot()
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        compatibilityReady = try c.decodeIfPresent(Bool.self, forKey: .compatibilityReady) ?? defaults.compatibilityReady
+        compatibilityMessage = try c.decodeIfPresent(String.self, forKey: .compatibilityMessage) ?? defaults.compatibilityMessage
+        phase = try c.decodeIfPresent(Phase.self, forKey: .phase) ?? defaults.phase
+        hasLidSensor = try c.decodeIfPresent(Bool.self, forKey: .hasLidSensor) ?? defaults.hasLidSensor
+        sleepDisabled = try c.decodeIfPresent(Bool.self, forKey: .sleepDisabled)
+        openAwakeRequested = try c.decodeIfPresent(Bool.self, forKey: .openAwakeRequested) ?? defaults.openAwakeRequested
+        openAwakeActive = try c.decodeIfPresent(Bool.self, forKey: .openAwakeActive) ?? defaults.openAwakeActive
+        openAwakeMessage = try c.decodeIfPresent(String.self, forKey: .openAwakeMessage) ?? defaults.openAwakeMessage
+        openAwakeError = try c.decodeIfPresent(Bool.self, forKey: .openAwakeError) ?? defaults.openAwakeError
+        displayAwake = try c.decodeIfPresent(DisplayAwakeStatus.self, forKey: .displayAwake)
+        agentPID = try c.decodeIfPresent(Int32.self, forKey: .agentPID)
+        sandboxContainer = try c.decodeIfPresent(String.self, forKey: .sandboxContainer)
+        message = try c.decodeIfPresent(String.self, forKey: .message) ?? defaults.message
+        lidClosed = try c.decodeIfPresent(Bool.self, forKey: .lidClosed)
+        causesSleep = try c.decodeIfPresent(Bool.self, forKey: .causesSleep)
+        battery = try c.decodeIfPresent(Int.self, forKey: .battery)
+        onBattery = try c.decodeIfPresent(Bool.self, forKey: .onBattery) ?? defaults.onBattery
+        thermal = try c.decodeIfPresent(String.self, forKey: .thermal) ?? defaults.thermal
+        deadline = try c.decodeIfPresent(TimeInterval.self, forKey: .deadline)
+        error = try c.decodeIfPresent(Bool.self, forKey: .error) ?? defaults.error
+    }
 }

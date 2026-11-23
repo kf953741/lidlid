@@ -79,23 +79,31 @@ private struct CompatibilitySetupView: View {
     @ObservedObject var model: AppModel
     let done: () -> Void
     @State private var installedURL: URL?
+    @State private var installedBuild: Int?
     @State private var downloadRequested = false
     @State private var launchFailed = false
     @State private var componentOpened = false
     private let refresh = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
-    // A user click hands this fixed, official download to the system browser.
+    // Build 1 (1.0.0) rejected Apple-re-signed App Store/TestFlight clients.
+    private static let minimumSupportedBuild = 2
+    // Stable official redirect so App Store users always get the latest notarized DMG.
     // The sandboxed app does not fetch, mount, copy, install or execute it.
-    private let download = URL(string: "https://lidlid.bigsmart.cc/downloads/LidLid-Compatibility-1.0.1-macOS-arm64.dmg")!
+    private let download = URL(string: "https://lidlid.bigsmart.cc/downloads/compatibility-latest.dmg")!
 
     private var ready: Bool { model.state.compatibilityReady }
+    private var needsUpdate: Bool {
+        if model.state.compatibilityMessage == "请更新盖盖兼容组件" { return true }
+        if let build = installedBuild, build < Self.minimumSupportedBuild { return true }
+        return false
+    }
 
     private enum Stage: Equatable {
-        case download, moveToApplications, approve, ready
+        case download, moveToApplications, update, approve, ready
     }
 
     private var stage: Stage {
         if ready { return .ready }
-        if installedURL != nil { return .approve }
+        if installedURL != nil { return needsUpdate ? .update : .approve }
         return downloadRequested ? .moveToApplications : .download
     }
 
@@ -106,6 +114,9 @@ private struct CompatibilitySetupView: View {
         case .moveToApplications:
             return ("拖入「应用程序」", "从浏览器下载列表打开 DMG，将 LidLid Compatibility 拖入「应用程序」。",
                     "folder.badge.plus")
+        case .update:
+            return ("更新兼容组件", "已安装的兼容组件版本过旧，请下载新版并替换「应用程序」中的旧组件。",
+                    "arrow.down.circle")
         case .approve:
             return ("打开组件查看状态", componentOpened
                     ? "若 macOS 要求允许后台服务，请在组件窗口点「打开系统设置」。连接后会自动显示就绪。"
@@ -124,7 +135,7 @@ private struct CompatibilitySetupView: View {
 
     private var stepIndex: Int {
         switch stage {
-        case .download: return 1
+        case .download, .update: return 1
         case .moveToApplications: return 2
         case .approve: return 3
         case .ready: return 3
@@ -154,8 +165,11 @@ private struct CompatibilitySetupView: View {
             }
             HStack(spacing: 12) {
                 primaryAction
-                if stage == .moveToApplications {
+                if stage == .moveToApplications || stage == .approve {
                     Button(model.text("重新下载"), action: downloadComponent).buttonStyle(.link)
+                }
+                if stage == .update, let installedURL {
+                    Button(model.text("管理组件")) { openComponent(at: installedURL) }.buttonStyle(.link)
                 }
                 if ready, let installedURL {
                     Button(model.text("管理组件")) { openComponent(at: installedURL) }
@@ -172,8 +186,14 @@ private struct CompatibilitySetupView: View {
         .tint(PanelStyle.controlTint)
         .preferredColorScheme(model.appearance.colorScheme)
         .environment(\.locale, model.language.locale)
-        .onAppear(perform: findInstalledComponent)
-        .onReceive(refresh) { _ in findInstalledComponent() }
+        .onAppear {
+            findInstalledComponent()
+            model.send(Command("check-compatibility"))
+        }
+        .onReceive(refresh) { _ in
+            findInstalledComponent()
+            if !ready { model.send(Command("check-compatibility")) }
+        }
         .onChange(of: ready) { _, isReady in
             if isReady { launchFailed = false; downloadRequested = false; componentOpened = false }
         }
@@ -246,6 +266,10 @@ private struct CompatibilitySetupView: View {
             }
             .buttonStyle(BrandProminentButtonStyle())
             .accessibilityIdentifier("compatibility-download-folder")
+        case .update:
+            Button(model.text("下载新版兼容组件"), action: downloadComponent)
+                .buttonStyle(BrandProminentButtonStyle())
+                .accessibilityIdentifier("compatibility-download-update")
         case .approve:
             if let installedURL {
                 Button(model.text("打开兼容组件")) { openComponent(at: installedURL) }
@@ -281,8 +305,15 @@ private struct CompatibilitySetupView: View {
     }
 
     private func findInstalledComponent() {
-        installedURL = NSWorkspace.shared.urlsForApplications(withBundleIdentifier: "dev.kf.lidonce.compatibility")
-            .first { $0.deletingLastPathComponent().path == "/Applications" }
+        let found = NSWorkspace.shared.urlsForApplications(withBundleIdentifier: "dev.kf.lidonce.compatibility")
+            .first { $0.standardizedFileURL.resolvingSymlinksInPath().deletingLastPathComponent().path == "/Applications" }
+        installedURL = found
+        if let found, let bundle = Bundle(url: found),
+           let raw = bundle.infoDictionary?["CFBundleVersion"] as? String {
+            installedBuild = Int(raw)
+        } else {
+            installedBuild = nil
+        }
     }
 
     private func downloadComponent() {

@@ -11,6 +11,8 @@ final class StoreAccessManager: ObservableObject {
     var now = Date(timeIntervalSince1970: 1_800_000_000)
     let isStoreEdition = true
     var allowsStartingClosedLidSession: Bool { permits(Command("arm")) }
+    var canPurchaseLifetime: Bool { true }
+    var hasMissingProducts: Bool { false }
     func permits(_ command: Command) -> Bool {
         access.permits(command, inStoreEdition: true, at: now)
     }

@@ -18,7 +18,7 @@ public final class CompatibilityClient {
         connection?.invalidate(); connection = nil
     }
     public func status(_ reply: @escaping (Result<CompatibilityStatus, Error>) -> Void) {
-        call(reply) { proxy, finish in
+        call(timeoutSeconds: 6, reply: reply) { proxy, finish in
             proxy.status { version, active, pending in
                 guard version == CompatibilityService.version else {
                     finish(.failure(PowerError(text: "请更新盖盖兼容组件")), true); return
@@ -28,20 +28,21 @@ public final class CompatibilityClient {
         }
     }
     public func begin(minutes: Int, _ reply: @escaping (Result<Void, Error>) -> Void) {
-        command(reply) { $0.beginSession(minutes: minutes, reply: $1) }
+        command(timeoutSeconds: 10, reply: reply) { $0.beginSession(minutes: minutes, reply: $1) }
     }
     public func renew(_ reply: @escaping (Result<Void, Error>) -> Void) {
-        command(reply) { $0.renewSession(reply: $1) }
+        command(timeoutSeconds: 6, reply: reply) { $0.renewSession(reply: $1) }
     }
     public func end(_ reply: @escaping (Result<Void, Error>) -> Void) {
-        command(reply) { $0.endSession(reply: $1) }
+        command(timeoutSeconds: 10, reply: reply) { $0.endSession(reply: $1) }
     }
     public func prepareForRemoval(_ reply: @escaping (Result<Void, Error>) -> Void) {
-        command(reply) { $0.prepareForRemoval(reply: $1) }
+        command(timeoutSeconds: 10, reply: reply) { $0.prepareForRemoval(reply: $1) }
     }
-    private func command(_ reply: @escaping (Result<Void, Error>) -> Void,
+    private func command(timeoutSeconds: TimeInterval,
+                         reply: @escaping (Result<Void, Error>) -> Void,
                          operation: @escaping (LidLidSleepServiceProtocol, @escaping (Bool, String?) -> Void) -> Void) {
-        call(reply) { proxy, finish in
+        call(timeoutSeconds: timeoutSeconds, reply: reply) { proxy, finish in
             operation(proxy) { success, message in
                 // A clean RPC reply means the XPC channel is healthy; keep the
                 // connection alive so transient daemon timeouts do not drop lease ownership.
@@ -50,7 +51,8 @@ public final class CompatibilityClient {
             }
         }
     }
-    private func call<Value>(_ reply: @escaping (Result<Value, Error>) -> Void,
+    private func call<Value>(timeoutSeconds: TimeInterval,
+                             reply: @escaping (Result<Value, Error>) -> Void,
                              operation: (LidLidSleepServiceProtocol, @escaping (Result<Value, Error>, Bool) -> Void) -> Void) {
         if connection == nil {
             let channel = NSXPCConnection(machServiceName: CompatibilityService.name, options: .privileged)
@@ -73,7 +75,7 @@ public final class CompatibilityClient {
             gate.finish(.failure(PowerError(text: "兼容组件响应超时，请保持开盖并检查组件")), invalidate: true)
         }
         gate.attach(timeout: timeout)
-        DispatchQueue.global().asyncAfter(deadline: .now() + 6, execute: timeout)
+        DispatchQueue.global().asyncAfter(deadline: .now() + timeoutSeconds, execute: timeout)
         operation(proxy) { result, invalidate in gate.finish(result, invalidate: invalidate) }
     }
 }

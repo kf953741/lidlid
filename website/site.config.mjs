@@ -1,7 +1,7 @@
 export const site = {
   url: process.env.SITE_URL || 'https://lidlid.bigsmart.cc',
   version: '1.6.1',
-  updated: '2026-11-22',
+  updated: '2026-11-23',
   developer: 'Fei Kang',
   supportEmail: 'lidlid@bigsmart.cc',
   compatibilityVersion: '1.0.1',

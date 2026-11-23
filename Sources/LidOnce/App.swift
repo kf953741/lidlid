@@ -6,7 +6,7 @@ import LidOnceCore
 import LidOnceSystem
 
 enum ClosedLidAction: Equatable {
-    case checking, setup, tryFree, unlock, toggle
+    case checking, unsupportedMac, setup, tryFree, unlock, toggle
 }
 
 extension AppAppearance {
@@ -28,11 +28,14 @@ extension AppAppearance {
 }
 
 final class AppModel: ObservableObject {
+    private static let allowedMaximumMinutes: Set<Int> = [0, 30, 60, 120, 240, 480]
     let store = StoreAccessManager()
     private var storeChanges: AnyCancellable?
     @Published var state = Snapshot()
     @Published var connected = false
     @Published var conflict = conflictingApp()
+    @Published var conflictQuitHint = false
+    @Published var copiedRecoveryCommand = false
     @Published var options = false
     @Published var language = AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system {
         didSet {
@@ -46,8 +49,15 @@ final class AppModel: ObservableObject {
             changed?()
         }
     }
-    @Published var maximumMinutes = UserDefaults.standard.integer(forKey: "maximumMinutes") {
-        didSet { UserDefaults.standard.set(maximumMinutes, forKey: "maximumMinutes") }
+    @Published var maximumMinutes: Int = {
+        let saved = UserDefaults.standard.integer(forKey: "maximumMinutes")
+        return allowedMaximumMinutes.contains(saved) ? saved : 0
+    }() {
+        didSet {
+            let valid = Self.allowedMaximumMinutes.contains(maximumMinutes) ? maximumMinutes : 0
+            if valid != maximumMinutes { maximumMinutes = valid; return }
+            UserDefaults.standard.set(valid, forKey: "maximumMinutes")
+        }
     }
     @Published var displayDuration: DisplayAwakeDuration = {
         guard UserDefaults.standard.object(forKey: "displayAwakeMinutes") != nil else { return .halfHour }
@@ -66,6 +76,11 @@ final class AppModel: ObservableObject {
     private var output: Pipe?
     private var buffer = Data()
     private var heartbeat: Timer?
+    private var quitTimeout: Timer?
+    private var reconnectWorkItem: DispatchWorkItem?
+    private var reconnectAttempts = 0
+    private var agentGeneration = 0
+    private let writeQueue = DispatchQueue(label: "dev.kf.lidonce.agent-stdin", qos: .userInitiated)
     private var quitting = false
     private var requestedArm = false
     private let repairClient = CompatibilityClient()
@@ -95,12 +110,18 @@ final class AppModel: ObservableObject {
     var openAwakeEnabled: Bool { state.openAwakeRequested || state.openAwakeActive }
     var displayAwakeEnabled: Bool { state.displayAwake?.active == true }
     var anySessionActive: Bool { busy || openAwakeEnabled || displayAwakeEnabled }
+    var sleepStuckDisabled: Bool {
+        state.phase == .off && !state.compatibilityReady && state.sleepDisabled == true
+    }
+    var canReconnect: Bool { !connected && process == nil && !quitting && state.phase == .off }
     var menuState: GuardianMenuState {
         GuardianMenuState(closedLidEnabled: enabled, openLidEnabled: openAwakeEnabled)
     }
     var canToggleOpenAwake: Bool { connected && !quitting && !(!state.openAwakeRequested && state.openAwakeActive) }
     var canToggleDisplayAwake: Bool {
-        connected && !quitting && (displayAwakeEnabled ? state.displayAwake?.requested == true : state.lidClosed == false)
+        connected && !quitting && (displayAwakeEnabled
+            ? state.displayAwake?.requested == true
+            : (!state.hasLidSensor || state.lidClosed == false))
     }
     var menuLabel: String {
         let lidStatus = text(GuardianMenuSymbol.label(menuState))
@@ -111,10 +132,16 @@ final class AppModel: ObservableObject {
     // The one-shot needs armed/closed internally; the person sees a single on state.
     var enabled: Bool { state.phase == .armed || state.phase == .closed || state.phase == .restoring }
     var changing: Bool { state.phase == .starting || state.phase == .restoring }
-    var canToggle: Bool { connected && !changing && (enabled || store.allowsStartingClosedLidSession) && (!conflict || enabled) && (enabled || state.compatibilityReady) }
+    var canToggle: Bool {
+        connected && state.hasLidSensor && !changing
+            && (enabled || store.allowsStartingClosedLidSession)
+            && (!conflict || enabled)
+            && (enabled || state.compatibilityReady)
+    }
     var closedLidAction: ClosedLidAction {
         if busy { return .toggle }
         if !connected { return .checking }
+        if !state.hasLidSensor { return .unsupportedMac }
         if !state.compatibilityReady { return .setup }
         guard store.isStoreEdition else { return .toggle }
         switch store.access {
@@ -142,36 +169,60 @@ final class AppModel: ObservableObject {
         }
     }
     func launchAgent() {
-        guard process == nil else { return }
+        guard process == nil, !quitting else { return }
+        reconnectWorkItem?.cancel(); reconnectWorkItem = nil
+        agentGeneration += 1
+        let generation = agentGeneration
+        buffer.removeAll(keepingCapacity: true)
         let child = AgentProcess.make(), stdin = Pipe(), stdout = Pipe()
         child.standardInput = stdin; child.standardOutput = stdout
         child.standardError = FileHandle.nullDevice
         input = stdin; output = stdout; process = child
-        stdout.fileHandleForReading.readabilityHandler = { [weak self] handle in
-            let data = handle.availableData
-            DispatchQueue.main.async { self?.consume(data) }
-        }
-        child.terminationHandler = { [weak self] _ in
-            DispatchQueue.main.async { self?.agentEnded() }
-        }
         do {
             try child.run()
             // Only the agent may own the read end; a UI crash must cause EOF.
             try? stdin.fileHandleForReading.close()
             try? stdout.fileHandleForWriting.close()
         } catch {
-            process = nil; state.error = true; state.message = "无法启动合盖进程：\(error.localizedDescription)"
+            process = nil; input = nil; output = nil
+            state.error = true; state.message = "无法启动合盖进程：\(error.localizedDescription)"
+            scheduleReconnectIfAppropriate()
+            changed?()
+            return
+        }
+        let readHandle = stdout.fileHandleForReading
+        // Serial stdout reader guarantees every snapshot written before exit
+        // reaches main FIFO before agentEnded(generation:) executes.
+        DispatchQueue.global(qos: .utility).async { [weak self] in
+            while true {
+                let data = readHandle.availableData
+                if data.isEmpty { break }
+                DispatchQueue.main.async { self?.consume(data, generation: generation) }
+            }
+            child.waitUntilExit()
+            DispatchQueue.main.async { self?.agentEnded(generation: generation) }
         }
         let timer = Timer(timeInterval: 2, repeats: true) { [weak self] _ in
             guard let self else { return }
             self.send(Command("ping"))
-            if self.busy || self.isPopoverShown { self.conflict = conflictingApp() }
+            if self.busy || self.isPopoverShown {
+                self.conflict = conflictingApp()
+                if !self.conflict { self.conflictQuitHint = false }
+            }
         }
         timer.tolerance = 0.2
         heartbeat = timer
         // Native menus use an event-tracking run-loop mode. Keep the heartbeat
         // running while a duration or language menu is open.
         RunLoop.main.add(timer, forMode: .common)
+    }
+    func reconnect() {
+        guard canReconnect else { return }
+        reconnectAttempts = 0
+        state.error = false
+        state.message = "正在连接盖盖…"
+        changed?()
+        launchAgent()
     }
     /// Prevent macOS App Nap from throttling the 2-second heartbeat timer when
     /// the screen locks during an active session, without holding any system or
@@ -188,13 +239,15 @@ final class AppModel: ObservableObject {
             appNapActivity = nil
         }
     }
-    private func consume(_ data: Data) {
-        guard !data.isEmpty else { return }
+    private func consume(_ data: Data, generation: Int) {
+        guard generation == agentGeneration, process != nil, !data.isEmpty else { return }
         buffer.append(data)
         while let newline = buffer.firstIndex(of: 10) {
             let line = Data(buffer[..<newline]); buffer.removeSubrange(...newline)
             guard let update = try? JSONDecoder().decode(Snapshot.self, from: line) else { continue }
             state = update; connected = true
+            // Only reset backoff after a healthy worker startup, not a fatal exit snapshot.
+            if !update.error && update.agentPID != nil { reconnectAttempts = 0 }
             if update.phase == .off { requestedArm = false }
             syncAppNapActivity()
             changed?()
@@ -205,11 +258,29 @@ final class AppModel: ObservableObject {
         guard store.permits(command) else { return }
         guard process?.isRunning == true, let handle = input?.fileHandleForWriting,
               let data = try? JSONEncoder().encode(command) else { return }
-        try? handle.write(contentsOf: data + Data([10]))
+        let payload = data + Data([10])
+        writeQueue.async {
+            try? handle.write(contentsOf: payload)
+        }
+    }
+    func clearTransientError() {
+        guard connected, state.phase == .off, state.error, !sleepStuckDisabled else { return }
+        state.error = false
+        state.message = state.hasLidSensor ? Snapshot().message : "这台 Mac 没有可读取的合盖传感器"
+        send(Command("clear-error"))
+        changed?()
+    }
+    func copyRecoveryCommand() {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString("sudo pmset -a disablesleep 0", forType: .string)
+        copiedRecoveryCommand = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { [weak self] in
+            self?.copiedRecoveryCommand = false
+        }
     }
     func toggle() {
         conflict = conflictingApp()
-        guard connected, state.phase != .starting, state.phase != .restoring else { return }
+        guard connected, state.hasLidSensor, state.phase != .starting, state.phase != .restoring else { return }
         if busy { send(Command("stop")) }
         else if !conflict, store.allowsStartingClosedLidSession {
             requestedArm = true
@@ -227,26 +298,64 @@ final class AppModel: ObservableObject {
     }
     func quit() {
         quitting = true
-        if process?.isRunning == true { send(Command("quit")) }
-        else { readyToQuit?() }
+        reconnectWorkItem?.cancel(); reconnectWorkItem = nil
+        if process?.isRunning == true {
+            send(Command("quit"))
+            quitTimeout?.invalidate()
+            // Bounded quit safeguard so a stalled worker can never block macOS logout/shutdown.
+            let timeout = Timer(timeInterval: 6, repeats: false) { [weak self] _ in
+                guard let self else { return }
+                if let child = self.process, child.isRunning {
+                    // SIGKILL ensures a stuck worker releases agent.lock and its XPC peer immediately.
+                    kill(child.processIdentifier, SIGKILL)
+                }
+                self.repairTimer?.invalidate(); self.repairTimer = nil
+                self.readyToQuit?()
+            }
+            RunLoop.main.add(timeout, forMode: .common)
+            quitTimeout = timeout
+        } else {
+            readyToQuit?()
+        }
     }
-    private func agentEnded() {
-        output?.fileHandleForReading.readabilityHandler = nil
+    private func agentEnded(generation: Int) {
+        guard generation == agentGeneration else { return }
         heartbeat?.invalidate(); heartbeat = nil
-        connected = false; process = nil
+        connected = false; process = nil; input = nil; output = nil
         state.displayAwake = nil  // macOS releases this process-owned assertion on exit.
         // The worker's XPC disconnect revokes its lease. Confirm recovery via
         // the independently running service before showing Off.
         if anySessionActive || requestedArm {
             state.phase = .restoring; state.error = true
             state.message = "合盖进程意外结束，正在恢复睡眠…"
-            repairTimer = Timer(timeInterval: 0.25, repeats: true) { [weak self] _ in self?.repair() }
+            repairTimer?.invalidate()
+            repairTimer = Timer(timeInterval: 0.5, repeats: true) { [weak self] _ in self?.repair() }
             RunLoop.main.add(repairTimer!, forMode: .common)
             repair()
-        } else if quitting { readyToQuit?() }
-        else { state.error = true; state.message = "合盖进程已结束，请重新打开盖盖" }
+        } else if quitting {
+            quitTimeout?.invalidate(); quitTimeout = nil
+            readyToQuit?()
+        } else {
+            state.error = true
+            if state.message == Snapshot().message || state.message.isEmpty {
+                state.message = "合盖进程已结束，请重新打开盖盖"
+            }
+            scheduleReconnectIfAppropriate()
+        }
         syncAppNapActivity()
         changed?()
+    }
+    private func scheduleReconnectIfAppropriate() {
+        guard !quitting, reconnectAttempts < 3 else { return }
+        let delays: [TimeInterval] = [1.0, 3.0, 6.0]
+        let delay = delays[min(reconnectAttempts, delays.count - 1)]
+        reconnectAttempts += 1
+        let work = DispatchWorkItem { [weak self] in
+            guard let self, self.canReconnect else { return }
+            self.launchAgent()
+        }
+        reconnectWorkItem = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
     }
     private func repair() {
         guard !checkingRepair else { return }
@@ -255,8 +364,10 @@ final class AppModel: ObservableObject {
             guard let self else { return }
             self.checkingRepair = false
             let confirmed: Bool
-            if case .success(let status) = result { confirmed = !status.active && !status.recoveryPending }
-            else { confirmed = (try? PowerDriver().bool("SleepDisabled")) == false }
+            switch result {
+            case .success(let status): confirmed = !status.active && !status.recoveryPending
+            case .failure: confirmed = (try? PowerDriver().bool("SleepDisabled")) == false
+            }
             if confirmed {
                 EventLog.write("parent recovery: original sleep setting confirmed after agent exit")
                 self.repairTimer?.invalidate(); self.repairTimer = nil
@@ -265,7 +376,12 @@ final class AppModel: ObservableObject {
                 self.state.message = "意外退出后已恢复睡眠，请重新打开盖盖"
                 self.requestedArm = false
                 self.syncAppNapActivity()
-                if self.quitting { self.readyToQuit?() }
+                if self.quitting {
+                    self.quitTimeout?.invalidate(); self.quitTimeout = nil
+                    self.readyToQuit?()
+                } else {
+                    self.scheduleReconnectIfAppropriate()
+                }
             } else { self.state.message = "兼容组件正在恢复睡眠，请保持开盖" }
             self.changed?()
         }
@@ -274,8 +390,16 @@ final class AppModel: ObservableObject {
         showCompatibilitySetup?()
     }
     func exitReference() {
-        for app in NSRunningApplication.runningApplications(withBundleIdentifier: "com.rathonyi.clamshell") { app.terminate() }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { self.conflict = conflictingApp() }
+        let apps = NSRunningApplication.runningApplications(withBundleIdentifier: "com.rathonyi.clamshell")
+        var requested = false
+        for app in apps {
+            if app.terminate() { requested = true }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.conflict = conflictingApp()
+            // App Sandbox blocks terminating third-party apps; guide user when blocked.
+            self.conflictQuitHint = self.conflict && !requested
+        }
     }
     func setLogin(_ enabled: Bool) {
         do {
@@ -286,22 +410,38 @@ final class AppModel: ObservableObject {
     }
     func refreshSystemState() {
         conflict = conflictingApp()
+        if !conflict { conflictQuitHint = false }
         loginEnabled = SMAppService.mainApp.status == .enabled
+        if state.phase == .off {
+            state.sleepDisabled = try? PowerDriver().bool("SleepDisabled")
+        }
     }
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
+    private static let reopenNotification = Notification.Name("dev.kf.lidonce.reopen")
     let model = AppModel()
     private var status: NSStatusItem!
     private let popover = NSPopover()
     private let compatibilitySetup = CompatibilitySetupPresenter()
     private var allowsTermination = false
+    private var reopenObserver: NSObjectProtocol?
     func applicationDidFinishLaunching(_ notification: Notification) {
         if let id = Bundle.main.bundleIdentifier,
-           NSRunningApplication.runningApplications(withBundleIdentifier: id).contains(where: { $0.processIdentifier != getpid() }) {
+           let existing = NSRunningApplication.runningApplications(withBundleIdentifier: id)
+            .first(where: { $0.processIdentifier != getpid() }) {
+            DistributedNotificationCenter.default().postNotificationName(
+                Self.reopenNotification, object: nil, userInfo: nil, deliverImmediately: true
+            )
+            existing.activate()
             NSApp.terminate(nil); return
         }
         NSApp.setActivationPolicy(.accessory)
+        reopenObserver = DistributedNotificationCenter.default().addObserver(
+            forName: Self.reopenNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.show()
+        }
         status = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = status.button {
             button.target = self; button.action = #selector(clicked)
@@ -311,7 +451,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         popover.behavior = .transient
         popover.delegate = self
         popover.appearance = model.appearance.nsAppearance
-        popover.contentViewController = NSHostingController(rootView: PanelView(model: model))
+        let hosting = NSHostingController(rootView: PanelView(model: model))
+        hosting.sizingOptions = .preferredContentSize
+        popover.contentViewController = hosting
         model.store.confirmation.willPresent = { [weak self] in self?.popover.performClose(nil) }
         model.store.confirmation.didDismiss = { [weak self] in self?.show() }
         compatibilitySetup.willPresent = { [weak self] in self?.popover.performClose(nil) }
@@ -342,6 +484,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     }
     func popoverDidClose(_ notification: Notification) {
         model.isPopoverShown = false
+        model.clearTransientError()
     }
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool { show(); return true }
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
@@ -365,7 +508,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
         let closedItem = NSMenuItem(title: model.text("合盖不休眠"), action: #selector(quickToggleClosedLid), keyEquivalent: "")
         closedItem.target = self
         closedItem.state = model.enabled ? .on : .off
-        closedItem.isEnabled = model.closedLidAction == .toggle ? model.canToggle : model.closedLidAction != .checking
+        closedItem.isEnabled = model.closedLidAction == .toggle
+            ? model.canToggle
+            : (model.closedLidAction != .checking && model.closedLidAction != .unsupportedMac)
         menu.addItem(closedItem)
 
         let openItem = NSMenuItem(title: model.text("开盖不休眠"), action: #selector(quickToggleOpenLid), keyEquivalent: "")

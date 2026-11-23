@@ -253,6 +253,21 @@ public struct AppText {
         "会话已结束，恢复正常睡眠": "Session ended. Normal sleep restored.",
         "找不到合盖控制接口": "Lid-control interface not found",
         "无法确认显示器状态": "Couldn't confirm display status",
-        "读取显示器失败": "Couldn't read display status"
+        "读取显示器失败": "Couldn't read display status",
+        "已取消兼容服务注册": "Compatibility service registration cancelled",
+        "系统睡眠当前处于禁用状态，且无法连接兼容服务。可在终端运行恢复命令还原默认睡眠：": "System sleep is currently disabled and the compatibility service is unreachable. Run this command in Terminal to restore normal sleep:",
+        "复制命令": "Copy command",
+        "已复制": "Copied",
+        "移除服务": "Remove service",
+        "更新兼容组件": "Update compatibility component",
+        "已安装的兼容组件版本过旧，请下载新版并替换「应用程序」中的旧组件。": "The installed compatibility component is outdated. Download the latest version and replace the copy in Applications.",
+        "下载新版兼容组件": "Download updated component",
+        "合盖功能仅支持 MacBook": "Closed-lid mode requires a MacBook",
+        "未检测到合盖传感器，开盖不休眠与屏幕常亮仍可正常使用。": "No lid sensor detected. Open-lid and display keep-awake remain available.",
+        "请在菜单栏或活动监视器中手动退出 Clamshell。": "Quit Clamshell manually from the menu bar or Activity Monitor.",
+        "系统睡眠仍被禁用": "System sleep is still disabled",
+        "无法连接兼容服务，请在终端运行以下命令恢复默认睡眠：": "Compatibility service unreachable. Run this command in Terminal to restore normal sleep:",
+        "重新连接": "Reconnect",
+        "接通电源": "AC power"
     ]
 }

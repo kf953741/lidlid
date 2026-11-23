@@ -8,6 +8,7 @@ import LidLidServiceProtocol
 /// renewable lease; this process never changes persistent system sleep settings.
 final class SessionAgent {
     let driver: PowerDriver
+    private var hasLidSensor = true
     private var session = OneShot()
     private let openLid = OpenLidSession(assertion: OpenLidAssertion())
     private let displayAwake = OpenLidSession(assertion: OpenLidAssertion(scope: .display))
@@ -27,6 +28,7 @@ final class SessionAgent {
     private var timer: Timer?
     private var timerInterval: TimeInterval = 0
     private var appNapActivity: NSObjectProtocol?
+    private var displaySleepProcess: Process?
     private var notificationPort: IONotificationPortRef?
     private var notifier: io_object_t = 0
     private var observers: [NSObjectProtocol] = []
@@ -58,35 +60,33 @@ final class SessionAgent {
     }
 
     func start() throws {
-        guard driver.bool("AppleClamshellState") != nil else {
-            throw PowerError(text: "这台 Mac 没有可读取的合盖传感器")
+        hasLidSensor = driver.bool("AppleClamshellState") != nil
+        snapshot.hasLidSensor = hasLidSensor
+        if hasLidSensor {
+            try registerLidNotifications()
+        } else {
+            snapshot.message = "这台 Mac 没有可读取的合盖传感器"
         }
-        notificationPort = IONotificationPortCreate(kIOMainPortDefault)
-        guard let port = notificationPort else { throw PowerError(text: "无法监听合盖事件") }
-        IONotificationPortSetDispatchQueue(port, .main)
-        let result = IOServiceAddInterestNotification(port, driver.root, kIOGeneralInterest, { context, _, type, argument in
-            guard let context else { return }
-            // kIOPMMessageClamshellStateChange = sys_iokit | sub_iokit_powermanagement | 0x100
-            if type == 0xe0034100 {
-                let agent = Unmanaged<SessionAgent>.fromOpaque(context).takeUnretainedValue()
-                let closed = (UInt(bitPattern: argument) & 1) != 0
-                agent.lidChanged(closed)
-            }
-        }, Unmanaged.passUnretained(self).toOpaque(), &notifier)
-        guard result == kIOReturnSuccess else { throw PowerError(text: "合盖事件监听失败") }
         let center = NSWorkspace.shared.notificationCenter
         for name in [NSWorkspace.screensDidSleepNotification, NSWorkspace.screensDidWakeNotification,
                      NSWorkspace.didWakeNotification] {
             observers.append(center.addObserver(forName: name, object: nil, queue: .main) { [weak self] _ in
-                if name == NSWorkspace.didWakeNotification { self?.systemSleeping = false }
-                self?.checkCompatibility()
+                guard let self else { return }
+                if name == NSWorkspace.didWakeNotification {
+                    self.systemSleeping = false
+                    // Prevent spurious heartbeat timeout right after waking from sleep.
+                    self.lastHeartbeat = ProcessInfo.processInfo.systemUptime
+                }
+                if self.hasLidSensor { self.checkCompatibility() }
             })
         }
         observers.append(center.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { [weak self] _ in
             guard let self else { return }
             self.systemSleeping = true
-            self.updateOpenLid()
-            self.updateDisplayAwake(lidClosed: self.snapshot.lidClosed)
+            let battery = batteryReading()
+            let lidClosed = self.effectiveLidClosed(self.snapshot.lidClosed)
+            self.updateOpenLid(battery: battery, lidClosed: lidClosed)
+            self.updateDisplayAwake(battery: battery, lidClosed: lidClosed)
             self.stop("系统正在睡眠，本次已结束")
         })
         for code in [SIGTERM, SIGINT, SIGHUP] {
@@ -107,14 +107,38 @@ final class SessionAgent {
         syncTimer()
         tick()
     }
+    private func registerLidNotifications() throws {
+        guard notificationPort == nil else { return }
+        notificationPort = IONotificationPortCreate(kIOMainPortDefault)
+        guard let port = notificationPort else { throw PowerError(text: "无法监听合盖事件") }
+        IONotificationPortSetDispatchQueue(port, .main)
+        let result = IOServiceAddInterestNotification(port, driver.root, kIOGeneralInterest, { context, _, type, argument in
+            guard let context else { return }
+            // kIOPMMessageClamshellStateChange = sys_iokit | sub_iokit_powermanagement | 0x100
+            if type == 0xe0034100 {
+                let agent = Unmanaged<SessionAgent>.fromOpaque(context).takeUnretainedValue()
+                let closed = (UInt(bitPattern: argument) & 1) != 0
+                agent.lidChanged(closed)
+            }
+        }, Unmanaged.passUnretained(self).toOpaque(), &notifier)
+        guard result == kIOReturnSuccess else {
+            IONotificationPortDestroy(port)
+            notificationPort = nil
+            throw PowerError(text: "合盖事件监听失败")
+        }
+    }
+    private func effectiveLidClosed(_ raw: Bool?) -> Bool? {
+        if let raw { return raw }
+        return hasLidSensor ? nil : false
+    }
     private var needsFastPolling: Bool {
         ownsSession || restoring || exiting
             || openLid.requested || openLid.active
             || displayAwake.requested || displayAwake.active
     }
-    /// Poll at 4 Hz while any keep-awake or restoration path is active, and
-    /// back off to 3 s when completely idle (hardware lid notifications still
-    /// arrive immediately through IONotificationPort).
+    /// Poll at 1 Hz while active (0.5 s while restoring) because hardware lid
+    /// notifications arrive immediately through IONotificationPort, and back off
+    /// to 3 s when completely idle.
     private func syncTimer() {
         let active = needsFastPolling
         if active, appNapActivity == nil {
@@ -126,7 +150,7 @@ final class SessionAgent {
             ProcessInfo.processInfo.endActivity(activity)
             appNapActivity = nil
         }
-        let desired: TimeInterval = active ? 0.25 : 3.0
+        let desired: TimeInterval = restoring ? 0.5 : (active ? 1.0 : 3.0)
         guard desired != timerInterval || timer == nil else { return }
         timer?.invalidate()
         timerInterval = desired
@@ -148,6 +172,14 @@ final class SessionAgent {
         case "display-awake-off":
             stopDisplayAwake()
             publish()
+        case "clear-error":
+            if !ownsSession && !restoring && snapshot.error {
+                snapshot.error = false
+                snapshot.message = hasLidSensor ? Snapshot().message : "这台 Mac 没有可读取的合盖传感器"
+                publish()
+            }
+        case "check-compatibility":
+            if hasLidSensor { checkCompatibility() }
         case "stop": stop("已取消，恢复正常合盖睡眠")
         case "quit": finish()
         default: break
@@ -155,13 +187,15 @@ final class SessionAgent {
     }
     private func setOpenLid(_ enabled: Bool) {
         guard !exiting else { return }
+        let battery = batteryReading()
+        let lidClosed = effectiveLidClosed(driver.bool("AppleClamshellState"))
         do {
             snapshot.openAwakeError = false
-            if enabled, let message = openLidSafetyIssue() { throw PowerError(text: message) }
+            if enabled, let message = openLidSafetyIssue(battery: battery) { throw PowerError(text: message) }
             try openLid.setEnabled(enabled, now: ProcessInfo.processInfo.systemUptime,
-                                   lidClosed: driver.bool("AppleClamshellState"), systemSleeping: systemSleeping)
+                                   lidClosed: lidClosed, systemSleeping: systemSleeping)
             EventLog.write("open-lid idle protection requested=\(enabled); bounded assertion=30s")
-            updateOpenLid()
+            updateOpenLid(battery: battery, lidClosed: lidClosed)
         } catch { failOpenLid(error.localizedDescription) }
         publish()
     }
@@ -172,22 +206,25 @@ final class SessionAgent {
         snapshot.openAwakeRequested = openLid.requested
         snapshot.openAwakeActive = openLid.active
     }
-    private func openLidSafetyIssue() -> String? {
-        let battery = batteryReading()
-        if battery.percent == nil { return "无法读取电量，开盖不休眠已关闭" }
-        if battery.onBattery && battery.percent! <= 10 { return "电量已降至 10%，开盖不休眠已关闭" }
+    private func openLidSafetyIssue(battery: BatteryReading) -> String? {
+        if hasLidSensor {
+            if battery.percent == nil { return "无法读取电量，开盖不休眠已关闭" }
+            if battery.onBattery && battery.percent! <= 10 { return "电量已降至 10%，开盖不休眠已关闭" }
+        } else if battery.onBattery, let percent = battery.percent, percent <= 10 {
+            return "电量已降至 10%，开盖不休眠已关闭"
+        }
         if ProcessInfo.processInfo.thermalState.rawValue >= ProcessInfo.ThermalState.serious.rawValue {
             return "温度过高，开盖不休眠已关闭"
         }
         return nil
     }
-    private func updateOpenLid() {
-        if (openLid.requested || openLid.active), let message = openLidSafetyIssue() {
+    private func updateOpenLid(battery: BatteryReading, lidClosed: Bool?) {
+        if (openLid.requested || openLid.active), let message = openLidSafetyIssue(battery: battery) {
             failOpenLid(message); return
         }
         do {
             try openLid.tick(now: ProcessInfo.processInfo.systemUptime,
-                             lidClosed: driver.bool("AppleClamshellState"), systemSleeping: systemSleeping)
+                             lidClosed: lidClosed, systemSleeping: systemSleeping)
             snapshot.openAwakeRequested = openLid.requested
             snapshot.openAwakeActive = openLid.active
             if !snapshot.openAwakeError {
@@ -199,10 +236,11 @@ final class SessionAgent {
     private func startDisplayAwake(_ duration: DisplayAwakeDuration) {
         guard !exiting, !displayAwake.requested, !displayAwake.active else { return }
         defer { publish() }
-        guard driver.bool("AppleClamshellState") == false, !systemSleeping else {
+        let battery = batteryReading()
+        guard effectiveLidClosed(driver.bool("AppleClamshellState")) == false, !systemSleeping else {
             stopDisplayAwake(error: "请先打开电脑盖子"); return
         }
-        guard openLidSafetyIssue() == nil else {
+        guard openLidSafetyIssue(battery: battery) == nil else {
             stopDisplayAwake(error: "电量或温度触发保护，屏幕常亮已关闭"); return
         }
         do {
@@ -214,9 +252,9 @@ final class SessionAgent {
             stopDisplayAwake(error: "无法保持屏幕常亮，请重试")
         }
     }
-    private func updateDisplayAwake(lidClosed: Bool?) {
+    private func updateDisplayAwake(battery: BatteryReading, lidClosed: Bool?) {
         guard displayAwake.requested || displayAwake.active else { return }
-        guard !displayAwake.requested || openLidSafetyIssue() == nil else {
+        guard !displayAwake.requested || openLidSafetyIssue(battery: battery) == nil else {
             stopDisplayAwake(error: "电量或温度触发保护，屏幕常亮已关闭"); return
         }
         do {
@@ -245,12 +283,10 @@ final class SessionAgent {
     private func arm(minutes: Int) {
         guard !ownsSession, !restoring, !exiting else { return }
         do {
+            guard hasLidSensor else { throw PowerError(text: "这台 Mac 没有可读取的合盖传感器") }
             guard snapshot.compatibilityReady else { throw PowerError(text: snapshot.compatibilityMessage) }
             generation += 1
             if operationPending { compatibility.invalidate(); operationPending = false }
-            #if !arch(arm64)
-            throw PowerError(text: "此版本仅支持 Apple Silicon MacBook")
-            #endif
             guard [0, 30, 60, 120, 240, 480].contains(minutes) else { throw PowerError(text: "无效的时长设置") }
             guard !conflictingApp() else { throw PowerError(text: "请先退出 Clamshell，避免两个软件同时控制合盖") }
             guard driver.bool("AppleClamshellState") == false else { throw PowerError(text: "请先打开电脑盖子") }
@@ -292,9 +328,14 @@ final class SessionAgent {
     }
     private func lidChanged(_ closed: Bool) {
         snapshot.lidClosed = closed
-        updateOpenLid()
-        updateDisplayAwake(lidClosed: closed)
-        guard ownsSession, !restoring else { publish(); return }
+        let battery = batteryReading()
+        updateOpenLid(battery: battery, lidClosed: closed)
+        updateDisplayAwake(battery: battery, lidClosed: closed)
+        handleClosedLidObservation(closed)
+        publish()
+    }
+    private func handleClosedLidObservation(_ closed: Bool) {
+        guard ownsSession, !restoring else { return }
         if snapshot.phase == .starting {
             if closed { stop("请先打开电脑盖子", error: true) }
             return
@@ -307,16 +348,20 @@ final class SessionAgent {
             EventLog.write("lid closed: one-shot session active")
             snapshot.phase = .closed
             snapshot.message = "合盖运行中 · 开盖即结束"
-            // Display sleep is separate from system sleep. Never force a screen
-            // wake or alter the user's lock/password preferences.
+            // Display sleep is separate from system sleep. Retain process until exit.
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/usr/bin/pmset")
             process.arguments = ["displaysleepnow"]
             process.standardOutput = FileHandle.nullDevice
             process.standardError = FileHandle.nullDevice
-            try? process.run()
+            process.terminationHandler = { [weak self] finished in
+                DispatchQueue.main.async {
+                    if self?.displaySleepProcess === finished { self?.displaySleepProcess = nil }
+                }
+            }
+            displaySleepProcess = process
+            do { try process.run() } catch { displaySleepProcess = nil }
         }
-        publish()
     }
     private func checkCompatibility() {
         guard !operationPending, !restoring else { return }
@@ -368,16 +413,32 @@ final class SessionAgent {
            ProcessInfo.processInfo.systemUptime - lastHeartbeat > 12, !exiting {
             finish(); return
         }
-        updateOpenLid()
+        // Sample battery, thermal, lid and SleepDisabled once per tick to avoid redundant IPC.
         let battery = batteryReading()
+        let rawLidClosed = driver.bool("AppleClamshellState")
+        if !hasLidSensor && rawLidClosed != nil {
+            // If an early startup probe missed the MacBook lid sensor, promote immediately.
+            hasLidSensor = true
+            snapshot.hasLidSensor = true
+            if !snapshot.error && snapshot.message == "这台 Mac 没有可读取的合盖传感器" {
+                snapshot.message = Snapshot().message
+            }
+            try? registerLidNotifications()
+        }
+        let effectiveLid = effectiveLidClosed(rawLidClosed)
         snapshot.battery = battery.percent; snapshot.onBattery = battery.onBattery
         snapshot.thermal = thermalLabel()
         snapshot.causesSleep = driver.bool("AppleClamshellCausesSleep")
-        snapshot.lidClosed = driver.bool("AppleClamshellState")
-        updateDisplayAwake(lidClosed: snapshot.lidClosed)
+        snapshot.lidClosed = rawLidClosed
+        snapshot.sleepDisabled = driver.bool("SleepDisabled")
+        updateOpenLid(battery: battery, lidClosed: effectiveLid)
+        updateDisplayAwake(battery: battery, lidClosed: effectiveLid)
         if exiting && !ownsSession && !restoring && !openLid.active && !displayAwake.active { publish(); exit(0) }
         if restoring { restore(); return }
         if ownsSession {
+            if conflictingApp() {
+                stop("请先退出 Clamshell，避免两个软件同时控制合盖", error: true); return
+            }
             if ProcessInfo.processInfo.thermalState.rawValue >= ProcessInfo.ThermalState.serious.rawValue {
                 stop("温度过高，已恢复正常睡眠", error: true); return
             }
@@ -387,13 +448,13 @@ final class SessionAgent {
             do {
                 if try externalDisplayCount() > 0 { stop("已连接外接屏，本次结束，由 macOS 管理睡眠"); return }
             } catch { stop(error.localizedDescription, error: true); return }
-            guard let closed = snapshot.lidClosed else {
+            guard let closed = rawLidClosed else {
                 stop("合盖传感器读取中断，已恢复正常睡眠", error: true); return
             }
-            lidChanged(closed)
+            handleClosedLidObservation(closed)
             guard ownsSession, !restoring else { return }
         }
-        if ProcessInfo.processInfo.systemUptime - lastCompatibilityCheck >= CompatibilityService.renewalSeconds {
+        if hasLidSensor, ProcessInfo.processInfo.systemUptime - lastCompatibilityCheck >= CompatibilityService.renewalSeconds {
             checkCompatibility()
         }
         syncTimer()
@@ -421,16 +482,23 @@ final class SessionAgent {
             self.compatibility.status { [weak self] result in
                 guard let self, token == self.generation else { return }
                 self.operationPending = false
-                let serviceConfirmed: Bool
-                if case .success(let status) = result { serviceConfirmed = !status.active && !status.recoveryPending }
-                else { serviceConfirmed = false }
-                // The service only starts from SleepDisabled=false. A direct
-                // kernel read of that exact global setting can also confirm
-                // restoration if the service connection is unavailable.
-                if (serviceConfirmed || self.driver.bool("SleepDisabled") == false) {
+                // Authoritative XPC status takes precedence: never report Off
+                // while the daemon still reports active or recoveryPending.
+                let confirmed: Bool
+                let serviceReady: Bool
+                switch result {
+                case .success(let status):
+                    confirmed = !status.active && !status.recoveryPending
+                    serviceReady = confirmed
+                case .failure:
+                    confirmed = self.driver.bool("SleepDisabled") == false
+                    serviceReady = false
+                }
+                if confirmed {
                     self.ownsSession = false; self.restoring = false; self.snapshot.phase = .off
-                    self.snapshot.compatibilityReady = serviceConfirmed
-                    EventLog.write("restore: original sleep setting confirmed; service=\(serviceConfirmed)")
+                    self.snapshot.compatibilityReady = serviceReady
+                    self.snapshot.sleepDisabled = self.driver.bool("SleepDisabled")
+                    EventLog.write("restore: original sleep setting confirmed; service=\(serviceReady)")
                     self.publish()
                     if self.exiting && !self.openLid.active && !self.displayAwake.active { exit(0) }
                 } else {

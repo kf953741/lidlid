@@ -31,23 +31,34 @@ public final class SleepLease {
     private let power: SleepSetting
     private let journal: SleepJournalStore
     private var owner: UUID?
+    private var ownerUID: UInt32?
     private var expiry: TimeInterval = 0
     private var deadline: TimeInterval?
     private var sawClosed = false
-    private var paused = false
+    private var permanentPause = false
+    private var pausedUntil: TimeInterval?
     public private(set) var recoveryPending = false
     public var active: Bool { owner != nil }
+    public var activeOwnerUID: UInt32? { ownerUID }
 
     public init(power: SleepSetting, journal: SleepJournalStore) {
         self.power = power; self.journal = journal
     }
 
+    public func isPaused(at now: TimeInterval) -> Bool {
+        if permanentPause { return true }
+        guard let until = pausedUntil else { return false }
+        if now.isFinite && now < until { return true }
+        pausedUntil = nil
+        return false
+    }
+
     public func recover() throws {
-        owner = nil; deadline = nil
+        owner = nil; ownerUID = nil; deadline = nil
         try restore()
     }
-    public func begin(owner id: UUID, minutes: Int, now: TimeInterval, lidClosed: Bool) throws {
-        guard !paused else { throw ServiceFailure("兼容组件正在移除，请重新安装后再试") }
+    public func begin(owner id: UUID, ownerUID: UInt32? = nil, minutes: Int, now: TimeInterval, lidClosed: Bool) throws {
+        guard !isPaused(at: now) else { throw ServiceFailure("兼容组件正在移除，请重新安装后再试") }
         guard [0, 30, 60, 120, 240, 480].contains(minutes), now.isFinite, !lidClosed else {
             throw ServiceFailure("请先打开电脑盖子")
         }
@@ -65,7 +76,7 @@ public final class SleepLease {
             try? restore()
             throw error
         }
-        owner = id; expiry = now + 30
+        owner = id; self.ownerUID = ownerUID; expiry = now + 30
         // A journal during a healthy session is intentional, not a recovery
         // failure. Active ownership already keeps the daemon's timer running.
         recoveryPending = false
@@ -88,6 +99,9 @@ public final class SleepLease {
         try recover()
     }
     public func tick(now: TimeInterval, lidClosed: Bool?, safe: Bool) throws {
+        if let until = pausedUntil, now.isFinite, now >= until {
+            pausedUntil = nil
+        }
         if owner != nil {
             guard let closed = lidClosed, safe, now.isFinite, now < expiry,
                   deadline.map({ now < $0 }) ?? true else { try recover(); return }
@@ -97,9 +111,19 @@ public final class SleepLease {
             try restore()
         }
     }
-    public func pauseAndRestore() throws {
-        paused = true
-        try recover()
+    public func pauseAndRestore(now: TimeInterval? = nil, duration: TimeInterval = 30) throws {
+        if let now, now.isFinite {
+            pausedUntil = now + max(1, duration)
+            do {
+                try recover()
+            } catch {
+                pausedUntil = nil
+                throw error
+            }
+        } else {
+            permanentPause = true
+            try recover()
+        }
     }
     private func restore() throws {
         do {

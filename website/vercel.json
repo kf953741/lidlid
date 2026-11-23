@@ -5,6 +5,13 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/downloads/compatibility-latest.dmg",
+      "destination": "/downloads/LidLid-Compatibility-1.0.1-macOS-arm64.dmg",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",

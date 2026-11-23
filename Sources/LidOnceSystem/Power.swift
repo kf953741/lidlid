@@ -60,15 +60,20 @@ public func batteryReading() -> BatteryReading {
 }
 
 public func externalDisplayCount() throws -> Int {
+    let maxDisplays: UInt32 = 64
+    var displays = [CGDirectDisplayID](repeating: 0, count: Int(maxDisplays))
     var count: UInt32 = 0
-    guard CGGetOnlineDisplayList(0, nil, &count) == .success, count > 0, count <= 64 else {
+    guard CGGetOnlineDisplayList(maxDisplays, &displays, &count) == .success, count > 0 else {
         throw PowerError(text: "无法确认显示器状态")
     }
-    var displays = [CGDirectDisplayID](repeating: 0, count: Int(count))
-    guard CGGetOnlineDisplayList(count, &displays, &count) == .success else {
-        throw PowerError(text: "读取显示器失败")
-    }
-    return displays.prefix(Int(count)).filter { CGDisplayIsBuiltin($0) == 0 }.count
+    // Ignore built-in panels and headless/virtual entries with no associated monitor
+    // (Apple documents UInt32.max as the sentinel when no monitor is associated;
+    // kDisplayVendorIDUnknown still represents a real unidentifiable external display).
+    return displays.prefix(Int(count)).filter { id in
+        guard CGDisplayIsBuiltin(id) == 0 else { return false }
+        let vendor = CGDisplayVendorNumber(id)
+        return vendor != UInt32.max
+    }.count
 }
 
 public func conflictingApp() -> Bool {

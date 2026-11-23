@@ -3,6 +3,11 @@ import SwiftUI
 import StoreKit
 import LidOnceCore
 
+final class StoreConfirmationState: ObservableObject {
+    @Published var purchasing = false
+    @Published var allowStalledCancel = false
+}
+
 /// A menu-bar popover is not a suitable anchor for Apple's payment sheet:
 /// its top edge can place confirmation controls outside the visible screen.
 /// Keep a normal, centered window alive for the entire StoreKit operation.
@@ -14,6 +19,12 @@ final class StoreConfirmationPresenter: NSObject, NSWindowDelegate {
     private var previousActivationPolicy: NSApplication.ActivationPolicy?
     private var pendingPurchase: CheckedContinuation<Product.PurchaseResult, Error>?
     private var purchaseInFlight = false
+    private var escapeTask: Task<Void, Never>?
+    private var purchaseState = StoreConfirmationState()
+
+    private static var currentAppearance: AppAppearance {
+        AppAppearance(rawValue: UserDefaults.standard.string(forKey: "appAppearance") ?? "") ?? .system
+    }
 
     @MainActor func show(title: String, price: String? = nil) async -> NSWindow {
         let screen = NSApp.keyWindow?.screen ?? NSScreen.main
@@ -23,10 +34,12 @@ final class StoreConfirmationPresenter: NSObject, NSWindowDelegate {
         // popover. Restore the menu-bar-only policy after StoreKit finishes.
         NSApp.setActivationPolicy(.regular)
         let text = AppText(language: AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system)
+        let appearance = Self.currentAppearance
         let frame = NSRect(x: 0, y: 0, width: 540, height: 470)
         let window = NSWindow(contentRect: frame,
                               styleMask: [.titled, .closable, .resizable], backing: .buffered, defer: false)
         window.title = text("盖盖") + " · App Store"
+        window.appearance = appearance.nsAppearance
         window.isReleasedWhenClosed = false
         window.collectionBehavior = [.moveToActiveSpace, .fullScreenAuxiliary]
         let icon = NSImageView()
@@ -101,16 +114,33 @@ final class StoreConfirmationPresenter: NSObject, NSWindowDelegate {
     @MainActor func purchase(_ product: Product, title: String) async throws -> Product.PurchaseResult {
         let window = await show(title: title, price: product.displayPrice)
         let text = AppText(language: AppLanguage(rawValue: UserDefaults.standard.string(forKey: "appLanguage") ?? "") ?? .system)
+        let appearance = Self.currentAppearance
+        let state = StoreConfirmationState()
+        purchaseState = state
         return try await withCheckedThrowingContinuation { continuation in
             pendingPurchase = continuation
             purchaseInFlight = false
             window.delegate = self
             window.standardWindowButton(.closeButton)?.isEnabled = true
             window.contentViewController = NSHostingController(rootView: StoreProductConfirmationView(
-                product: product, text: text,
+                product: product, text: text, appearance: appearance, state: state,
                 started: { [weak self] in
-                    self?.purchaseInFlight = true
-                    self?.window?.standardWindowButton(.closeButton)?.isEnabled = false
+                    guard let self else { return }
+                    self.purchaseInFlight = true
+                    self.purchaseState.purchasing = true
+                    self.purchaseState.allowStalledCancel = false
+                    self.window?.standardWindowButton(.closeButton)?.isEnabled = false
+                    self.escapeTask?.cancel()
+                    // Escape hatch: if macOS PassKit/StoreKit stalls without
+                    // calling completion, re-enable closing after 15 seconds.
+                    // Never await inside StoreKit's onInAppPurchaseStart hook.
+                    self.escapeTask = Task { @MainActor [weak self] in
+                        try? await Task.sleep(for: .seconds(15))
+                        guard !Task.isCancelled, let self, self.purchaseInFlight else { return }
+                        self.purchaseInFlight = false
+                        self.purchaseState.allowStalledCancel = true
+                        self.window?.standardWindowButton(.closeButton)?.isEnabled = true
+                    }
                 },
                 completed: { [weak self] result in self?.finishPurchase(result) },
                 cancel: { [weak self] in self?.finishPurchase(.success(.userCancelled)) }
@@ -119,6 +149,8 @@ final class StoreConfirmationPresenter: NSObject, NSWindowDelegate {
     }
 
     @MainActor private func finishPurchase(_ result: Result<Product.PurchaseResult, Error>) {
+        escapeTask?.cancel()
+        escapeTask = nil
         guard let continuation = pendingPurchase else { return }
         pendingPurchase = nil
         purchaseInFlight = false
@@ -160,10 +192,11 @@ final class StoreConfirmationPresenter: NSObject, NSWindowDelegate {
 private struct StoreProductConfirmationView: View {
     let product: Product
     let text: AppText
+    let appearance: AppAppearance
+    @ObservedObject var state: StoreConfirmationState
     let started: @MainActor () -> Void
     let completed: @MainActor (Result<Product.PurchaseResult, Error>) -> Void
     let cancel: @MainActor () -> Void
-    @State private var purchasing = false
 
     var body: some View {
         let isTrial = product.id == StoreProducts.trial
@@ -174,7 +207,7 @@ private struct StoreProductConfirmationView: View {
                         Image(nsImage: NSApp.applicationIconImage)
                             .resizable().frame(width: 74, height: 74)
                     }
-                    .productViewStyle(StorePurchaseProductStyle(text: text, purchasing: purchasing))
+                    .productViewStyle(StorePurchaseProductStyle(text: text, purchasing: state.purchasing))
                     VStack(alignment: .leading, spacing: 9) {
                         trustRow("checkmark.circle.fill", "一次购买，永不自动续费")
                         trustRow("bolt.fill", "开盖不休眠永久免费")
@@ -204,14 +237,16 @@ private struct StoreProductConfirmationView: View {
             Button(text("暂不购买"), action: cancel)
                 .buttonStyle(HoverPillButtonStyle(cornerRadius: 8, horizontalPadding: 14, verticalPadding: 6))
                 .foregroundStyle(.secondary)
-                .disabled(purchasing)
+                .disabled(state.purchasing && !state.allowStalledCancel)
                 .accessibilityIdentifier("cancel-store-confirmation")
         }
         .padding(32).frame(width: 540, height: 470)
         .background(PanelStyle.background)
+        .preferredColorScheme(appearance.colorScheme)
         .environment(\.locale, text.language.locale)
         .onInAppPurchaseStart { _ in
-            await MainActor.run { purchasing = true; started() }
+            // Return immediately so StoreKit's payment sheet is never delayed.
+            await MainActor.run { started() }
         }
         .onInAppPurchaseCompletion { _, result in completed(result) }
     }
@@ -303,7 +338,7 @@ private struct StorePurchaseButtonStyle: ButtonStyle {
         configuration.label
             .padding(.horizontal, 18).padding(.vertical, 8)
             .foregroundStyle(.white)
-            .background(PanelStyle.controlTint.opacity(enabled ? (configuration.isPressed ? 0.82 : 1) : 0.4),
+            .background(PanelStyle.prominentButtonFill.opacity(enabled ? (configuration.isPressed ? 0.82 : 1) : 0.4),
                         in: RoundedRectangle(cornerRadius: 11, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 11, style: .continuous)

@@ -25,6 +25,12 @@ enum PanelStyle {
             ? NSColor(srgbRed: 0.31, green: 0.56, blue: 1.0, alpha: 1)
             : NSColor(srgbRed: 0.118, green: 0.302, blue: 0.847, alpha: 1)
     })
+    /// Higher-contrast cobalt fill (~6.0:1 dark / ~7.6:1 light against white text) for primary buttons.
+    static let prominentButtonFill = Color(nsColor: NSColor(name: "LidLidButtonFill") { appearance in
+        appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            ? NSColor(srgbRed: 0.145, green: 0.388, blue: 0.898, alpha: 1)
+            : NSColor(srgbRed: 0.118, green: 0.302, blue: 0.847, alpha: 1)
+    })
     static let amberAccent = Color(nsColor: NSColor(name: "LidLidAmberInk") { appearance in
         appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
             ? NSColor(srgbRed: 0.99, green: 0.78, blue: 0.30, alpha: 1)
@@ -248,7 +254,7 @@ struct BrandProminentButtonStyle: ButtonStyle {
             .padding(.vertical, 6)
             .frame(minHeight: minHeight)
             .background(
-                PanelStyle.controlTint.opacity(isEnabled ? (configuration.isPressed ? 0.84 : 1) : 0.45),
+                PanelStyle.prominentButtonFill.opacity(isEnabled ? (configuration.isPressed ? 0.84 : 1) : 0.45),
                 in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
             )
             .overlay {

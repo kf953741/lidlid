@@ -35,7 +35,7 @@ PY
 LIDLID_DISTRIBUTION=app-store LIDLID_APP_PATH="$STAGE/LidLid.app" LIDLID_CODE_SIGN_IDENTITY="$LIDLID_STORE_APP_IDENTITY" zsh "$ROOT/scripts/build.sh"
 cp "$LIDLID_STORE_PROFILE" "$STAGE/LidLid.app/Contents/embedded.provisionprofile"
 /usr/libexec/PlistBuddy -c 'Set :LidLidDistribution app-store' "$STAGE/LidLid.app/Contents/Info.plist"
-codesign --force --timestamp --sign "$LIDLID_STORE_APP_IDENTITY" \
+codesign --force --options runtime --timestamp --sign "$LIDLID_STORE_APP_IDENTITY" \
   --identifier dev.kf.lidonce --entitlements "$ROOT/.build/app-store-signing/entitlements.plist" "$STAGE/LidLid.app"
 python3 "$ROOT/scripts/verify-app-store.py" "$STAGE/LidLid.app"
 VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$STAGE/LidLid.app/Contents/Info.plist")

@@ -37,15 +37,16 @@ function guardian(on) {
   return `<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">${on ? `<path fill="currentColor" fill-rule="evenodd" d="${outline}M6.2 13.3a1.9 2.4 0 1 0 3.8 0a1.9 2.4 0 1 0-3.8 0ZM14 12.6a1.9 2.4 0 1 0 3.8 0a1.9 2.4 0 1 0-3.8 0Z"/>` : `<g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="${outline}"/><path d="M5.9 11.8C7.1 13.8 9.1 13.8 10.3 11.8M13.7 11.8C14.9 13.8 16.9 13.8 18.1 11.8"/></g>`}</svg>`;
 }
 
+const storeLive = Boolean(site.appStoreUrl);
 const copy = {
   zh: {
     lang: 'zh-CN', brand: '盖盖', other: 'EN', otherLabel: 'Read in English',
     title: '盖盖 LidLid — MacBook 合盖不休眠，带着任务走',
-    description: "Codex、Claude Code 任务还没跑完，你已经要出门？盖盖让 MacBook 合盖不休眠，本机任务继续运行。不插电、不接外接屏也能使用。开盖不休眠永久免费，合盖可免费试用 7 天。支持 M 系列 MacBook、macOS 14+。",
+    description: "Codex、Claude Code 任务还没跑完，你已经要出门？盖盖让 MacBook 合盖不休眠，本机任务继续运行。不插电、不接外接屏也能使用。开盖不休眠永久免费，合盖可免费试用 7 天。支持 MacBook、macOS 14+。",
     nav: ['为什么用盖盖', '三步上手', '支持'], download: '下载盖盖', demo: '看 20 秒演示',
     eyebrow: 'MACBOOK 合盖不休眠', heading: '合上盖子，<br><em>带着任务走。</em>',
     lead: 'Codex、Claude Code 还在工作，你已经要走。打开盖盖，让 Mac 本机的任务在合盖后继续运行。',
-    compat: "M 系列 MacBook · macOS 14+ · 开盖不休眠永久免费", artAlt: '场景插画：开发者单手携带合盖的 MacBook 出门', artLabel: '场景插画',
+    compat: "MacBook · macOS 14+ · 开盖不休眠永久免费", artAlt: '场景插画：开发者单手携带合盖的 MacBook 出门', artLabel: '场景插画',
     uiOn: '盖盖真实中文界面，已开启本次合盖不休眠', uiOff: '盖盖真实中文界面，已关闭本次合盖不休眠',
     workIntro: '你的本机任务，继续进行', work: ['Codex', 'Claude Code', '编译', '下载'],
     storyLabel: '任务没跑完，也能先出发', storyTitle: '从「托着走」，<br>到「拿着走」。',
@@ -54,7 +55,7 @@ const copy = {
     imageNote: '移动办公场景插画。联网任务仍需可用的网络连接。',
     features: [
       ['clock', '一次开启，开盖结束', '只为本次合盖保持运行。重新开盖后自动关闭，下次需要时再开启。'],
-      ['laptop', '不用接外接屏', '面向 M 系列 MacBook，电池供电也能使用，轻装换个地方。'],
+      ['laptop', '不用接外接屏', '面向 MacBook 笔记本，电池供电也能使用，轻装换个地方。'],
       ['shield', '有分寸地保持运行', '可选最长保持时间；电池供电降至 10% 或出现严重高温时自动结束。'],
     ],
     interfaceLabel: '一个开关，就够了', interfaceTitle: '该继续时继续，<br>该休息时休息。',
@@ -62,13 +63,13 @@ const copy = {
     checks: ["睁眼开启，闭眼关闭，顶栏一眼可知状态", "中英文界面，支持浅色与深色外观", "开盖不休眠与屏幕常亮永久免费，合盖免费试用 7 天"],
     interfaceLink: '看看怎么用', previewLabel: '真实界面预览，点击切换状态', on: '已开启', off: '已关闭',
     guideLabel: '两分钟上手', guideTitle: '准备出发，只要三步。', guideLead: "安装盖盖和免费兼容组件，准备好下一次出发。",
-    steps: [["安装盖盖", "从 Mac App Store 安装主应用；商店入口将在上架后开放。"], ["完成首次设置", "在盖盖中点「设置合盖功能」，按窗口提示完成一次安装授权，再领取试用或永久解锁。"], ["开启，合盖，出发", "先启动任务，打开合盖开关，确认「可以合盖」。再次开盖，本次自动结束。"]],
+    steps: [["安装盖盖", storeLive ? "从 Mac App Store 下载并安装盖盖主应用。" : "从 Mac App Store 安装主应用；商店入口将在上架后开放。"], ["完成首次设置", "在盖盖中点「设置合盖功能」，按窗口提示完成一次安装授权，再领取试用或永久解锁。"], ["开启，合盖，出发", "先启动任务，打开合盖开关，确认「可以合盖」。再次开盖，本次自动结束。"]],
     guideNote: '需要首次打开的帮助？', guideHelp: '查看安装与使用指南',
     faqTitle: '你可能还想知道', faqLead: '更详细的安装说明和使用帮助，都在支持页面。', faqLink: '前往支持页面',
     faq: [
       ['MacBook 合盖后，Codex、Claude 还能继续运行吗？', '盖盖面向运行在 Mac 本机的 Codex、Claude Code、编译和下载任务。开启后，本机会在这次合盖期间保持唤醒；任务仍需要它所需的网络连接和用户授权。已经在云端执行的任务，可以独立运行。'],
-      ['需要插电或外接显示器吗？', '不需要外接显示器，电池供电也能使用。当前版本面向不连接外接屏的 M 系列 MacBook；电池供电降至 10% 时会结束本次。'],
-      ['Mac App Store 版本可以下载了吗？', 'Mac App Store 版本正在准备上架，商店入口开放后会更新在这里。本站的 DMG 仅为免费兼容组件，需配合盖盖主应用使用。'],
+      ['需要插电或外接显示器吗？', '不需要外接显示器，电池供电也能使用。当前版本面向不连接外接屏的 MacBook 笔记本；电池供电降至 10% 时会结束本次。'],
+      ['Mac App Store 版本可以下载了吗？', storeLive ? '已经上架 Mac App Store，可直接点击页面中的商店链接下载主应用。本站的 DMG 为免费兼容组件，需配合盖盖主应用使用。' : 'Mac App Store 版本正在准备上架，商店入口开放后会更新在这里。本站的 DMG 仅为免费兼容组件，需配合盖盖主应用使用。'],
     ],
     closingTitle: '任务继续，<br>你也继续出发。', closingLead: '让下一次离开工位，少一点等待。',
     storePending: 'Mac App Store 版本筹备中', storeAvailable: '在 Mac App Store 查看',
@@ -77,11 +78,11 @@ const copy = {
     privacyTitle: '隐私政策', privacyMeta: '盖盖 LidLid 的隐私政策：本机偏好、诊断记录、官网托管与问题反馈。',
     privacyIntro: privacyCopy.zh.intro,
     privacySections: privacyCopy.zh.sections,
-    updated: '更新日期：2026 年 11 月 22 日',
+    updated: '更新日期：2026 年 11 月 23 日',
     supportTitle: '支持与使用指南', supportMeta: "盖盖 LidLid 安装与使用指南：MacBook 合盖不休眠、免费兼容组件下载、7 天试用和邮件支持。",
     supportIntro: "安装、开启、合盖出发。需要帮助，直接发邮件给我们。",
     feedback: '发送邮件', emailLabel: '邮件支持', emailHint: '欢迎发送使用问题、建议或隐私相关咨询。', installHeading: '安装与使用',
-    supportSteps: [["安装盖盖", "从 Mac App Store 安装主应用；商店入口将在上架后开放。"], ["完成首次设置", "在盖盖中点「设置合盖功能」，按窗口提示完成一次安装授权，再领取试用或永久解锁。"], ["开启，合盖，出发", "先启动任务，打开合盖开关，确认「可以合盖」。再次开盖，本次自动结束。"]],
+    supportSteps: [["安装盖盖", storeLive ? "从 Mac App Store 下载并安装盖盖主应用。" : "从 Mac App Store 安装主应用；商店入口将在上架后开放。"], ["完成首次设置", "在盖盖中点「设置合盖功能」，按窗口提示完成一次安装授权，再领取试用或永久解锁。"], ["开启，合盖，出发", "先启动任务，打开合盖开关，确认「可以合盖」。再次开盖，本次自动结束。"]],
     firstLaunch: "首次安装的系统确认", firstLaunchText: "免费兼容组件已使用 Developer ID 签名并通过 Apple 公证。安装服务时，只在 macOS 系统窗口中使用 Touch ID 或管理员密码确认；盖盖不会收集你的密码。",
     supportFaq: [
       ['开着盖子也想防止休眠或保持亮屏？', '盖盖提供独立的「开盖不休眠」和「屏幕常亮」开关，均永久免费，无需兼容组件。「开盖不休眠」允许屏幕自动熄灭、合盖时暂停；「屏幕常亮」支持 30 分钟、1 小时或持续常亮，合盖即自动结束。'],
@@ -97,7 +98,7 @@ const copy = {
     privacyLink: '阅读隐私政策', back: '返回首页', notFound: '这一页走丢了。',
     getApp: "获取盖盖",
     storeSetupTitle: "盖盖主应用",
-    storeSetupBody: "Mac App Store 版本正在准备上架，正式开放后会在此提供商店链接。下方 DMG 是免费兼容组件，不能替代盖盖主应用。",
+    storeSetupBody: storeLive ? "从 Mac App Store 安装盖盖主应用。下方 DMG 是免费兼容组件，需配合主应用使用。" : "Mac App Store 版本正在准备上架，正式开放后会在此提供商店链接。下方 DMG 是免费兼容组件，不能替代盖盖主应用。",
     pricing: "开盖不休眠与屏幕常亮永久免费。合盖功能可免费试用 7 天，之后 ¥38 一次购买永久解锁；没有订阅或自动续费。试用到期不会打断已经开始的会话。",
     componentDownload: "下载免费兼容组件",
     componentMeta: "v1.0.1 · M 系列 MacBook · macOS 14+ · Developer ID 签名，Apple 公证",
@@ -106,11 +107,11 @@ const copy = {
   en: {
     lang: 'en', brand: 'LidLid', other: '中文', otherLabel: '阅读中文版',
     title: 'LidLid — Keep your MacBook awake with the lid closed',
-    description: "Keep local Codex and Claude Code tasks, builds and downloads running with your MacBook lid closed, on battery without an external monitor. Open-lid mode is always free. Try closed-lid mode free for 7 days. For Apple Silicon MacBooks, macOS 14+.",
+    description: "Keep local Codex and Claude Code tasks, builds and downloads running with your MacBook lid closed, on battery without an external monitor. Open-lid mode is always free. Try closed-lid mode free for 7 days. For MacBooks running macOS 14+.",
     nav: ['Why LidLid', 'Get started', 'Support'], download: 'Download for Mac', demo: 'Watch the 20s demo',
     eyebrow: 'MACBOOK CLOSED-LID KEEP-AWAKE', heading: 'Close the lid.<br><em>Carry on.</em>',
     lead: 'Codex or Claude Code is still working, but you need to go. Keep local work running while you close your MacBook and take it with you.',
-    compat: "Apple Silicon · macOS 14+ · Open-lid mode is always free", artAlt: 'Illustration of a developer leaving with a closed MacBook in one hand', artLabel: 'Illustrated scene',
+    compat: "MacBook · macOS 14+ · Open-lid mode is always free", artAlt: 'Illustration of a developer leaving with a closed MacBook in one hand', artLabel: 'Illustrated scene',
     uiOn: 'Actual English LidLid interface with closed-lid keep-awake on', uiOff: 'Actual English LidLid interface with closed-lid keep-awake off',
     workIntro: 'For the work running on your Mac', work: ['Codex', 'Claude Code', 'Builds', 'Downloads'],
     storyLabel: 'YOUR TASK IS RUNNING. YOU NEED TO GO.', storyTitle: 'Less balancing.<br>More moving.',
@@ -119,7 +120,7 @@ const copy = {
     imageNote: 'Illustrated on-the-go scenes. Online tasks still need a working connection.',
     features: [
       ['clock', 'One session. Then back to normal.', 'Turn it on for this lid close. Reopening ends the session. Switch it on again next time you need it.'],
-      ['laptop', 'No external monitor needed.', 'Made for Apple Silicon MacBooks. Works on battery, so you can move with just your laptop.'],
+      ['laptop', 'No external monitor needed.', 'Made for MacBooks. Works on battery, so you can move with just your laptop.'],
       ['shield', 'A little more peace of mind.', 'Choose a time limit. Sessions end at 10% on battery power or on serious thermal pressure.'],
     ],
     interfaceLabel: 'JUST ONE SWITCH', interfaceTitle: 'Keep going.<br>Then let it rest.',
@@ -127,13 +128,13 @@ const copy = {
     checks: ["Eyes open for On, eyes closed for Off — readable at a glance.", "English and Chinese, with native light and dark appearance.", "Open-lid & display keep-awake are free; try closed-lid for 7 days."],
     interfaceLink: 'See how it works', previewLabel: 'Actual interface preview. Select a state to view it.', on: 'On', off: 'Off',
     guideLabel: 'TWO MINUTES TO GET STARTED', guideTitle: 'Ready to go in three steps.', guideLead: "Install LidLid and its free compatibility component. Then get ready to go.",
-    steps: [["Install LidLid.", "Get the main app from the Mac App Store. The store link will be available after launch."], ["Set up once.", "Choose Set up closed-lid mode in LidLid, follow its one-time setup, then claim your trial or unlock it for life."], ["Switch on. Close. Go.", "Start your task and turn on closed-lid mode. Wait for Ready to close. Reopening ends the session automatically."]],
+    steps: [["Install LidLid.", storeLive ? "Download and install the LidLid main app from the Mac App Store." : "Get the main app from the Mac App Store. The store link will be available after launch."], ["Set up once.", "Choose Set up closed-lid mode in LidLid, follow its one-time setup, then claim your trial or unlock it for life."], ["Switch on. Close. Go.", "Start your task and turn on closed-lid mode. Wait for Ready to close. Reopening ends the session automatically."]],
     guideNote: 'Need help with the first launch?', guideHelp: 'Read the setup guide',
     faqTitle: 'A few good questions.', faqLead: 'More installation help and answers live on the support page.', faqLink: 'Visit support',
     faq: [
       ['Will Codex and Claude Code keep running with the lid closed?', 'LidLid is for Codex, Claude Code, builds and downloads running locally on your Mac. It keeps your Mac awake for this session. Tasks still need their required internet connection and user approvals. Jobs already running in the cloud can run independently.'],
-      ['Do I need power or an external monitor?', 'No external monitor is needed, and LidLid can run on battery. The current version is for Apple Silicon MacBooks without an external display connected. A session ends at 10% on battery power.'],
-      ['Is LidLid available on the Mac App Store?', 'The Mac App Store version is being prepared for launch. We will add its link here when available. The DMG on this site contains only the free compatibility component and requires the LidLid main app.'],
+      ['Do I need power or an external monitor?', 'No external monitor is needed, and LidLid can run on battery. Closed-lid mode is designed for MacBooks without an external display connected. A session ends at 10% on battery power.'],
+      ['Is LidLid available on the Mac App Store?', storeLive ? 'Yes—LidLid is available on the Mac App Store via the download button on this page. The DMG on this site contains only the free compatibility component and requires the LidLid main app.' : 'The Mac App Store version is being prepared for launch. We will add its link here when available. The DMG on this site contains only the free compatibility component and requires the LidLid main app.'],
     ],
     closingTitle: 'Your task carries on.<br>So can you.', closingLead: 'Make your next move with a little less waiting.',
     storePending: 'Mac App Store version in preparation', storeAvailable: 'View on the Mac App Store',
@@ -142,11 +143,11 @@ const copy = {
     privacyTitle: 'Privacy policy', privacyMeta: 'LidLid privacy: local preferences and diagnostics, website hosting and support requests.',
     privacyIntro: privacyCopy.en.intro,
     privacySections: privacyCopy.en.sections,
-    updated: 'Updated November 22, 2026',
+    updated: 'Updated November 23, 2026',
     supportTitle: 'Support & getting started', supportMeta: "LidLid setup and support: keep your MacBook awake with the lid closed, download the free compatibility component and start a 7-day trial.",
     supportIntro: "Install, switch on, and take your work with you. Need a hand? Email us.",
     feedback: 'Email support', emailLabel: 'Email support', emailHint: 'For help, feedback or privacy questions.', installHeading: 'Install and use',
-    supportSteps: [["Install LidLid.", "Get the main app from the Mac App Store. The store link will be available after launch."], ["Set up once.", "Choose Set up closed-lid mode in LidLid, follow its one-time setup, then claim your trial or unlock it for life."], ["Switch on. Close. Go.", "Start your task and turn on closed-lid mode. Wait for Ready to close. Reopening ends the session automatically."]],
+    supportSteps: [["Install LidLid.", storeLive ? "Download and install the LidLid main app from the Mac App Store." : "Get the main app from the Mac App Store. The store link will be available after launch."], ["Set up once.", "Choose Set up closed-lid mode in LidLid, follow its one-time setup, then claim your trial or unlock it for life."], ["Switch on. Close. Go.", "Start your task and turn on closed-lid mode. Wait for Ready to close. Reopening ends the session automatically."]],
     firstLaunch: "Your first system confirmation", firstLaunchText: "The free compatibility app is Developer ID signed and notarized by Apple. When installing its service, confirm with Touch ID or an administrator password only in the macOS system dialog. LidLid never collects your password.",
     supportFaq: [
       ['Can I keep my Mac or display awake with the lid open?', 'Yes. LidLid includes independent Open-lid awake and Keep display awake switches—both are always free and need no compatibility component. Open-lid awake lets the display sleep and pauses on lid close; Keep display awake supports 30 minutes, 1 hour or Until off, and ends automatically when you close the lid.'],
@@ -162,7 +163,7 @@ const copy = {
     privacyLink: 'Read the privacy policy', back: 'Back to home', notFound: 'This page took a different path.',
     getApp: "Get LidLid",
     storeSetupTitle: "The LidLid main app",
-    storeSetupBody: "The Mac App Store version is being prepared for launch. Its store link will appear here when available. The DMG below is the free compatibility component and does not replace the LidLid main app.",
+    storeSetupBody: storeLive ? "Install the LidLid main app from the Mac App Store. The DMG below is the free compatibility component and works alongside the main app." : "The Mac App Store version is being prepared for launch. Its store link will appear here when available. The DMG below is the free compatibility component and does not replace the LidLid main app.",
     pricing: "Open-lid awake and display keep-awake are always free. Try closed-lid mode free for 7 days, then unlock it for life for US$4.99. No subscription or automatic renewal. Trial expiry never interrupts a session already in progress.",
     componentDownload: "Download the free component",
     componentMeta: "v1.0.1 · Apple Silicon MacBooks · macOS 14+ · Developer ID signed, Apple notarized",
@@ -204,7 +205,7 @@ function support(locale) {
 function schema(locale, page) {
   const t = copy[locale], url = base + routes[locale][page];
   const graph = [{ '@type': 'WebSite', '@id': base + '/#website', name: 'LidLid', alternateName: '盖盖', url: base + '/' }, { '@type': 'WebPage', '@id': url + '#webpage', url, name: page === 'home' ? t.title : page === 'privacy' ? t.privacyTitle : t.supportTitle, inLanguage: t.lang, isPartOf: { '@id': base + '/#website' } }];
-  if (page === 'home') graph.push({ '@type': 'SoftwareApplication', name: 'LidLid', alternateName: '盖盖', applicationCategory: 'UtilitiesApplication', operatingSystem: 'macOS 14 or later; Apple Silicon MacBook', softwareVersion: site.version, url, description: t.description, image: `${base}/assets/hero-${locale}.jpg`, screenshot: `${base}/assets/interface-on-${locale}.jpg`, ...(site.appStoreUrl ? { downloadUrl: site.appStoreUrl } : {}), author: { '@type': 'Person', name: site.developer }, ...(site.appStoreUrl ? { offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', url: site.appStoreUrl } } : {}) }, { '@type': 'FAQPage', mainEntity: t.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: plain(a) } })) });
+  if (page === 'home') graph.push({ '@type': 'SoftwareApplication', name: 'LidLid', alternateName: '盖盖', applicationCategory: 'UtilitiesApplication', operatingSystem: 'macOS 14 or later; MacBook', softwareVersion: site.version, url, description: t.description, image: `${base}/assets/hero-${locale}.jpg`, screenshot: `${base}/assets/interface-on-${locale}.jpg`, ...(site.appStoreUrl ? { downloadUrl: site.appStoreUrl } : {}), author: { '@type': 'Person', name: site.developer }, ...(site.appStoreUrl ? { offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', url: site.appStoreUrl } } : {}) }, { '@type': 'FAQPage', mainEntity: t.faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: plain(a) } })) });
   return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
 }
 function layout(locale, page, body) {

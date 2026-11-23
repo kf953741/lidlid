@@ -7,13 +7,13 @@ LidLid keeps your MacBook awake with the lid closed so local tasks can keep runn
 Small controls for work in progress
 • For coding tasks, builds, renders and downloads.
 • Set 30 minutes to 8 hours, or keep going until you reopen. Ends on reopening or at your limit, whichever comes first.
-• Open-lid keep-awake is always free. Your display can still sleep.
+• Open-lid keep-awake and Keep display awake are always free.
 • Closed-lid mode ends at 10% battery while on battery, or when macOS reports serious thermal pressure.
-• Optional launch at login. English and Simplified Chinese.
+• Optional launch at login. English and Simplified Chinese, with light and dark appearance.
 • No account, ads or tracking. No reading your code or chats. Preferences and diagnostics stay on your Mac.
 
 Try closed-lid mode for 7 days
 Set up the free component, then claim your trial when ready. Choose a one-time in-app purchase for lifetime access afterward. No automatic renewal. Expiry blocks new sessions; your current session finishes under its original settings. Restore Purchases is supported.
 
 Before you start
-Requires an Apple Silicon MacBook and macOS 14+. Intel Macs are not supported. Full closed-lid mode needs the separately installed, free LidLid Compatibility component and approval through macOS. Open-lid mode needs no component. Disconnect external displays before using closed-lid mode. Online tasks still need connectivity. Turn off closed-lid mode before choosing Sleep.
+Designed for MacBooks running macOS 14+ (Apple Silicon and Intel). Full closed-lid mode needs the separately installed, free LidLid Compatibility component and approval through macOS. Open-lid mode needs no component. Disconnect external displays before using closed-lid mode. Online tasks still need connectivity. Turn off closed-lid mode before choosing Sleep.

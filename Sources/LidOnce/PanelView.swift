@@ -55,7 +55,7 @@ struct PanelView: View {
                 if let battery = model.state.battery {
                     let low = model.state.onBattery && battery <= 20
                     HStack(spacing: 3.5) {
-                        Image(systemName: model.state.onBattery ? "battery.75percent" : "bolt.fill")
+                        Image(systemName: Self.batterySymbol(level: battery, onBattery: model.state.onBattery))
                             .font(.system(size: 9.5, weight: .semibold))
                             .foregroundStyle(low ? Color.orange : Color.secondary)
                         Text("\(battery)%")
@@ -131,7 +131,9 @@ struct PanelView: View {
 
             closedLidContent(armed: armed, inverted: inverted)
 
-            if model.conflict || model.state.error {
+            if model.sleepStuckDisabled {
+                emergencySleepRecoveryNotice
+            } else if model.conflict || model.state.error {
                 notice(onInvertedHero: inverted)
             }
         }
@@ -168,6 +170,13 @@ struct PanelView: View {
                     secondary(model.text(model.connected ? "正在检查购买…" : "正在连接盖盖…"))
                 }
             }
+        case .unsupportedMac:
+            VStack(alignment: .leading, spacing: 4) {
+                Text(model.text("合盖功能仅支持 MacBook"))
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.primary)
+                secondary(model.text("未检测到合盖传感器，开盖不休眠与屏幕常亮仍可正常使用。"))
+            }
         case .setup:
             secondary(model.text("首次使用需安装免费兼容组件。"))
             Button(action: model.openCompatibility) {
@@ -196,7 +205,7 @@ struct PanelView: View {
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(BrandProminentButtonStyle())
-            .disabled(!model.store.canPurchase)
+            .disabled(!model.store.canPurchaseLifetime)
             .accessibilityIdentifier("buy-store-lifetime")
         case .toggle:
             VStack(alignment: .leading, spacing: 5) {
@@ -318,11 +327,11 @@ struct PanelView: View {
             ? AnyShapeStyle(PanelStyle.displayTileActiveBorder)
             : AnyShapeStyle(PanelStyle.specularRim(dark: isDark))
 
-        return VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .center, spacing: 4) {
-                Button {
-                    model.setDisplayAwake(!active, duration: model.displayDuration)
-                } label: {
+        return ZStack(alignment: .topTrailing) {
+            Button {
+                model.setDisplayAwake(!active, duration: model.displayDuration)
+            } label: {
+                VStack(alignment: .leading, spacing: 10) {
                     ZStack {
                         Circle()
                             .fill(active ? PanelStyle.amberFill : PanelStyle.chromePill)
@@ -331,13 +340,32 @@ struct PanelView: View {
                             .foregroundStyle(active ? Color.white : Color.secondary)
                     }
                     .frame(width: 28, height: 28)
+                    .accessibilityHidden(true)
+
+                    VStack(alignment: .leading, spacing: 2.5) {
+                        Text(model.text("屏幕常亮"))
+                            .font(.system(size: 12.5, weight: .semibold))
+                            .foregroundStyle(active && !isDark ? PanelStyle.amberAccent : Color.primary)
+                            .lineLimit(1)
+                        Text(subtitle)
+                            .font(.system(size: 11))
+                            .foregroundStyle(errorText != nil ? Color.orange : Color.secondary)
+                            .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .buttonStyle(.plain)
-                .disabled(!model.canToggleDisplayAwake)
-                .accessibilityHidden(true)
+                .padding(12)
+                .frame(maxWidth: .infinity, minHeight: 96, alignment: .topLeading)
+                .contentShape(RoundedRectangle(cornerRadius: PanelStyle.cardCorner, style: .continuous))
+            }
+            .buttonStyle(.plain)
+            .disabled(!model.canToggleDisplayAwake)
+            .accessibilityLabel(model.text("屏幕常亮"))
+            .accessibilityValue(model.text(active ? "开启" : "关闭"))
+            .accessibilityIdentifier("display-awake-switch")
 
-                Spacer(minLength: 2)
-
+            Group {
                 if active, let status, status.requested {
                     if let deadline = status.deadline {
                         TimelineView(.periodic(from: .now, by: 1)) { _ in
@@ -348,12 +376,14 @@ struct PanelView: View {
                                 .foregroundStyle(PanelStyle.amberAccent)
                         }
                         .accessibilityIdentifier("display-awake-countdown")
+                        .allowsHitTesting(false)
                     } else {
                         Label(model.text("持续"), systemImage: "infinity")
                             .labelStyle(.titleOnly)
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(PanelStyle.amberAccent)
                             .accessibilityIdentifier("display-awake-continuous")
+                            .allowsHitTesting(false)
                     }
                 } else {
                     compactDurationMenu(DisplayAwakeDuration.allCases, selection: model.displayDuration,
@@ -363,32 +393,9 @@ struct PanelView: View {
                     .accessibilityIdentifier("display-duration-button")
                 }
             }
-
-            Button {
-                model.setDisplayAwake(!active, duration: model.displayDuration)
-            } label: {
-                VStack(alignment: .leading, spacing: 2.5) {
-                    Text(model.text("屏幕常亮"))
-                        .font(.system(size: 12.5, weight: .semibold))
-                        .foregroundStyle(active && !isDark ? PanelStyle.amberAccent : Color.primary)
-                        .lineLimit(1)
-                    Text(subtitle)
-                        .font(.system(size: 11))
-                        .foregroundStyle(errorText != nil ? Color.orange : Color.secondary)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .disabled(!model.canToggleDisplayAwake)
-            .accessibilityLabel(model.text("屏幕常亮"))
-            .accessibilityValue(model.text(active ? "开启" : "关闭"))
-            .accessibilityIdentifier("display-awake-switch")
+            .padding(.top, 16)
+            .padding(.trailing, 12)
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, minHeight: 96, alignment: .topLeading)
         .background(
             active ? PanelStyle.displayTileActiveBackground : PanelStyle.cardBackground,
             in: RoundedRectangle(cornerRadius: PanelStyle.cardCorner, style: .continuous)
@@ -404,6 +411,17 @@ struct PanelView: View {
         .opacity(model.canToggleDisplayAwake ? 1 : 0.48)
         .onHover { displayTileHovered = $0 }
         .help(model.text("阻止开盖时自动熄屏"))
+    }
+
+    private static func batterySymbol(level: Int, onBattery: Bool) -> String {
+        guard onBattery else { return "bolt.fill" }
+        switch level {
+        case 88...: return "battery.100percent"
+        case 63..<88: return "battery.75percent"
+        case 38..<63: return "battery.50percent"
+        case 13..<38: return "battery.25percent"
+        default: return "battery.0percent"
+        }
     }
 
     private static func formatCountdown(_ totalSeconds: Int) -> String {
@@ -484,7 +502,9 @@ struct PanelView: View {
                 Divider().opacity(0.42)
                 settingRow(model.text("高温保护"), model.text("自动"))
                 Divider().opacity(0.42)
-                settingRow(model.text("当前电量"), model.state.battery.map { "\($0)%" } ?? model.text("读取中"))
+                settingRow(model.text("当前电量"),
+                           model.state.battery.map { "\($0)%" }
+                               ?? model.text(model.state.hasLidSensor ? "读取中" : "接通电源"))
             }
 
             settingsCard(title: model.text("服务与支持")) {
@@ -665,17 +685,48 @@ struct PanelView: View {
         .accessibilityLabel("\(title): \(label(selection))")
     }
 
+    private var emergencySleepRecoveryNotice: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(model.text("系统睡眠仍被禁用"))
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(.orange)
+            Text(model.text("无法连接兼容服务，请在终端运行以下命令恢复默认睡眠："))
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: 6) {
+                Text("sudo pmset -a disablesleep 0")
+                    .font(.system(size: 10.5, design: .monospaced))
+                    .foregroundStyle(.primary)
+                    .textSelection(.enabled)
+                Spacer(minLength: 4)
+                Button(model.text(model.copiedRecoveryCommand ? "已复制" : "复制命令"), action: model.copyRecoveryCommand)
+                    .buttonStyle(.link)
+                    .font(.system(size: 11))
+            }
+        }
+        .padding(9)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.orange.opacity(0.11), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+
     private func notice(onInvertedHero: Bool) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(model.text(model.conflict ? "Clamshell 正在运行" : "需要处理"))
                 .font(.system(size: 12, weight: .semibold))
                 .foregroundStyle(onInvertedHero ? Color.white : Color.orange)
-            Text(model.text(model.conflict ? "退出后即可开启本次合盖不休眠。" : model.state.message))
+            Text(model.text(model.conflict
+                ? (model.conflictQuitHint ? "请在菜单栏或活动监视器中手动退出 Clamshell。" : "退出后即可开启本次合盖不休眠。")
+                : model.state.message))
                 .font(.system(size: 11))
                 .foregroundStyle(onInvertedHero ? Color.white.opacity(0.88) : Color.secondary)
                 .fixedSize(horizontal: false, vertical: true)
             if model.conflict {
                 Button(model.text("退出 Clamshell"), action: model.exitReference)
+                    .buttonStyle(.link)
+                    .font(.system(size: 11))
+            } else if model.canReconnect {
+                Button(model.text("重新连接"), action: model.reconnect)
                     .buttonStyle(.link)
                     .font(.system(size: 11))
             }
@@ -708,7 +759,7 @@ struct PanelView: View {
                         .foregroundStyle(selected ? Color.white : Color.secondary)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
-                        .background(selected ? PanelStyle.controlTint : Color.clear, in: Capsule())
+                        .background(selected ? PanelStyle.prominentButtonFill : Color.clear, in: Capsule())
                         .contentShape(Capsule())
                 }
                 .buttonStyle(.plain)

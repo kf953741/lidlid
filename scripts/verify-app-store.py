@@ -28,6 +28,11 @@ app_keys = [key for key in ('com.apple.application-identifier','application-iden
 assert len(app_keys) == 1, 'A profile-authorized application identifier is required'
 assert entitlements[app_keys[0]] == allowed[app_keys[0]] == '63ALH54858.dev.kf.lidonce'
 helper = app/'Contents/Helpers/LidLidAgent'
+main_archs = sorted(subprocess.check_output(['lipo','-archs',str(app/'Contents/MacOS/LidLid')], text=True).split())
+helper_archs = sorted(subprocess.check_output(['lipo','-archs',str(helper)], text=True).split())
+assert main_archs == ['arm64', 'x86_64'] and helper_archs == ['arm64', 'x86_64'], (
+    f'App Store package must be Universal (arm64 + x86_64); found app={main_archs} helper={helper_archs}'
+)
 child = plistlib.loads(subprocess.check_output(['codesign','-d','--entitlements','-','--xml',str(helper)], stderr=subprocess.DEVNULL))
 assert child == {'com.apple.security.app-sandbox': True,'com.apple.security.inherit': True}
 with tempfile.TemporaryDirectory() as tmp:

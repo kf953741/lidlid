@@ -6,19 +6,31 @@ import LidOnceSystem
 struct SystemSleepSetting: SleepSetting {
     let root: PowerDriver
     static func parse(_ output: String) throws -> Bool {
-        let values = output.split(whereSeparator: \.isNewline).compactMap { line -> Bool? in
-            let fields = line.split(whereSeparator: \.isWhitespace)
-            guard fields.count == 2, fields[0] == "SleepDisabled" else { return nil }
-            if fields[1] == "0" { return false }
-            if fields[1] == "1" { return true }
-            return nil
+        let lines = output.split(whereSeparator: \.isNewline)
+        let hasPmsetHeader = lines.contains {
+            let trimmed = $0.trimmingCharacters(in: .whitespaces)
+            return trimmed == "System-wide power settings:" || trimmed == "Currently in use:"
         }
+        guard hasPmsetHeader else { throw ServiceFailure("无法读取系统睡眠设置，请稍后重试") }
+        var values: [Bool] = []
+        for line in lines {
+            let fields = line.split(whereSeparator: \.isWhitespace)
+            guard fields.first == "SleepDisabled" else { continue }
+            guard fields.count == 2 else { throw ServiceFailure("无法读取系统睡眠设置，请稍后重试") }
+            if fields[1] == "0" { values.append(false) }
+            else if fields[1] == "1" { values.append(true) }
+            else { throw ServiceFailure("无法读取系统睡眠设置，请稍后重试") }
+        }
+        // On a fresh macOS install where `disablesleep` has never been toggled,
+        // `pmset -g` may omit `SleepDisabled`, which semantically means 0 (false).
+        if values.isEmpty { return false }
         guard values.count == 1 else { throw ServiceFailure("无法读取系统睡眠设置，请稍后重试") }
         return values[0]
     }
     func read() throws -> Bool {
         let saved = try Self.parse(run(["-g"]))
-        guard root.bool("SleepDisabled") == saved else {
+        let kernel = root.bool("SleepDisabled") ?? false
+        guard kernel == saved else {
             throw ServiceFailure("兼容组件未能确认睡眠设置，请稍后重试")
         }
         return saved
@@ -28,7 +40,7 @@ struct SystemSleepSetting: SleepSetting {
         // The persistent preference alone is not proof the kernel applied it.
         // Wait a bounded interval for the actual root-domain property as well.
         let until = ProcessInfo.processInfo.systemUptime + 1
-        while root.bool("SleepDisabled") != disabled {
+        while (root.bool("SleepDisabled") ?? false) != disabled {
             guard ProcessInfo.processInfo.systemUptime < until else {
                 throw ServiceFailure("兼容组件未能确认睡眠设置，请稍后重试")
             }
@@ -53,13 +65,13 @@ struct SystemSleepSetting: SleepSetting {
             output = pipe.fileHandleForReading.readDataToEndOfFile()
             readDone.signal()
         }
-        guard done.wait(timeout: .now() + 4) == .success else {
+        guard done.wait(timeout: .now() + 2.5) == .success else {
             kill(task.processIdentifier, SIGKILL)
-            _ = done.wait(timeout: .now() + 1)
-            _ = readDone.wait(timeout: .now() + 1)
+            _ = done.wait(timeout: .now() + 0.5)
+            _ = readDone.wait(timeout: .now() + 0.5)
             throw ServiceFailure("系统睡眠设置超时，请保持开盖并重试")
         }
-        guard readDone.wait(timeout: .now() + 1) == .success else {
+        guard readDone.wait(timeout: .now() + 0.5) == .success else {
             throw ServiceFailure("系统睡眠设置响应异常")
         }
         guard task.terminationStatus == 0 else { throw ServiceFailure("系统拒绝兼容组件的睡眠设置") }

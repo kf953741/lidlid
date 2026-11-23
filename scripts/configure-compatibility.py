@@ -19,7 +19,7 @@ save(app / 'Contents/Info.plist', {
     'CFBundleDisplayName': 'LidLid Compatibility',
     'CFBundleExecutable': 'LidLidCompatibility',
     'CFBundleIconFile': 'LidLid', 'CFBundlePackageType': 'APPL',
-    'CFBundleShortVersionString': '1.0.1', 'CFBundleVersion': '2',
+    'CFBundleShortVersionString': '1.0.2', 'CFBundleVersion': '3',
     'LSMinimumSystemVersion': '14.0', 'CFBundleDevelopmentRegion': 'en',
     'CFBundleLocalizations': ['en', 'zh-Hans'],
     'NSHumanReadableCopyright': '© 2026 Fei Kang. MIT License.'})

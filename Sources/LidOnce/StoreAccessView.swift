@@ -37,12 +37,12 @@ struct StoreAccessView: View {
                         .disabled(store.working)
                         .accessibilityIdentifier("restore-store-purchases")
                     Spacer(minLength: 0)
-                    if store.lifetimePrice == nil, store.access != .lifetime, !store.working {
+                    if store.hasMissingProducts, store.access != .lifetime, !store.working {
                         Button(text("重新加载商品"), action: store.retry)
                     }
                     if surface == .settings, store.access != .lifetime, let price = store.lifetimePrice {
                         Button(text("永久解锁合盖 · ") + price, action: store.purchaseLifetime)
-                            .disabled(!store.canPurchase)
+                            .disabled(!store.canPurchaseLifetime)
                             .accessibilityIdentifier("settings-buy-store-lifetime")
                     }
                     if store.working { ProgressView().controlSize(.mini) }

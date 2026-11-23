@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import StoreKit
 import Combine
@@ -16,24 +17,42 @@ final class StoreAccessManager: ObservableObject {
     private var updates: Task<Void, Never>?
     private var startup: Task<Void, Never>?
     private var timer: Timer?
+    private var wakeObserver: NSObjectProtocol?
     private var started = false
+    private let clockEpoch = ContinuousClock.now
     private var clock = StoreAccessClock(wallTime: Date(),
         lastObserved: UserDefaults.standard.object(forKey: "storeLastObservedDate") as? Date,
-        uptime: ProcessInfo.processInfo.systemUptime)
+        uptime: 0)
+
+    private func continuousElapsed() -> TimeInterval {
+        let c = clockEpoch.duration(to: .now).components
+        return Double(c.seconds) + Double(c.attoseconds) / 1e18
+    }
 
     var allowsStartingClosedLidSession: Bool { permits(Command("arm")) }
     func permits(_ command: Command) -> Bool {
         access.permits(command, inStoreEdition: isStoreEdition, at: currentDate)
     }
-    var canPurchase: Bool { !working && products[StoreProducts.trial] != nil && products[StoreProducts.lifetime] != nil }
+    var canPurchaseTrial: Bool { !working && products[StoreProducts.trial] != nil }
+    var canPurchaseLifetime: Bool { !working && products[StoreProducts.lifetime] != nil }
+    var canPurchase: Bool { canPurchaseLifetime }
+    var hasMissingProducts: Bool { products.count < StoreProducts.all.count }
     var lifetimePrice: String? { products[StoreProducts.lifetime]?.displayPrice }
-    private var currentDate: Date { clock.now(wallTime: Date(), uptime: ProcessInfo.processInfo.systemUptime) }
+    private var currentDate: Date { clock.now(wallTime: Date(), uptime: continuousElapsed()) }
 
-    deinit { updates?.cancel(); startup?.cancel(); timer?.invalidate() }
+    deinit {
+        updates?.cancel(); startup?.cancel(); timer?.invalidate()
+        if let wakeObserver { NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver) }
+    }
 
     func start() {
         guard isStoreEdition && !started else { return }
         started = true
+        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification, object: nil, queue: .main
+        ) { [weak self] _ in
+            self?.recompute()
+        }
         updates = Task { @MainActor [weak self] in
             for await result in Transaction.updates {
                 guard !Task.isCancelled, let self else { return }
@@ -50,7 +69,7 @@ final class StoreAccessManager: ObservableObject {
             self.working = true
             await self.refreshEntitlements()
             self.working = false
-            await self.loadProducts()
+            await self.loadProducts(preserveMessage: true)
         }
     }
 
@@ -60,7 +79,7 @@ final class StoreAccessManager: ObservableObject {
     }
 
     func canStartTrial(compatibilityReady: Bool) -> Bool {
-        isStoreEdition && canPurchase && access.permitsStartingTrial(compatibilityReady: compatibilityReady)
+        isStoreEdition && canPurchaseTrial && access.permitsStartingTrial(compatibilityReady: compatibilityReady)
     }
 
     func startTrial(compatibilityReady: Bool) {
@@ -71,7 +90,7 @@ final class StoreAccessManager: ObservableObject {
     func purchaseLifetime() { purchase(StoreProducts.lifetime) }
 
     private func purchase(_ productID: String) {
-        guard isStoreEdition && canPurchase, let product = products[productID] else { return }
+        guard isStoreEdition, !working, let product = products[productID] else { return }
         working = true; message = nil
         Task { @MainActor [weak self] in
             guard let self else { return }
@@ -109,9 +128,10 @@ final class StoreAccessManager: ObservableObject {
         }
     }
 
-    @MainActor private func loadProducts() async {
+    @MainActor private func loadProducts(preserveMessage: Bool = false) async {
         guard !working else { return }
-        working = true; message = nil
+        working = true
+        if !preserveMessage { message = nil }
         defer { working = false }
         do {
             let loaded = try await Product.products(for: StoreProducts.all)
@@ -120,8 +140,12 @@ final class StoreAccessManager: ObservableObject {
             products = Dictionary(uniqueKeysWithValues: loaded.filter {
                 $0.type == .nonConsumable && ($0.id != StoreProducts.trial || $0.price == 0)
             }.map { ($0.id, $0) })
-            if products.count != StoreProducts.all.count { message = "商店商品暂不可用，请稍后重试。" }
-        } catch { message = "商店商品暂不可用，请稍后重试。" }
+            if products.count != StoreProducts.all.count, message == nil {
+                message = "商店商品暂不可用，请稍后重试。"
+            }
+        } catch {
+            if message == nil { message = "商店商品暂不可用，请稍后重试。" }
+        }
     }
 
     @MainActor private func refreshEntitlements() async {
@@ -135,17 +159,29 @@ final class StoreAccessManager: ObservableObject {
 
     private func accept(_ transaction: Transaction) -> Bool {
         guard StoreProducts.all.contains(transaction.productID), transaction.productType == .nonConsumable else { return false }
-        records[transaction.productID] = StorePurchase(productID: transaction.productID,
+        let incoming = StorePurchase(productID: transaction.productID,
             originalPurchaseDate: transaction.originalPurchaseDate, revoked: transaction.revocationDate != nil)
+        if let existing = records[transaction.productID], !existing.revoked, !incoming.revoked {
+            records[transaction.productID] = StorePurchase(
+                productID: transaction.productID,
+                originalPurchaseDate: min(existing.originalPurchaseDate, incoming.originalPurchaseDate),
+                revoked: false
+            )
+        } else {
+            records[transaction.productID] = incoming
+        }
         return true
     }
 
     private func recompute() {
         guard isStoreEdition else { return }
         let now = currentDate
-        // Persist at most once per minute; never save an unverified entitlement.
+        // Persist at most once per minute using the jump-guarded date; never save an unverified entitlement.
+        let persistable = clock.persistableDate
         let previous = UserDefaults.standard.object(forKey: "storeLastObservedDate") as? Date ?? .distantPast
-        if now.timeIntervalSince(previous) >= 60 { UserDefaults.standard.set(now, forKey: "storeLastObservedDate") }
+        if persistable.timeIntervalSince(previous) >= 60 {
+            UserDefaults.standard.set(persistable, forKey: "storeLastObservedDate")
+        }
         let next = StoreAccess.evaluate(Array(records.values), now: now)
         if access != next { access = next }
         syncTrialTimer(now: now)
