@@ -1,1 +1,0 @@
-clamshell,sleep,laptop,background,timer,build,download,render,menubar,awake,screen,macbook

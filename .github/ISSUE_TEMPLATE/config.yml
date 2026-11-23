@@ -1,1 +1,8 @@
 blank_issues_enabled: false
+contact_links:
+  - name: Official Support & Setup Guide / 官网支持与安装指南
+    url: https://lidlid.bigsmart.cc/support/
+    about: Setup steps, FAQ, and direct email support (lidlid@bigsmart.cc)
+  - name: Open-Source Compatibility Component Audit / 兼容组件开源审计
+    url: https://github.com/kf953741/lidlid-compatibility
+    about: Inspect the MIT-licensed privileged helper source code

@@ -1,29 +1,32 @@
-name: Bug report / 问题反馈
-description: Report an unexpected behavior / 反馈异常行为
-title: "[Bug] "
-labels: [bug]
+name: Bug Report / 问题反馈
+description: Report a bug or compatibility issue in LidLid
+labels: ["bug"]
 body:
   - type: input
-    id: environment
+    id: mac
     attributes:
-      label: Model, macOS, and LidLid version / 机型、系统与软件版本
+      label: Mac model & chip / Mac 型号与芯片
+      placeholder: e.g., MacBook Pro 14" (M3) / MacBook Pro 16" (Intel)
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: macOS version / macOS 版本
+      placeholder: e.g., macOS 15.4
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: LidLid & Compatibility version / 盖盖与兼容组件版本
+      placeholder: e.g., LidLid 1.6.1, Compatibility 1.0.2
     validations:
       required: true
   - type: textarea
     id: steps
     attributes:
-      label: Steps and observed behavior / 操作步骤与现象
-      description: Include the power source, external display status, and any other lid controller.
+      label: What happened & steps to reproduce / 问题描述与复现步骤
+      description: Please redact personal details and never share private code, AI chats, or API keys.
     validations:
       required: true
-  - type: textarea
-    id: expected
-    attributes:
-      label: Expected behavior / 预期表现
-    validations:
-      required: true
-  - type: textarea
-    id: evidence
-    attributes:
-      label: Relevant evidence / 相关记录
-      description: Optional screenshots or a short redacted app event excerpt. Do not include secrets or unrelated personal data.

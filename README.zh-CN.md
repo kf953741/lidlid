@@ -1,72 +1,62 @@
-<p align="center"><img src="docs/assets/app-icon.png" width="72" alt="盖盖 · LidLid 蓝色绒团图标"></p>
+<p align="center"><img src="docs/assets/app-icon.png" width="76" alt="盖盖 · LidLid 蓝色绒团图标"></p>
 
 <h1 align="center">盖盖 · LidLid<br>MacBook 合盖不休眠</h1>
 
 <p align="center"><strong>合上盖子，带着任务走。</strong></p>
 
 <p align="center">
-  <a href="https://lidlid.bigsmart.cc/support/#app-store">获取盖盖</a> ·
   <a href="https://lidlid.bigsmart.cc/">官网</a> ·
-  <a href="https://lidlid.bigsmart.cc/support/">上手教程</a> ·
+  <a href="https://lidlid.bigsmart.cc/support/">上手与支持</a> ·
+  <a href="https://github.com/kf953741/lidlid-compatibility">兼容组件开源审计（MIT）</a> ·
   <a href="README.md">English</a>
 </p>
 
 ![盖盖 · LidLid：MacBook 合盖不休眠，任务还在跑，合盖就能走。](docs/assets/zh-CN/hero-mobility.png)
 
-**盖盖是一款 MacBook 合盖不休眠工具，让本机 Codex、Claude Code 在合盖后继续运行。** 编译或下载还没结束，你已经要出发。打开开关，合上电脑、从容带走；再次开盖，本次自动结束。
+**让本机 Codex、Claude Code、编译与下载在 MacBook 合盖后继续运行。** 无需外接显示器、也无需插电；出门前点一下菜单栏开关，合上电脑单手带走，回到工位开盖即自动结束并恢复正常休眠。
 
 ![移动办公场景插画：左侧双手托着开盖的 MacBook，右侧单手携带合盖的 MacBook。](docs/assets/zh-CN/use-case-mobility.png)
 
-<details>
-<summary>看 20 秒使用演示</summary>
-
-![盖盖 20 秒演示：开启开关、合盖带走、开盖自动结束。](docs/assets/zh-CN/usage-demo.gif)
-
-*真实应用界面，搭配移动办公场景插画。*
-
-</details>
-
-## 为什么用盖盖
-
-- **一个开关**：菜单栏一键开启，还能设置最长保持时间。
-- **开盖自动结束**：下次需要时，再开启一次。
-- **无需外接屏**：电池供电也能用，低电量或高温时自动结束本次。
-- **简单自在**：中英文界面、深浅外观自适应，无需注册账号；开盖不休眠与屏幕常亮永久免费。
-
-## Codex、Claude Code 合盖继续运行
-
-<p align="center">
-  <img src="docs/assets/zh-CN/interface-off.jpg" width="320" alt="盖盖中文界面：MacBook 合盖不休眠已关闭">
-  <img src="docs/assets/zh-CN/interface-on.jpg" width="320" alt="盖盖中文界面：已开启本次合盖不休眠，让本机任务继续运行">
-</p>
-
-<details>
-<summary>查看菜单栏图标与使用流程</summary>
-
-![小绒团菜单栏图标：闭眼为关闭，睁眼为开启。](docs/assets/zh-CN/menu-states.png)
-
-![盖盖使用流程：开启本次、合上盖子、再次开盖后自动结束。](docs/assets/workflow.zh-CN.svg)
-
-</details>
-
-## 安装与使用
-
-适用于 **M 系列 MacBook、macOS 14 或更新版本**，不连接外接屏。目前不支持 Intel Mac。
-
-Mac App Store 版正在准备上架，正式开放后会在[官网](https://lidlid.bigsmart.cc/support/#app-store)提供入口。开盖不休眠永久免费；合盖可试用 7 天，之后 US$4.99／¥38 一次购买永久解锁，没有自动续费。
-
-1. 安装并打开盖盖。
-2. 首次合盖使用，在盖盖中点「设置合盖功能」：直接下载 DMG、拖入「应用程序」、打开组件并完成系统授权，盖盖会自动识别就绪。
-3. 领取试用或永久解锁，启动本机任务，打开合盖开关。确认「**可以合盖**」后合盖带走，再次开盖自动结束。
-
-只需要开盖不休眠或「屏幕常亮」（支持 30 分钟、1 小时或持续常亮，合盖即停）？直接打开底部免费开关即可，无需兼容组件。试用到期也不会打断已经开始的合盖会话。
-
-[安装与使用指南](https://lidlid.bigsmart.cc/support/) · [免费兼容组件 DMG](https://lidlid.bigsmart.cc/downloads/LidLid-Compatibility-1.0.1-macOS-arm64.dmg)（需配合盖盖主应用）。
-
-联网任务仍需网络连接。
-
 ---
 
-问题或建议请发邮件至 [lidlid@bigsmart.cc](mailto:lidlid@bigsmart.cc)。喜欢盖盖，欢迎点一个 Star。
+## 界面预览（深色 / 浅色原生外观）
 
-[MIT 开源协议](LICENSE)
+<p align="center">
+  <img src="docs/assets/zh-CN/interface-on.jpg" width="330" alt="盖盖中文界面：已开启本次合盖不休眠">
+  <img src="docs/assets/zh-CN/interface-off.jpg" width="330" alt="盖盖中文界面：合盖不休眠已关闭">
+</p>
+
+## 核心特性
+
+- **一次开启，开盖结束**：只为本次合盖保持运行，重新开盖自动恢复正常休眠，下次需要再点一次。
+- **无需外接屏，不插电也能用**：支持 **Apple Silicon 与 Intel MacBook**（macOS 14+），内置最长保持时长、电池 10% 低电量与严重高温自动保护。
+- **两项开盖功能永久免费**：内置「开盖不休眠」与「屏幕常亮（30 分钟 / 1 小时 / 持续）」，无需安装兼容组件，台式 Mac 也可正常使用。
+- **纯本地运行，零数据收集**：无需注册账号，无广告与追踪，不读取你的代码、文件或 AI 对话。
+- **提权兼容组件 100% 开源可审计（MIT）**：所有管理系统睡眠的后台守护进程代码均公开在 [kf953741/lidlid-compatibility](https://github.com/kf953741/lidlid-compatibility)，透明放心。
+
+## 收费与获取方式
+
+| 功能 | 说明 |
+| --- | --- |
+| **开盖不休眠** | 永久免费 |
+| **屏幕常亮**（30 分钟 / 1 小时 / 持续） | 永久免费 |
+| **合盖不休眠**（MacBook，需免费兼容组件） | **7 天免费试用**（不自动续费），之后 **一次买断**（中国大陆 ¥38 / 美国区 US$4.99） |
+
+- **Mac App Store 主应用**：准备上架中，最新状态与入口见 [lidlid.bigsmart.cc/support/#app-store](https://lidlid.bigsmart.cc/support/#app-store)。
+- **免费兼容组件**：Developer ID 签名 + Apple 公证，完整 MIT 源码见 [kf953741/lidlid-compatibility](https://github.com/kf953741/lidlid-compatibility)。
+
+## 仓库说明
+
+本仓库为 LidLid 盖盖的 **公开产品展示、更新日志与社区反馈主页**：
+
+- **兼容组件开源审计仓库（公开 · MIT）**：[kf953741/lidlid-compatibility](https://github.com/kf953741/lidlid-compatibility)
+- **Mac App Store 商业主应用源码**：自 `v1.6.1+` 起在私有仓库维护；早期开源提交仍按原 MIT 协议保留在 Git 历史中（详见 [NOTICE.md](NOTICE.md)）。
+
+## 支持与反馈
+
+- 安装与帮助：[https://lidlid.bigsmart.cc/support/](https://lidlid.bigsmart.cc/support/)
+- 隐私政策：[https://lidlid.bigsmart.cc/privacy/](https://lidlid.bigsmart.cc/privacy/)
+- 客服邮箱：[lidlid@bigsmart.cc](mailto:lidlid@bigsmart.cc)
+- 问题反馈与功能建议：[GitHub Issues](https://github.com/kf953741/lidlid/issues)
+
+如果盖盖帮你省下了等任务跑完的时间，欢迎点一个 Star 支持！
